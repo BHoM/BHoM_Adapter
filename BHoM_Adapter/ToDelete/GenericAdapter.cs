@@ -51,13 +51,13 @@ namespace BH.Adapter
 
                 // Delete the old objects that are not in the new set
                 IEqualityComparer<object> comparer = EqualityComparer<object>.Default; //TODO: We need to have proper equality comparer for object (probably directly on BHoMObject and Geometry
-                Adapter.Delete(existing.Except(data, comparer));
+                Adapter.Delete(existing.Except(group, comparer));
 
                 // Update the objects that already exist
-                Adapter.Update(existing.Union(data, comparer), data.Union(existing, comparer));
+                Adapter.Update(existing.Union(group, comparer), data.Union(existing, comparer));
 
                 //Create the objects that don't exist already
-                Adapter.Create(data.Except(existing, comparer));
+                Adapter.Create(group.Except(existing, comparer));
             }
 
             return true;
