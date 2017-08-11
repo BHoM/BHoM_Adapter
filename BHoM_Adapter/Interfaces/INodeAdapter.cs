@@ -9,6 +9,6 @@ namespace BH.Adapter.Interfaces
 {
     public interface INodeAdapter : IAdapter, IStructuralAdapter
     {
-        List<string> GetNodes(out List<Node> nodes, List<string> ids = null);
+        List<Node> PullNodes(List<string> ids = null);
     }
 }
