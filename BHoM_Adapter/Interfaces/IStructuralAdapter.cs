@@ -13,7 +13,7 @@ namespace BH.Adapter.Interfaces
 
         object GetNextIndex(Type objectType, bool refresh = false);
 
-        bool CreateObjects(IEnumerable<object> objects);
+        bool Create(IEnumerable<object> objects);
 
         bool UpdateTags(IEnumerable<object> objects);
 
