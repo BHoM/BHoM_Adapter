@@ -7,7 +7,7 @@ using BH.oM.Base;
 
 namespace BH.Adapter
 {
-    public static partial class StructuralPush
+    public static partial class StructuralPusher
     {
 
         /***************************************************/

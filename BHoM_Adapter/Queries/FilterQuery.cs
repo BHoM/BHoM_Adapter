@@ -13,6 +13,10 @@ namespace BH.Adapter.Queries
         /**** Properties                                ****/
         /***************************************************/
 
+        public string Tag { get; set; } = "";
+
+        public Type Type { get; set; } = null;
+
         //public Func<object, bool> Filter { get; set; }
         public Dictionary<string, object> Equalities { get; set; } = new Dictionary<string, object>();
 
@@ -22,6 +26,14 @@ namespace BH.Adapter.Queries
         /***************************************************/
 
         public FilterQuery() {}
+
+        /***************************************************/
+
+        public FilterQuery(Type type, string tag = "")
+        {
+            Type = type;
+            Tag = Tag;
+        }
 
         /***************************************************/
 

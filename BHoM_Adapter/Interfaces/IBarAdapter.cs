@@ -9,6 +9,6 @@ namespace BH.Adapter.Interfaces
 {
     public interface IBarAdapter : IAdapter, IStructuralAdapter, INodeAdapter, ISectionPropertyAdapter
     {
-        List<string> GetBars(out List<Bar> bars, List<string> ids = null);
+        List<Bar> PullBars(List<string> ids = null);
     }
 }

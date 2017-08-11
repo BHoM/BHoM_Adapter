@@ -17,7 +17,7 @@ using BH.Adapter.Queries;
 
 namespace BH.Adapter
 {
-    public static partial class StructuralPush
+    public static partial class StructuralPusher
     {
         /***************************************************/
         /**** General Push Methods                      ****/
@@ -85,10 +85,10 @@ namespace BH.Adapter
             /**********   Create Objects      **********/
 
             //Create objects. Return false if something went wrong during the creation of the objects
-            if (!adapter.CreateObjects(objectsToCreate)) return false;
+            if (!adapter.Create(objectsToCreate)) return false;
 
             //Make sure every material is tagged with id
-            TagPushObjectsFromCreatedObjects(objectsToCreate, objectsToPush, comparer, adapter.AdapterId, out ids);
+            TagPushFromCreatedObjects(objectsToCreate, objectsToPush, comparer, adapter.AdapterId, out ids);
 
             return true;
         }
@@ -148,10 +148,10 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        private static void TagPushObjectsFromCreatedObjects<T>(IEnumerable<T> createdObjects, IEnumerable<T> pushObjects, IEqualityComparer<T> comparer, string adapterId, out List<string> ids) where T : BH.oM.Base.BHoMObject
+        private static void TagPushFromCreatedObjects<T>(IEnumerable<T> createdObjects, IEnumerable<T> Push, IEqualityComparer<T> comparer, string adapterId, out List<string> ids) where T : BH.oM.Base.BHoMObject
         {
             ids = new List<string>();
-            foreach (T item in pushObjects)
+            foreach (T item in Push)
             {
                 string id = createdObjects.First(x => comparer.Equals(x, item)).CustomData[adapterId].ToString();
                 item.CustomData[adapterId] = id;

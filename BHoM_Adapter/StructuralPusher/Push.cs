@@ -15,10 +15,11 @@ using BH.Engine.Base;
 using BH.Engine.Structure;
 
 using BH.Adapter.Queries;
+using BH.oM.Base;
 
 namespace BH.Adapter
 {
-    public static partial class StructuralPush
+    public static partial class StructuralPusher
     {
         /***************************************************/
         /**** Public Methods                            ****/
@@ -30,20 +31,17 @@ namespace BH.Adapter
             List<string> ids = new List<string>();
             foreach (IEnumerable<object> typeGroup in objects.GroupBy(x => x.GetType()))
             {
-                success &= PushObjects(adapter as dynamic, objects as dynamic, out ids, key);
+                success &= Push(adapter as dynamic, objects as dynamic, out ids, key);
             }
             return success;
         }
 
         /***************************************************/
-        /**** Bar Push Methods                          ****/
-        /***************************************************/
 
-        public static bool PushObjects(IBarAdapter adapter, List<Bar> bars, out List<string> ids, string tag, Dictionary<string, string> config = null)
+        public static bool Push(IBarAdapter adapter, List<Bar> bars, out List<string> ids, string tag, Dictionary<string, string> config = null)
         {
             //Get existing bars
-            List<Bar> exisitingBars;
-            adapter.GetBars(out exisitingBars);
+            List<Bar> exisitingBars = adapter.PullBars();
 
 
             //Shallowclone the bars and their custom data
@@ -58,7 +56,7 @@ namespace BH.Adapter
 
             //Create the section properties
             List<string> propIds;
-            if (!PushObjects(adapter,clonedSecProps.Values.ToList(), out propIds, tag))
+            if (!Push(adapter,clonedSecProps.Values.ToList(), out propIds, tag))
             {
                 ids = new List<string>();
                 return false;
@@ -73,7 +71,7 @@ namespace BH.Adapter
 
             //Create nodes
             List<string> nodeIDs;
-            if (!PushObjects(adapter, clonedNodes.Values.ToList(), out nodeIDs, tag))
+            if (!Push(adapter, clonedNodes.Values.ToList(), out nodeIDs, tag))
             {
                 ids = new List<string>();
                 return false;
@@ -93,15 +91,12 @@ namespace BH.Adapter
         }
 
         /***************************************************/
-        /**** Material Methods                          ****/
-        /***************************************************/
 
-        public static bool PushObjects(IMaterialAdapter adapter, List<Material> materials, out List<string> ids, string key, Dictionary<string, string> config = null)
+        public static bool Push(IMaterialAdapter adapter, List<Material> materials, out List<string> ids, string key, Dictionary<string, string> config = null)
         {
 
             //Get existing materials
-            List<Material> existingMaterialList;
-            adapter.GetMaterials(out existingMaterialList);
+            List<Material> existingMaterialList = adapter.PullMaterials();
 
             //Construct comparer
             IEqualityComparer<Material> comparer = new BHoMObjectNameComparer();
@@ -111,14 +106,12 @@ namespace BH.Adapter
         }
 
         /***************************************************/
-        /**** Section Property Methods                  ****/
-        /***************************************************/
-        public static bool PushObjects(ISectionPropertyAdapter adapter, List<SectionProperty> sectionProperties, out List<string> ids, string key, Dictionary<string, string> config = null)
+
+        public static bool Push(ISectionPropertyAdapter adapter, List<SectionProperty> sectionProperties, out List<string> ids, string key, Dictionary<string, string> config = null)
         {
             //Get exisiting Properties
             ids = new List<string>();
-            List<SectionProperty> existingProperties;
-            adapter.GetSectionProperties(out existingProperties);
+            List<SectionProperty> existingProperties = adapter.PullSectionProperties();
 
 
             //////////// Dependent properties ///////////
@@ -134,7 +127,7 @@ namespace BH.Adapter
 
             //Create all new materials
             List<string> materialIds;
-            PushObjects(adapter, clonedMaterials.Values.ToList(), out materialIds, key);
+            Push(adapter, clonedMaterials.Values.ToList(), out materialIds, key);
 
             //////////// End dependent properties ///////////
 
@@ -144,20 +137,41 @@ namespace BH.Adapter
         }
 
         /***************************************************/
-        /**** Node Methods                              ****/
-        /***************************************************/
 
-        public static bool PushObjects(INodeAdapter adapter, List<Node> nodes, out List<string> ids, string key, Dictionary<string, string> config = null)
+        public static bool Push(INodeAdapter adapter, List<Node> nodes, out List<string> ids, string key, Dictionary<string, string> config = null)
         {
-            List<Node> existingNodeList;
-            adapter.GetNodes(out existingNodeList);
+            List<Node> existingNodeList = adapter.PullNodes();
 
             //Create node distancecomaprer, to check within 3 decimalplaces
             IEqualityComparer<Node> comparer = new NodeDistanceComparer(3);
 
             return GeneralPush(adapter, nodes, existingNodeList, comparer, key, out ids);
-
         }
 
+
+        /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
+
+        private static Dictionary<Guid, T> GetDistinctDictionary<T>(this IEnumerable<T> list) where T : BHoMObject
+        {
+            return list.GroupBy(x => x.BHoM_Guid).Select(x => x.First()).ToDictionary(x => x.BHoM_Guid);
+        }
+
+        /***************************************************/
+
+        public static Dictionary<Guid, T> CloneObjects<T>(Dictionary<Guid, T> dict) where T : BHoMObject
+        {
+            Dictionary<Guid, T> clones = new Dictionary<Guid, T>();
+
+            foreach (KeyValuePair<Guid, T> kvp in dict)
+            {
+                T obj = (T)kvp.Value.GetShallowClone();
+                obj.CustomData = new Dictionary<string, object>(kvp.Value.CustomData);
+                clones.Add(kvp.Key, obj);
+            }
+
+            return clones;
+        }
     }
 }

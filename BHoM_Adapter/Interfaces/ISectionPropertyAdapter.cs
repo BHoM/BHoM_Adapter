@@ -9,6 +9,6 @@ namespace BH.Adapter.Interfaces
 {
     public interface ISectionPropertyAdapter : IAdapter, IStructuralAdapter, IMaterialAdapter
     {
-        List<string> GetSectionProperties(out List<SectionProperty> sectionProperties, List<string> ids = null);
+        List<SectionProperty> PullSectionProperties(List<string> ids = null);
     }
 }

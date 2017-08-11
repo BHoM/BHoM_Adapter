@@ -61,11 +61,10 @@
     <Compile Include="Convert\Compress.cs" />
     <Compile Include="Convert\Bson.cs" />
     <Compile Include="Convert\Json.cs" />
-    <Compile Include="StructuralPush\MapProperties.cs" />
-    <Compile Include="StructuralPush\ObjectCloning.cs" />
-    <Compile Include="StructuralPush\Push.cs" />
-    <Compile Include="StructuralPush\PushAlgorithm.cs" />
-    <Compile Include="StructuralPush\TagHandling.cs" />
+    <Compile Include="StructuralPusher\MapProperties.cs" />
+    <Compile Include="StructuralPusher\Push.cs" />
+    <Compile Include="StructuralPusher\PushAlgorithm.cs" />
+    <Compile Include="StructuralPusher\TagHandling.cs" />
     <Compile Include="Interfaces\IBarAdapter.cs" />
     <Compile Include="Interfaces\IMaterialAdapter.cs" />
     <Compile Include="Interfaces\INodeAdapter.cs" />

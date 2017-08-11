@@ -9,6 +9,6 @@ namespace BH.Adapter.Interfaces
 {
     public interface IMaterialAdapter : IAdapter, IStructuralAdapter
     {
-        List<string> GetMaterials(out List<Material> materials, List<string> ids = null);
+        List<Material> PullMaterials(List<string> ids = null);
     }
 }
