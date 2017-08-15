@@ -10,44 +10,44 @@ using BH.oM.Structural.Elements;
 
 namespace BH.Adapter
 {
-    public static partial class StructuralPusher 
+    public static partial class Update 
     {
-        ///***************************************************/
-        ///**** Public Methods                            ****/
-        ///***************************************************/
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
 
-        public static bool MapProperties(this BHoMObject target, BHoMObject source, string idKey) //TODO: This is quite a general method that could be elevated to the Engine
+        public static bool MapProperties(this BHoMObject target, BHoMObject source, string adapterKey) 
         {
             // Add tags from source to target
             foreach (string tag in source.Tags)
                 target.Tags.Add(tag);
 
             // Map Properties Special Properties
-            _MapSpecialProperties(target as dynamic, source as dynamic, idKey);
+            _MapSpecialProperties(target as dynamic, source as dynamic);
 
             // Check for id of the source and apply to the target
             bool found = true;
             object id;
-            if (source.CustomData.TryGetValue(idKey, out id))
+            if (source.CustomData.TryGetValue(adapterKey, out id))
             {
-                target.CustomData[idKey] = id;
+                target.CustomData[adapterKey] = id;
                 found = true;
             }
             return found;
         }
 
 
-        ///***************************************************/
-        ///**** Private Methods                           ****/
-        ///***************************************************/
+        /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
 
-        private static void _MapSpecialProperties(BHoMObject target, BHoMObject source, string idKey)
+        private static void _MapSpecialProperties(BHoMObject target, BHoMObject source)
         {
         }
 
         /***************************************************/
 
-        private static void _MapSpecialProperties(Node target, Node source, string idKey)
+        private static void _MapSpecialProperties(Node target, Node source)
         {
             //Check if the source is constraint och taget not, if so add source constraint to target
             if (source.Constraint != null && target.Constraint == null)

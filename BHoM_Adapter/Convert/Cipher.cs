@@ -4,11 +4,11 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Linq;
 
-namespace BH.Adapter.Convert
+namespace BH.Adapter
 {
-    public static class Cipher
+    public static partial class Convert
     {
-        public static string Encrypt(string plainText, string passPhrase)
+        public static string ToEncrypted(this string plainText, string passPhrase)
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
@@ -47,7 +47,7 @@ namespace BH.Adapter.Convert
 
         /*******************************************/
 
-        public static string Decrypt(string cipherText, string passPhrase)
+        public static string FromEncrypted(string cipherText, string passPhrase)
         {
             // Get the complete stream of bytes that represent:
             // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
