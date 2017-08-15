@@ -80,17 +80,21 @@ namespace BH.Adapter.Strutural
             if (!adapter.Create(objectsToCreate)) return false;
 
             //Make sure every material is tagged with id
-            TagPushFromCreatedObjects(objectsToCreate, objectsToPush, comparer, adapter.AdapterId);
+            foreach (T item in objectsToPush)
+                item.CustomData[adapter.AdapterId] = objectsToCreate.First(x => comparer.Equals(x, item)).CustomData[adapter.AdapterId].ToString();
 
             return true;
         }
 
+
+        /***************************************************/
+        /**** Private Methods                           ****/
         /***************************************************/
 
         private static FilterQuery GenerateDeleteFilterQuery<T>(IEnumerable<T> objects, string adapterId) where T : BH.oM.Base.BHoMObject
         {
             FilterQuery filter = new FilterQuery();
-            filter.Equalities["Type"] = typeof(T);
+            filter.Type = typeof(T);
             filter.Equalities["Indices"] = objects.Select(x => x.CustomData[adapterId].ToString()).ToList();
             return filter;
         }
@@ -108,17 +112,6 @@ namespace BH.Adapter.Strutural
             }
         }
 
-        /***************************************************/
 
-        private static void TagPushFromCreatedObjects<T>(IEnumerable<T> createdObjects, IEnumerable<T> Push, IEqualityComparer<T> comparer, string adapterId) where T : BH.oM.Base.BHoMObject
-        {
-            foreach (T item in Push)
-            {
-                string id = createdObjects.First(x => comparer.Equals(x, item)).CustomData[adapterId].ToString();
-                item.CustomData[adapterId] = id;
-            }
-        }
-
-       
     }
 }
