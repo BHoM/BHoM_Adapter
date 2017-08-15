@@ -5,23 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BH.Adapter.Convert
+namespace BH.Adapter
 {
-    public static class Json
+    public static partial class Convert
     {
-        public static string Write(object obj)
+        public static string ToJson(this object obj)
         {
             return obj.ToJson();
         }
 
         /*******************************************/
 
-        public static object Read(string json)
+        public static object FromJson(string json)
         {
             BsonDocument document;
             if (BsonDocument.TryParse(json, out document))
             {
-                return Bson.Read(document);
+                return Convert.FromBson(document);
             }
             else
             {

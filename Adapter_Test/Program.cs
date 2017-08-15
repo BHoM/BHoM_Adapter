@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using BH.oM.Structural.Elements;
 using BH.Adapter;
+using BH.Adapter.Strutural;
 
 namespace Adapter_Test
 {

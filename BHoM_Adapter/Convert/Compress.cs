@@ -3,11 +3,11 @@ using System.Text;
 using System.IO;
 using System;
 
-namespace BH.Adapter.Convert
+namespace BH.Adapter
 {
-    public static class Compress
+    public static partial class Convert
     {
-        public static string Zip(string text)
+        public static string ToZip(this string text)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(text);
             MemoryStream ms = new MemoryStream();
@@ -30,7 +30,7 @@ namespace BH.Adapter.Convert
 
         /*******************************************/
 
-        public static string Unzip(string compressedText)
+        public static string FromZip(string compressedText)
         {
             byte[] gzBuffer = System.Convert.FromBase64String(compressedText);
             using (MemoryStream ms = new MemoryStream())
