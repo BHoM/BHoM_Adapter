@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace BH.Adapter.Convert
+namespace BH.Adapter
 {
-    public static class Bson
+    public static partial class Convert
     {
-        public static BsonDocument Write(object obj)
+        public static BsonDocument ToBson(object obj)
         {
             if (obj is string)
             {
@@ -25,7 +25,7 @@ namespace BH.Adapter.Convert
 
         /*******************************************/
 
-        public static object Read(BsonDocument bson)
+        public static object FromBson(BsonDocument bson)
         {
             bson.Remove("_id");
             return BsonSerializer.Deserialize(bson, typeof(object));

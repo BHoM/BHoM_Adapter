@@ -4,27 +4,24 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7018BA2D-56BB-423C-8E3E-E523852C5C7E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{7FE80504-287C-4F5C-BBA4-9EAE5C6DB485}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Adapter_Test</RootNamespace>
-    <AssemblyName>Adapter_Test</AssemblyName>
+    <RootNamespace>BH.Adapter.Strutural</RootNamespace>
+    <AssemblyName>Structural_Adapter</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,8 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BHoM">
+    <Reference Include="BHoM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\BHoM.dll</HintPath>
+    </Reference>
+    <Reference Include="BHoM_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\BHoM_Engine\Build\BHoM_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="DataStructure_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\BHoM_Engine\Build\DataStructure_Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,20 +52,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Interfaces\IBarAdapter.cs" />
+    <Compile Include="Interfaces\IMaterialAdapter.cs" />
+    <Compile Include="Interfaces\INodeAdapter.cs" />
+    <Compile Include="Interfaces\ISectionPropertyAdapter.cs" />
+    <Compile Include="Interfaces\IStructuralAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="StructuralPusher\Push.cs" />
+    <Compile Include="StructuralPusher\PushAlgorithm.cs" />
+    <Compile Include="StructuralPusher\TagHandling.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BHoM_Adapter\BHoM_Adapter.csproj">
       <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
       <Name>BHoM_Adapter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Structural_Adapter\Structural_Adapter.csproj">
-      <Project>{7fe80504-287c-4f5c-bba4-9eae5c6db485}</Project>
-      <Name>Structural_Adapter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

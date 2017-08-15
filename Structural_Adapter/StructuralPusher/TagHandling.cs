@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using BH.oM.Base;
 
-namespace BH.Adapter
+namespace BH.Adapter.Strutural
 {
     public static partial class StructuralPusher
     {
-
         /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
         public static string GetNameAndTagString(this BHoMObject obj)
         {
             string str = string.IsNullOrWhiteSpace(obj.Name) ? "" : obj.Name;
@@ -51,6 +53,8 @@ namespace BH.Adapter
             return new HashSet<string>(arr[1].Split(new string[] { "_/_" }, StringSplitOptions.None));
         }
 
+        /***************************************************/
+        /**** Private Methods                           ****/
         /***************************************************/
 
         public static string TrimEnd(this string input, string suffixToRemove)

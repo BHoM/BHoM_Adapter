@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BH.oM.Structural.Properties;
 
-namespace BH.Adapter.Interfaces
+namespace BH.Adapter.Structural
 {
     public interface ISectionPropertyAdapter : IAdapter, IStructuralAdapter, IMaterialAdapter
     {

@@ -10,7 +10,7 @@ namespace BH.Adapter
 {
     public interface IAdapter
     {
-        bool Push(IEnumerable<object> objects, string key = "", Dictionary<string, string> config = null);
+        bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
 
         IList Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null);
 

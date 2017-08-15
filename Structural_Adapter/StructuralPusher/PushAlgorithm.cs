@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BH.Adapter.Interfaces;
+using BH.Adapter.Structural;
 using BH.oM.Structural.Elements;
 using BH.oM.Structural.Properties;
 using BH.oM.Materials;
-
 using BH.oM.Geometry;
 using BH.Engine.Geometry;
-
 using BH.Engine.Base;
-
 using BH.Adapter.Queries;
+using BH.oM.DataStructure;
+using BH.Engine.DataStructure;
 
-namespace BH.Adapter
+namespace BH.Adapter.Strutural
 {
     public static partial class StructuralPusher
     {
@@ -24,11 +23,8 @@ namespace BH.Adapter
         /***************************************************/
 
         //Method assuming indexbased FE software
-        private static bool GeneralPush<T>(IStructuralAdapter adapter, List<T> objectsToPush, List<T> existingObjects, IEqualityComparer<T> comparer, string tag, out List<string> ids) where T : BH.oM.Base.BHoMObject
+        private static bool GeneralPush<T>(IStructuralAdapter adapter, List<T> objectsToPush, List<T> existingObjects, IEqualityComparer<T> comparer, string tag) where T : BH.oM.Base.BHoMObject
         {
-            //Create the id list for output
-            ids = new List<string>();
-
             //Get a distinct set of the non id-materials to create
             List<T> objectsToCreate = objectsToPush.Distinct(comparer).ToList();
 
@@ -38,7 +34,7 @@ namespace BH.Adapter
 
             /**********   Check tags **********/
 
-            //Check if objects contains key
+            //Check if objects contains tag
             List<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList();
             List<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag)).ToList();
 
@@ -55,31 +51,27 @@ namespace BH.Adapter
             /**********   Compare to objects without the provided tag **********/
 
             //Compare objects to the existing objects without the specified tag.
-            List<T> createEexistingNoTag, existingNoTagEin;
-            List<Tuple<T, T>> createUexistingNoTag;
-            VennDiagram(objectsToCreate, nonTaggedObjects, out createUexistingNoTag, out createEexistingNoTag, out existingNoTagEin, comparer);
+            VennDiagram<T> noTagDiagram = nonTaggedObjects.CreateVennDiagram<T>(objectsToCreate, comparer);
 
             //Map properties from existing to the objects to be created
-            createUexistingNoTag.ForEach(x => MapProperties(x.Item1, x.Item2, adapter.AdapterId));
+            noTagDiagram.Intersection.ForEach(x => x.Item2.MapProperties(x.Item1, adapter.AdapterId));
 
             /**********   Compare to objects with the provided tag   **********/
 
             //Compare objects to the existing objects that had the specified tag and other tag.
-            List<T> createEexistingTagged, existingTaggedEcreate;
-            List<Tuple<T, T>> createUexistingTagged;
-            VennDiagram(createEexistingNoTag, multiTagObjects, out createUexistingTagged, out createEexistingTagged, out existingTaggedEcreate, comparer);
+            VennDiagram<T> multiTagDiagram = multiTagObjects.CreateVennDiagram<T>(noTagDiagram.OnlySet2, comparer);
 
             //Map properties from existing to the objects to be created
-            createUexistingTagged.ForEach(x => MapProperties(x.Item1, x.Item2, adapter.AdapterId));
+            multiTagDiagram.Intersection.ForEach(x => x.Item2.MapProperties(x.Item1, adapter.AdapterId));
 
             //Update the tags for the objects to update
-            adapter.UpdateTags(existingTaggedEcreate);
+            adapter.UpdateTags(multiTagDiagram.OnlySet1);
 
             //Tag untagged objects with adapter ID
-            SetIdToObjectsFromAdapter(createEexistingTagged, adapter);
+            SetIdToObjectsFromAdapter(multiTagDiagram.OnlySet2, adapter);
 
             //Create delete queries for the objects to replace (being deleted here, to be replaced by the objects created). Note: Call not neccesary for GSA and robot
-            adapter.Delete(GenerateDeleteFilterQuery(createUexistingNoTag.Select(x => x.Item2).Concat(createUexistingTagged.Select(x => x.Item2)), adapter.AdapterId));
+            adapter.Delete(GenerateDeleteFilterQuery(noTagDiagram.Intersection.Select(x => x.Item2).Concat(multiTagDiagram.Intersection.Select(x => x.Item2)), adapter.AdapterId));
 
 
             /**********   Create Objects      **********/
@@ -88,40 +80,10 @@ namespace BH.Adapter
             if (!adapter.Create(objectsToCreate)) return false;
 
             //Make sure every material is tagged with id
-            TagPushFromCreatedObjects(objectsToCreate, objectsToPush, comparer, adapter.AdapterId, out ids);
+            TagPushFromCreatedObjects(objectsToCreate, objectsToPush, comparer, adapter.AdapterId);
 
             return true;
         }
-
-
-        /***************************************************/
-
-        private static void VennDiagram<T>(IEnumerable<T> setA, IEnumerable<T> setB, out List<Tuple<T,T>> aUb, out List<T> aEb, out List<T> bEa, IEqualityComparer<T> comparer)
-            where T : BH.oM.Base.BHoMObject
-        {
-            aUb = new List<Tuple<T, T>>();
-            aEb = new List<T>();
-            bEa = new List<T>();
-            foreach (T a in setA)
-            {
-                bool found = false;
-                foreach (T b in setB)
-                {
-                    //Check if object exists
-                    if (comparer.Equals(a, b))
-                    {
-                        aUb.Add(new Tuple<T, T>(a, b));
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    aEb.Add(a);
-            }
-
-            bEa = setB.Except(aUb.Select(x => x.Item2)).ToList();
-        }
-
 
         /***************************************************/
 
@@ -148,14 +110,12 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        private static void TagPushFromCreatedObjects<T>(IEnumerable<T> createdObjects, IEnumerable<T> Push, IEqualityComparer<T> comparer, string adapterId, out List<string> ids) where T : BH.oM.Base.BHoMObject
+        private static void TagPushFromCreatedObjects<T>(IEnumerable<T> createdObjects, IEnumerable<T> Push, IEqualityComparer<T> comparer, string adapterId) where T : BH.oM.Base.BHoMObject
         {
-            ids = new List<string>();
             foreach (T item in Push)
             {
                 string id = createdObjects.First(x => comparer.Equals(x, item)).CustomData[adapterId].ToString();
                 item.CustomData[adapterId] = id;
-                ids.Add(id);
             }
         }
 

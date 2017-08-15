@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BH.Adapter.Interfaces
+namespace BH.Adapter.Structural
 {
     public interface IStructuralAdapter : IAdapter
     {
