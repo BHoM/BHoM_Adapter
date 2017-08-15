@@ -58,8 +58,8 @@
     <Compile Include="Interfaces\ISectionPropertyAdapter.cs" />
     <Compile Include="Interfaces\IStructuralAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StructuralPusher\Push.cs" />
-    <Compile Include="StructuralPusher\PushAlgorithm.cs" />
+    <Compile Include="StructuralPusher\PushByType.cs" />
+    <Compile Include="StructuralPusher\GeneralPush.cs" />
     <Compile Include="StructuralPusher\TagHandling.cs" />
   </ItemGroup>
   <ItemGroup>
