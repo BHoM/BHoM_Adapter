@@ -16,7 +16,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static bool MapProperties(this BHoMObject target, BHoMObject source, string adapterKey) 
+        public static bool MapSpecialProperties(this BHoMObject target, BHoMObject source, string adapterKey) 
         {
             // Add tags from source to target
             foreach (string tag in source.Tags)

@@ -22,9 +22,11 @@ namespace BH.Adapter.Strutural
         /**** General Push Methods                      ****/
         /***************************************************/
 
-        //Method assuming indexbased FE software
-        private static bool GeneralPush<T>(IStructuralAdapter adapter, List<T> objectsToPush, List<T> existingObjects, IEqualityComparer<T> comparer, string tag) where T : BH.oM.Base.BHoMObject
+        //Method assuming index-based FE software
+        private static bool GeneralPush<T>(IStructuralAdapter adapter, IEnumerable<T> objectsToPush, IEqualityComparer<T> comparer, string tag) where T : BH.oM.Base.BHoMObject
         {
+            /********** Assure Objects to be pushed are distincts and have tags **********/
+
             //Get a distinct set of the non id-materials to create
             List<T> objectsToCreate = objectsToPush.Distinct(comparer).ToList();
 
@@ -33,6 +35,8 @@ namespace BH.Adapter.Strutural
 
 
             /**********   Check tags **********/
+
+            IEnumerable<T> existingObjects = adapter.Pull(new List<IQuery> { new FilterQuery(typeof(T)) }).Cast<T>();
 
             //Check if objects contains tag
             List<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList();
@@ -54,7 +58,7 @@ namespace BH.Adapter.Strutural
             VennDiagram<T> noTagDiagram = nonTaggedObjects.CreateVennDiagram<T>(objectsToCreate, comparer);
 
             //Map properties from existing to the objects to be created
-            noTagDiagram.Intersection.ForEach(x => x.Item2.MapProperties(x.Item1, adapter.AdapterId));
+            noTagDiagram.Intersection.ForEach(x => x.Item2.MapSpecialProperties(x.Item1, adapter.AdapterId));
 
             /**********   Compare to objects with the provided tag   **********/
 
@@ -62,7 +66,7 @@ namespace BH.Adapter.Strutural
             VennDiagram<T> multiTagDiagram = multiTagObjects.CreateVennDiagram<T>(noTagDiagram.OnlySet2, comparer);
 
             //Map properties from existing to the objects to be created
-            multiTagDiagram.Intersection.ForEach(x => x.Item2.MapProperties(x.Item1, adapter.AdapterId));
+            multiTagDiagram.Intersection.ForEach(x => x.Item2.MapSpecialProperties(x.Item1, adapter.AdapterId));
 
             //Update the tags for the objects to update
             adapter.UpdateTags(multiTagDiagram.OnlySet1);

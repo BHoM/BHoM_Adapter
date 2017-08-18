@@ -55,14 +55,14 @@ namespace BH.Adapter.Strutural
                 return false;
 
             // Push the bars themselves
-            return GeneralPush(adapter, bars, adapter.PullBars(), EqualityComparer<Bar>.Default, tag);
+            return GeneralPush(adapter, bars, EqualityComparer<Bar>.Default, tag);
         }
 
         /***************************************************/
 
         public static bool Push(IMaterialAdapter adapter, List<Material> materials, string tag, Dictionary<string, string> config = null)
         {
-            return GeneralPush(adapter, materials, adapter.PullMaterials(), new BHoMObjectNameComparer(), tag);
+            return GeneralPush(adapter, materials, new BHoMObjectNameComparer(), tag);
         }
 
         /***************************************************/
@@ -75,14 +75,14 @@ namespace BH.Adapter.Strutural
                 return false;
 
             // Push the section properties themselves
-            return GeneralPush(adapter, sectionProperties, adapter.PullSectionProperties(), new BHoMObjectNameOrToStringComparer(), tag);
+            return GeneralPush(adapter, sectionProperties, new BHoMObjectNameOrToStringComparer(), tag);
         }
 
         /***************************************************/
 
         public static bool Push(INodeAdapter adapter, List<Node> nodes, string tag, Dictionary<string, string> config = null)
         {
-            return GeneralPush(adapter, nodes, adapter.PullNodes(), new NodeDistanceComparer(3), tag);
+            return GeneralPush(adapter, nodes, new NodeDistanceComparer(3), tag);
         }
 
     }
