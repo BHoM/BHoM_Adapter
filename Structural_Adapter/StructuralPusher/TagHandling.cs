@@ -35,6 +35,14 @@ namespace BH.Adapter.Strutural
 
         /***************************************************/
 
+        public static HashSet<string> GetTagsFromString(this string str)
+        {
+            string name = "";
+            return str.GetTagsFromString(out name);
+        }
+
+        /***************************************************/
+
         public static HashSet<string> GetTagsFromString(this string str, out string name)
         {
             if (string.IsNullOrWhiteSpace(str))

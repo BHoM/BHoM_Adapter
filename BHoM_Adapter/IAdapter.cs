@@ -1,4 +1,5 @@
 ﻿using BH.Adapter.Queries;
+using BH.oM.Base;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,14 +13,35 @@ namespace BH.Adapter
     {
         bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
 
-        IList Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null);
+        IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null);
 
-        int Update(FilterQuery filter, Dictionary<string, object> changes, Dictionary<string, string> config = null);
+        int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null);
 
         int Delete(FilterQuery filter, Dictionary<string, string> config = null);
 
         bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null);
 
         List<string> ErrorLog { get; set; }
+
+
+        //bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
+
+        //IEnumerable<T> Pull<T>(IEnumerable<IQuery> query, Dictionary<string, string> config = null) where T : BHoMObject;
+
+        //int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null);
+
+        //int Delete(FilterQuery filter, Dictionary<string, string> config = null);
+
+        //bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null);
+
+        //List<string> ErrorLog { get; set; }
+
+
+
+        //FilterQuery CreateFilterQuery<T>(IEnumerable<T> objects);
+
+        //void MapSpecialProperties<T>(T target, T source);
+
+        //bool Create(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
     }
 }
