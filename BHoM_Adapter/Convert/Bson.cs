@@ -11,7 +11,7 @@ namespace BH.Adapter
 {
     public static partial class Convert
     {
-        public static BsonDocument ToBson(object obj)
+        public static BsonDocument ToBson(this object obj)
         {
             if (obj is string)
             {
