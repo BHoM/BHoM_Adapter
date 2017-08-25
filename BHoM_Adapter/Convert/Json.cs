@@ -11,7 +11,7 @@ namespace BH.Adapter
     {
         public static string ToJson(this object obj)
         {
-            return obj.ToJson();
+            return Convert.ToBson(obj).ToJson();
         }
 
         /*******************************************/
