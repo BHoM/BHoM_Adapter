@@ -23,6 +23,9 @@ namespace BH.Adapter
 
         List<string> ErrorLog { get; set; }
 
+        bool Create(IEnumerable<object> objects); //TODO: Probably need to move to a different position
+
+        bool UpdateTags(IEnumerable<object> objects); //TODO: Probably need to move to a different position
 
         //bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
 
