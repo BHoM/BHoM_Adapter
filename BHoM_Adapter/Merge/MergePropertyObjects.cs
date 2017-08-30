@@ -17,7 +17,13 @@ namespace BH.Adapter
 
         public static IEnumerable<object> MergePropertyObjects<T>(this IEnumerable<T> objects, Type propertyType) where T : BHoMObject
         {
-            MethodInfo method = typeof(Merge).GetMethod("MergePropertyObjects", new Type[] { typeof(List<T>) });
+            //MethodInfo method = typeof(Merge).GetMethod("MergePropertyObjects", new Type[] { typeof(List<T>) });
+            var method = typeof(Merge)
+                        .GetMethods()
+                        .Single(m => m.Name == "MergePropertyObjects" && m.IsGenericMethodDefinition && m.GetParameters().Count() == 1);
+
+
+
             MethodInfo generic = method.MakeGenericMethod(new Type[] { typeof(T), propertyType });
             return (IEnumerable<object>) generic.Invoke(null, new object[] { objects });
 
@@ -41,8 +47,9 @@ namespace BH.Adapter
             foreach (PropertyInfo property in properties)
             {
                 // Optimisation using this article: https://blogs.msmvps.com/jonskeet/2008/08/09/making-reflection-fly-and-exploring-delegates/
-                Action<T, P> setProp = (Action<T, P>)Delegate.CreateDelegate(typeof(Action<T>), property.GetSetMethod());
-                Func<T, P> getProp = (Func<T, P>)Delegate.CreateDelegate(typeof(Func<T, P>), property.GetSetMethod());
+                Func<T, P> getProp = (Func<T, P>)Delegate.CreateDelegate(typeof(Func<T, P>), property.GetGetMethod());
+                Action<T, P> setProp = (Action<T, P>)Delegate.CreateDelegate(typeof(Action<T, P>), property.GetSetMethod());
+
 
                 // Keep those for later
                 setters.Add(property, setProp);
