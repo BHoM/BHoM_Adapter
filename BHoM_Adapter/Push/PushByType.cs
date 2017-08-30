@@ -31,22 +31,64 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
+        //public static bool PushByType(this IAdapter adapter, IEnumerable<object> objects, string tag, Dictionary<string, string> config = null)
+        //{
+        //    bool success = true;
+        //    foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
+        //    {
+        //        if (!m_AdapterTypes.ContainsKey(typeGroup.Key))
+        //            return false;
+        //        AdapterType adapterType = m_AdapterTypes[typeGroup.Key];
+        //        //success &= adapter.PushType(typeGroup.ToList(), adapterType.Comparer, adapterType.DependencyTypes);
+        //    }
+
+
+
+        //    return success;
+        //}
         public static bool PushByType(this IAdapter adapter, IEnumerable<object> objects, string tag, Dictionary<string, string> config = null)
         {
             bool success = true;
-            foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
-            {
-                if (!m_AdapterTypes.ContainsKey(typeGroup.Key))
-                    return false;
-                AdapterType adapterType = m_AdapterTypes[typeGroup.Key];
-                //success &= adapter.PushType(typeGroup.ToList(), adapterType.Comparer, adapterType.DependencyTypes);
-            }
-               
-
+            foreach (IEnumerable<object> typeGroup in objects.GroupBy(x => x.GetType()))
+                success &= PushType(adapter as dynamic, objects as dynamic, tag);
 
             return success;
         }
 
         /***************************************************/
+
+        public static bool PushType(this IAdapter adapter, List<Bar> objectsToPush, string tag = "", bool applyMerge = true)
+        {
+            IEqualityComparer<Bar> comparer = EqualityComparer<Bar>.Default;
+            List<Type> dependencyTypes = new List<Type> { typeof(SectionProperty), typeof(Node) };
+            return _PushType(adapter, objectsToPush, comparer, dependencyTypes, tag, applyMerge);
+        }
+
+        /***************************************************/
+
+        public static bool PushType(this IAdapter adapter, List<Node> objectsToPush, string tag = "", bool applyMerge = true)
+        {
+            IEqualityComparer<Node> comparer = new BH.Engine.Structure.NodeDistanceComparer(3);
+            List<Type> dependencyTypes = new List<Type>();
+            return _PushType(adapter, objectsToPush, comparer, dependencyTypes, tag, applyMerge);
+        }
+
+        /***************************************************/
+
+        public static bool PushType(this IAdapter adapter, List<SectionProperty> objectsToPush, string tag = "", bool applyMerge = true)
+        {
+            IEqualityComparer<SectionProperty> comparer = new BH.Engine.Base.BHoMObjectNameOrToStringComparer();
+            List<Type> dependencyTypes = new List<Type> { typeof(Material)};
+            return _PushType(adapter, objectsToPush, comparer, dependencyTypes, tag, applyMerge);
+        }
+
+        /***************************************************/
+
+        public static bool PushType(this IAdapter adapter, List<Material> objectsToPush, string tag = "", bool applyMerge = true)
+        {
+            IEqualityComparer<Material> comparer = new BH.Engine.Base.BHoMObjectNameComparer();
+            List<Type> dependencyTypes = new List<Type>();
+            return _PushType(adapter, objectsToPush, comparer, dependencyTypes, tag, applyMerge);
+        }
     }
 }
