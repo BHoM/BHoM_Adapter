@@ -61,10 +61,6 @@
       <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
       <Name>BHoM_Adapter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Structural_Adapter\Structural_Adapter.csproj">
-      <Project>{7fe80504-287c-4f5c-bba4-9eae5c6db485}</Project>
-      <Name>Structural_Adapter</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

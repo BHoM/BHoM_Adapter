@@ -10,7 +10,7 @@ using BH.oM.Structural.Elements;
 
 namespace BH.Adapter
 {
-    public static partial class Update 
+    public static partial class Merge 
     {
         /***************************************************/
         /**** Public Methods                            ****/
