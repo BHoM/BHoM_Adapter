@@ -22,29 +22,5 @@ namespace BH.Adapter
         bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null);
 
         List<string> ErrorLog { get; set; }
-
-        bool Create(IEnumerable<object> objects); //TODO: Probably need to move to a different position
-
-        bool UpdateTags(IEnumerable<object> objects); //TODO: Probably need to move to a different position
-
-        //bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
-
-        //IEnumerable<T> Pull<T>(IEnumerable<IQuery> query, Dictionary<string, string> config = null) where T : BHoMObject;
-
-        //int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null);
-
-        //int Delete(FilterQuery filter, Dictionary<string, string> config = null);
-
-        //bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null);
-
-        //List<string> ErrorLog { get; set; }
-
-
-
-        //FilterQuery CreateFilterQuery<T>(IEnumerable<T> objects);
-
-        //void MapSpecialProperties<T>(T target, T source);
-
-        //bool Create(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
     }
 }

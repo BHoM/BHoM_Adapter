@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using BH.oM.Structural.Elements;
 using BH.Adapter;
-using BH.Adapter.Strutural;
 
 namespace Adapter_Test
 {
@@ -14,21 +13,21 @@ namespace Adapter_Test
     {
         static void Main(string[] args)
         {
-            TestTags();
+            
         }
 
-        private static void TestTags()
-        {
-            Node node = new Node();
+        //private static void TestTags()
+        //{
+        //    Node node = new Node();
 
-            node.Name = "Name hej";
-            node.Tags.Add("tag1");
-            node.Tags.Add("tag2");
+        //    node.Name = "Name hej";
+        //    node.Tags.Add("tag1");
+        //    node.Tags.Add("tag2");
 
-            string nameAndTags = node.GetNameAndTagString();
+        //    string nameAndTags = node.GetNameAndTagString();
 
-            string name;
-            HashSet<string> tags = nameAndTags.GetTagsFromString(out name);
-        }
+        //    string name;
+        //    HashSet<string> tags = nameAndTags.GetTagsFromString(out name);
+        //}
     }
 }
