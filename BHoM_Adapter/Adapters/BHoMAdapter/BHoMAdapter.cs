@@ -69,7 +69,7 @@ namespace BH.Adapter
 
 
         /***************************************************/
-        /**** Protected Abstract Methods                ****/
+        /**** Protected Abstract CRUD Methods           ****/
         /***************************************************/
 
         protected abstract bool Create(IEnumerable<object> objects);
@@ -79,6 +79,23 @@ namespace BH.Adapter
         protected abstract bool UpdateTags(IEnumerable<object> objects);
 
         protected abstract int Delete(Type type, string tag = "");
+
+
+        /***************************************************/
+        /**** Protected Type Methods                    ****/
+        /***************************************************/
+
+        protected virtual IEqualityComparer<T> GetComparer<T>()
+        {
+            return EqualityComparer<T>.Default;
+        }
+
+        /***************************************************/
+
+        protected virtual List<Type> GetDependencyTypes<T>()
+        {
+            return new List<Type>();
+        }
 
 
         /***************************************************/

@@ -61,16 +61,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\BHoMAdapter\Delete\DeletObjects.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Delete\DeleteObjects.cs" />
+    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Delete.cs" />
+    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Read.cs" />
     <Compile Include="Modifiers\Convert\Cipher.cs" />
     <Compile Include="Modifiers\Convert\Compress.cs" />
     <Compile Include="Modifiers\Convert\Bson.cs" />
     <Compile Include="Modifiers\Convert\Json.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="Adapters\IndexAdapter\IIndexAdapter.cs" />
-    <Compile Include="Adapters\IndexAdapter\Push\PostProcess.cs" />
-    <Compile Include="Adapters\IndexAdapter\Push\PreProcess.cs" />
-    <Compile Include="Adapters\IndexAdapter\Update\MapSets.cs" />
+    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\PostProcess.cs" />
+    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\PreProcess.cs" />
+    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\MapSets.cs" />
     <Compile Include="Modifiers\Merge\MergePropertyObjects.cs" />
     <Compile Include="Modifiers\Merge\MergeSets.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\PreProcess.cs" />
@@ -88,7 +90,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Adapters\BHoMAdapter\Update\PullUpdatePush.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Adapters\IndexAdapter\IAdapter\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

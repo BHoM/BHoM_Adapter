@@ -17,7 +17,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool PushType<T>(List<T> objectsToPush, IEqualityComparer<T> comparer, List<Type> dependencies, string tag = "", bool applyMerge = true) where T : BHoMObject
+        protected bool ReplaceMergePush<T>(List<T> objectsToPush, IEqualityComparer<T> comparer, List<Type> dependencies, string tag = "", bool applyMerge = true) where T : BHoMObject
         {
             // Assure Objects to be pushed are distincts and have tags 
             List<T> objectsToCreate = objectsToPush.Distinct(comparer).ToList();
