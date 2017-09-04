@@ -19,7 +19,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool PushByType(IEnumerable<object> objects, string tag, Dictionary<string, string> config = null)
+        protected virtual bool PushByType(IEnumerable<object> objects, string tag, Dictionary<string, string> config = null)
         {
             bool success = true;
             foreach (IEnumerable<object> typeGroup in objects.GroupBy(x => x.GetType()))
@@ -30,15 +30,13 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected bool PushType(IList objectsToPush, string tag = "", bool applyMerge = true)
+        protected virtual bool PushType<T>(List<T> objectsToPush, string tag = "") where T : BHoMObject
         {
-            // If we end up here, it means that no custom method exists fr this type
-
             if (objectsToPush.Count == 0)
                 return true;
 
             Type type = objectsToPush[0].GetType();
-            return SimpleReplace(objectsToPush.OfType<BHoMObject>().ToList(), type, tag);
+            return ReplaceMergePush<T>(objectsToPush, GetComparer<T>(), GetDependencyTypes<T>(), tag);
         }
     }
 }
