@@ -1,4 +1,5 @@
 ﻿using BH.Adapter.Queries;
+using BH.oM.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,5 +32,7 @@ namespace BH.Adapter
         protected abstract object GetNextIndex(Type objectType, bool refresh = false);
 
         protected abstract int Delete(Type type, List<int> indices);
+
+        protected abstract IEnumerable<BHoMObject> Read(Type type, List<string> indices); //TODO: sort out the type of the indices
     }
 }
