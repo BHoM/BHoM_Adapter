@@ -74,7 +74,7 @@ namespace BH.Adapter
 
         protected abstract bool Create(IEnumerable<object> objects);
 
-        protected abstract IEnumerable<object> Read(Type type, string tag = "");
+        protected abstract IEnumerable<BHoMObject> Read(Type type, string tag = "");
 
         protected abstract bool UpdateTags(IEnumerable<object> objects);
 
