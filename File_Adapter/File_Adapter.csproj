@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C99A5DDF-78B1-4224-81AC-C5B90D03E423}</ProjectGuid>
+    <ProjectGuid>{014E441F-D0FA-42DC-90D2-DE6FFC9BAF30}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BH.Adapter</RootNamespace>
-    <AssemblyName>BHoM_Adapter</AssemblyName>
+    <AssemblyName>File_Adapter</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,26 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BHoM">
-      <HintPath>..\..\BHoM\Build\BHoM.dll</HintPath>
-    </Reference>
-    <Reference Include="BHoM_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BHoM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\BHoM_Engine\Build\BHoM_Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="DataStructure_Engine">
-      <HintPath>..\..\BHoM_Engine\Build\DataStructure_Engine.dll</HintPath>
+      <HintPath>..\..\BHoM\Build\BHoM.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson, Version=2.4.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Bson.2.4.4\lib\net45\MongoDB.Bson.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Reflection_Engine">
-      <HintPath>..\..\BHoM_Engine\Build\Reflection_Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="Structure_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\BHoM_Engine\Build\Structure_Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,41 +48,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\BHoMAdapter\Delete\DeleteObjects.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Delete.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Read.cs" />
-    <Compile Include="Modifiers\Convert\Cipher.cs" />
-    <Compile Include="Modifiers\Convert\Compress.cs" />
-    <Compile Include="Modifiers\Convert\Bson.cs" />
-    <Compile Include="Modifiers\Convert\Json.cs" />
-    <Compile Include="IAdapter.cs" />
-    <Compile Include="Adapters\IndexAdapter\IndexAdapter.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\PostProcess.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\PreProcess.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\MapSets.cs" />
-    <Compile Include="Modifiers\Merge\MergePropertyObjects.cs" />
-    <Compile Include="Modifiers\Merge\MergeSets.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PreProcess.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PushType.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PostProcess.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PushByType.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\SimpleReplace.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Update\MapSets.cs" />
-    <Compile Include="Modifiers\Merge\MapSpecialProperties.cs" />
-    <Compile Include="Modifiers\Update\UpdateProperty.cs" />
-    <Compile Include="Queries\CustomQuery.cs" />
-    <Compile Include="Queries\FilterQuery.cs" />
-    <Compile Include="Adapters\BHoMAdapter\BHoMAdapter.cs" />
-    <Compile Include="Queries\IQuery.cs" />
+    <Compile Include="BHoMAdapter\Delete.cs" />
+    <Compile Include="BHoMAdapter\UpdateTag.cs" />
+    <Compile Include="BHoMAdapter\Read.cs" />
+    <Compile Include="BHoMAdapter\Create.cs" />
+    <Compile Include="FileAdapter.cs" />
+    <Compile Include="IAdapter\Delete.cs" />
+    <Compile Include="IAdapter\Execute.cs" />
+    <Compile Include="IAdapter\Pull.cs" />
+    <Compile Include="IAdapter\Push.cs" />
+    <Compile Include="IAdapter\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Update\PullUpdatePush.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Adapters\IndexAdapter\IAdapter\" />
+    <ProjectReference Include="..\BHoM_Adapter\BHoM_Adapter.csproj">
+      <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
+      <Name>BHoM_Adapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

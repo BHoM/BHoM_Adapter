@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public abstract partial class BHoMAdapter : IAdapter
     {
         /***************************************************/
         /**** Public Properties                         ****/
