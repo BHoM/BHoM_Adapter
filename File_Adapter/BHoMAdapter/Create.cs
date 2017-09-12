@@ -8,9 +8,9 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected abstract bool Create(IEnumerable<object> objects)
+        protected override bool Create(IEnumerable<object> objects)
         {
-
+            throw new NotImplementedException();  //TODO: Implement Create method for the FileAdapter
         }
     }
 }
