@@ -8,13 +8,11 @@ using BH.Adapter.Queries;
 
 namespace BH.Adapter.FileAdapter
 {
-    public partial class FileAdapter : IAdapter
+    public partial class FileAdapter : BHoMAdapter
     {
         /***************************************************/
         /**** Properties                                ****/
         /***************************************************/
-
-        public List<string> ErrorLog { get; set; } = new List<string>();
 
 
         /***************************************************/
