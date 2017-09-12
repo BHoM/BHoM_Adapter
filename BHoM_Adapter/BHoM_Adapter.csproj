@@ -76,7 +76,7 @@
     <Compile Include="Modifiers\Merge\MergePropertyObjects.cs" />
     <Compile Include="Modifiers\Merge\MergeSets.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\PreProcess.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PushType.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\ReplaceMergePush.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\PostProcess.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\PushByType.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\SimpleReplace.cs" />
