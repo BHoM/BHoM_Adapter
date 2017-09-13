@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BHoMAdapter\Delete.cs" />
+    <Compile Include="BHoMAdapter\PushType.cs" />
     <Compile Include="BHoMAdapter\UpdateTag.cs" />
     <Compile Include="BHoMAdapter\Read.cs" />
     <Compile Include="BHoMAdapter\Create.cs" />

@@ -21,6 +21,8 @@ namespace BH.Adapter
 
         bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null);
 
+        //List<string> GetAvailableOptions(CrudType crudType);
+
         List<string> ErrorLog { get; set; }
     }
 }
