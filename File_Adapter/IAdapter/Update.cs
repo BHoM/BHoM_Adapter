@@ -15,9 +15,9 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        public override int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
-        {
-            return 0;
-        } 
+        //public override int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
+        //{
+        //    return 0;
+        //} 
     }
 }
