@@ -37,7 +37,7 @@ namespace BH.Adapter
 
         public bool Push(IEnumerable<object> data, string tag = "", Dictionary<string, string> config = null)
         {
-            foreach (KeyValuePair<Type, List<object>> kvp in data.GetGroupedByType())
+            foreach (KeyValuePair<Type, List<object>> kvp in data.GroupByType())
             {
                 Type type = kvp.Key;
                 List<object> group = kvp.Value;
