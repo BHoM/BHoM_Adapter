@@ -15,7 +15,7 @@ namespace BH.Adapter
 
         IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null);
 
-        int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null);
+        int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null);
 
         int Delete(FilterQuery filter, Dictionary<string, string> config = null);
 
