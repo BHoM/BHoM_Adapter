@@ -48,7 +48,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual int Update(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
+        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
         {
             return PullUpdatePush(filter, property, newValue, config); 
         }
