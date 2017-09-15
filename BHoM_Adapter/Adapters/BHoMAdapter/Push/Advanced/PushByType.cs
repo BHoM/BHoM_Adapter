@@ -36,7 +36,7 @@ namespace BH.Adapter
                 return true;
 
             Type type = objectsToPush[0].GetType();
-            return ReplaceMergePush<T>(objectsToPush, GetComparer<T>(), GetDependencyTypes<T>(), tag);
+            return ReplaceAndMerge<T>(objectsToPush, GetComparer<T>(), GetDependencyTypes<T>(), tag);
         }
     }
 }

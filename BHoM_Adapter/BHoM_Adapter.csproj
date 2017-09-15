@@ -61,9 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\BHoMAdapter\Delete\DeleteByTypeAndTag.cs" />
     <Compile Include="Adapters\BHoMAdapter\Delete\DeleteObjects.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Delete.cs" />
-    <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\Read.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\ReplaceEverything.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Pull\ReadByTypeAndTag.cs" />
     <Compile Include="Modifiers\Convert\Cipher.cs" />
     <Compile Include="Modifiers\Convert\Compress.cs" />
     <Compile Include="Modifiers\Convert\Bson.cs" />
@@ -75,11 +76,11 @@
     <Compile Include="Adapters\IndexAdapter\BHoM_Adapter\MapSets.cs" />
     <Compile Include="Modifiers\Merge\MergePropertyObjects.cs" />
     <Compile Include="Modifiers\Merge\MergeSets.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PreProcess.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\Advanced\PreProcess.cs" />
     <Compile Include="Adapters\BHoMAdapter\Push\ReplaceMergePush.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PostProcess.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\PushByType.cs" />
-    <Compile Include="Adapters\BHoMAdapter\Push\SimpleReplace.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\Advanced\PostProcess.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\Advanced\PushByType.cs" />
+    <Compile Include="Adapters\BHoMAdapter\Push\ReplaceByTypeAndTag.cs" />
     <Compile Include="Adapters\BHoMAdapter\Update\MapSets.cs" />
     <Compile Include="Modifiers\Merge\MapSpecialProperties.cs" />
     <Compile Include="Modifiers\Update\UpdateProperty.cs" />
