@@ -13,7 +13,7 @@ namespace BH.Adapter
         /**** Protected  Methods                        ****/
         /***************************************************/
 
-        protected virtual void DeleteObjects<T>(IEnumerable<T> objects, Dictionary<string, string> config = null) where T : BHoMObject
+        protected virtual void Delete<T>(IEnumerable<T> objects, Dictionary<string, string> config = null) where T : BHoMObject
         {
             Delete(GenerateFilterQuery<T>(objects), config);
         }

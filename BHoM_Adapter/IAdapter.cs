@@ -11,7 +11,7 @@ namespace BH.Adapter
 {
     public interface IAdapter
     {
-        bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null);
+        bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, string> config = null);
 
         IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null);
 
