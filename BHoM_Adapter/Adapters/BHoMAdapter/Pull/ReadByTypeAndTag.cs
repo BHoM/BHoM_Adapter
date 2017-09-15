@@ -13,10 +13,10 @@ namespace BH.Adapter
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
 
-        protected override IEnumerable<BHoMObject> Read(Type type, string tag = "")
+        protected IEnumerable<BHoMObject> Read(Type type, string tag = "")
         {
             // Get the objects based on the indices
-            IEnumerable<BHoMObject> fromIndices = Read(type, null);
+            IEnumerable<BHoMObject> fromIndices = Read(type, null as List<object>);
 
             // Filter by tag if any 
             if (tag == "")

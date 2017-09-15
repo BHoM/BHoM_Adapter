@@ -15,7 +15,7 @@ namespace BH.Adapter.FileAdapter
                 return true;
 
             Type type = objectsToPush[0].GetType();
-            return SimpleReplace(objectsToPush.Cast<BHoMObject>().ToList(), typeof(T), tag);
+            return ReplaceByTypeAndTag(objectsToPush.Cast<BHoMObject>().ToList(), typeof(T), tag);
         }
     }
 }

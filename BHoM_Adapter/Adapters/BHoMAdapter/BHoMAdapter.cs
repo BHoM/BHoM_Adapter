@@ -24,9 +24,13 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null)
+        public virtual bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, string> config = null)
         {
-            return PushByType(objects, tag, config);
+            bool success = true;
+            foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
+                success &= Replace(typeGroup.ToList(), typeGroup.Key, tag);
+
+            return success;
         }
 
         /***************************************************/
@@ -72,13 +76,13 @@ namespace BH.Adapter
         /**** Protected Abstract CRUD Methods           ****/
         /***************************************************/
 
-        protected abstract bool Create(IEnumerable<object> objects);
+        protected abstract bool Create(IEnumerable<object> objects, bool replaceAll = false);
 
-        protected abstract IEnumerable<BHoMObject> Read(Type type, string tag = "");
+        protected abstract IEnumerable<BHoMObject> Read(Type type, List<object> ids);
 
         protected abstract bool UpdateTags(IEnumerable<object> objects);
 
-        protected abstract int Delete(Type type, string tag = "");
+        protected abstract int Delete(Type type, List<object> ids);
 
 
         /***************************************************/

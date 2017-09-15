@@ -1,23 +1,23 @@
-﻿using BH.oM.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BH.oM.Base;
 
 namespace BH.Adapter
 {
-    public abstract partial class IndexAdapter
+    public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** BHoM Adapter Methods                      ****/
+        /**** Protected  Methods                        ****/
         /***************************************************/
 
-        protected override int Delete(Type type, string tag = "")
+        protected virtual int Delete(Type type, string tag = "", Dictionary<string, string> config = null) 
         {
             if (tag == "")
             {
-                return Delete(type, null);
+                return Delete(type, null as List<object>);
             }
             else
             {
@@ -25,16 +25,17 @@ namespace BH.Adapter
                 IEnumerable<BHoMObject> withTag = Read(type, tag);
 
                 // Get indices of all with that tag only
-                List<int> indices = withTag.Where(x => x.Tags.Count == 1).Select(x => (int)x.CustomData[AdapterId]).OrderBy(x => x).ToList();
-                Delete(type, indices);
+                List<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x).ToList();
+                Delete(type, ids);
 
                 // Remove tag if other tags as well
                 IEnumerable<BHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateTags(multiTags);
+                UpdateTag(multiTags);
+                //UpdateProperty(multiTags.Select(x => x.CustomData[AdapterId]), "Tags", (multiTags.Select(x => x.Tags), config);
 
-                return indices.Count;
+                return ids.Count;
             }
-
         }
+
     }
 }
