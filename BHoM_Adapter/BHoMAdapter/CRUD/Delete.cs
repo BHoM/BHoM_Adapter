@@ -13,13 +13,6 @@ namespace BH.Adapter
         /**** Protected  Methods                        ****/
         /***************************************************/
 
-        protected virtual void Delete<T>(IEnumerable<T> objects, Dictionary<string, string> config = null) where T : BHoMObject
-        {
-            Delete(GenerateFilterQuery<T>(objects), config);
-        }
-
-        /***************************************************/
-
         protected virtual int Delete(Type type, string tag = "", Dictionary<string, string> config = null) 
         {
             if (tag == "")
@@ -32,14 +25,14 @@ namespace BH.Adapter
                 IEnumerable<BHoMObject> withTag = Read(type, tag);
 
                 // Get indices of all with that tag only
-                List<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x).ToList();
+                IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x);
                 Delete(type, ids);
 
                 // Remove tag if other tags as well
                 IEnumerable<BHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]).ToList(), "Tags", multiTags.Select(x => x.Tags));
+                UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]), "Tags", multiTags.Select(x => x.Tags));
 
-                return ids.Count;
+                return ids.Count();
             }
         }
 
