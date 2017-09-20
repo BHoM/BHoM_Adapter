@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public class PushConfig
+    public class AdapterConfig
     {
         public bool ProcessInMemory { get; set; } = true;
         public bool SeparateProperties { get; set; } = false;

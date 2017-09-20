@@ -15,14 +15,14 @@ namespace BH.Adapter
 
         protected IEnumerable<BHoMObject> Read(Type type, string tag = "")
         {
-            // Get the objects based on the indices
-            IEnumerable<BHoMObject> fromIndices = Read(type, null as List<object>);
+            // Get the objects based on the ids
+            IEnumerable<BHoMObject> objects = Read(type, null as List<object>);
 
             // Filter by tag if any 
             if (tag == "")
-                return fromIndices;
+                return objects;
             else
-                return fromIndices.Where(x => x.Tags.Contains(tag));
+                return objects.Where(x => x.Tags.Contains(tag));
         }
     }
 }

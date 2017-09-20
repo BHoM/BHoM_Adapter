@@ -31,7 +31,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public static List<P> MergePropertyObjects<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : BHoMObject
+        public static IEnumerable<P> MergePropertyObjects<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : BHoMObject
         {
             // Get the list of properties corresponding to type P
             Dictionary<Type, List<PropertyInfo>> propertyDictionary = typeof(T).GetProperties().GroupBy(x => x.PropertyType).ToDictionary(x => x.Key, x => x.ToList());
@@ -73,7 +73,7 @@ namespace BH.Adapter
             }
 
             //Return the disticnt property objects
-            return cloneDictionary.Values.ToList();
+            return cloneDictionary.Values;
         }
 
 

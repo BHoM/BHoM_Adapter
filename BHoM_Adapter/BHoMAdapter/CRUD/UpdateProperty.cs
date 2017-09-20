@@ -18,23 +18,40 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        public int PullUpdatePush(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null) 
+        public int PullUpdatePush(FilterQuery filter, string property, object newValue) 
         {
-            // Get the type of object
-            Type objectType = filter.Type;
-            if (objectType == null)
-                return 0;
+            if (Config.ProcessInMemory)
+            {
+                IEnumerable<BHoMObject> objects = UpdateInMemory(filter, property, newValue);
+                Create(objects, true);
+                return objects.Count();
+            }
+            else
+                return UpdateThroughAPI(filter, property, newValue);
+        }
 
+
+        /***************************************************/
+        /**** Helper Methods                            ****/
+        /***************************************************/
+
+        public IEnumerable<BHoMObject> UpdateInMemory(FilterQuery filter, string property, object newValue)
+        {
             // Pull the objects to update
-            List<object> objects = Pull(filter).ToList();
+            IEnumerable<BHoMObject> objects = Read(filter.Type);
 
-            // Set their property
-            objects.UpdateProperty(objectType, property, newValue);
+            // Set the property of the objects matching the filter
+            filter.Filter(objects).ToList().UpdateProperty(filter.Type, property, newValue);
 
-            // Push the objects back
-            Create(objects);
+            return objects;
+        }
 
-            return objects.Count;
+        /***************************************************/
+
+        public int UpdateThroughAPI(FilterQuery filter, string property, object newValue)
+        {
+            IEnumerable<object> ids = Pull(filter).Select(x => ((BHoMObject)x).CustomData[AdapterId]);
+            return UpdateProperty(filter.Type, ids, property, newValue);
         }
     }
 }

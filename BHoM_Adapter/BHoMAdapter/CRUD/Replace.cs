@@ -27,7 +27,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (PushConfiguration.SeparateProperties)
+            if (Config.SeparateProperties)
             {
                 if (!ReplaceDependencies<T>(newObjects, tag))
                     return false;
@@ -40,7 +40,7 @@ namespace BH.Adapter
             IEnumerable<T> objectsToCreate = newObjects;
             bool overwriteObjects = false;
 
-            if (PushConfiguration.ProcessInMemory)
+            if (Config.ProcessInMemory)
             {
                 objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
                 overwriteObjects = true;
@@ -51,7 +51,7 @@ namespace BH.Adapter
             }
 
             // Assign Id if needed
-            if (PushConfiguration.UseAdapterId)
+            if (Config.UseAdapterId)
             {
                 AssignId(objectsToCreate);
 
@@ -86,9 +86,6 @@ namespace BH.Adapter
             return true;
         }
 
-
-        /***************************************************/
-        /**** Private  Methods                          ****/
         /***************************************************/
 
         protected void AssignId<T>(IEnumerable<T> objects) where T: BHoMObject
@@ -131,7 +128,7 @@ namespace BH.Adapter
             multiTaggedObjects.ForEach(x => x.Tags.Remove(tag));
 
             // Merge objects if required
-            if (PushConfiguration.MergeWithComparer)
+            if (Config.MergeWithComparer)
             {
                 VennDiagram<T> diagram = newObjects.CreateVennDiagram(multiTaggedObjects.Concat(nonTaggedObjects), GetComparer<T>());
                 diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
@@ -148,8 +145,8 @@ namespace BH.Adapter
         protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : BHoMObject
         {
             //Check if objects contains tag
-            List<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList();
-            List<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag)).ToList();
+            IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag));
+            IEnumerable<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag));
 
             //Remove tag from existing objects
             foreach (T item in taggedObjects)
@@ -172,10 +169,11 @@ namespace BH.Adapter
             diagram2.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
 
             //Update the tags
-            UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]).ToList(), "Tags", diagram2.OnlySet2.Select(x => x.Tags));
+            UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]), "Tags", diagram2.OnlySet2.Select(x => x.Tags));
 
             //Delete objects to be replaced
-            Delete(diagram1.Intersection.Select(x => x.Item2).Concat(diagram2.Intersection.Select(x => x.Item2)));
+            IEnumerable<T> objectsToDelete = diagram1.Intersection.Select(x => x.Item2).Concat(diagram2.Intersection.Select(x => x.Item2));
+            Delete(typeof(T), objectsToDelete.Select(x => x.CustomData[AdapterId]));
 
             // return the objects to push
             return newObjects;

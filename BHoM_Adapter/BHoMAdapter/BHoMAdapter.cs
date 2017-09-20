@@ -19,7 +19,7 @@ namespace BH.Adapter
 
         public List<string> ErrorLog { get; set; } = new List<string>();
 
-        PushConfig PushConfiguration { get; set; } = new PushConfig();
+        AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
 
@@ -53,7 +53,7 @@ namespace BH.Adapter
 
         public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
         {
-            return PullUpdatePush(filter, property, newValue, config); 
+            return PullUpdatePush(filter, property, newValue); 
         }
 
         /***************************************************/
@@ -84,7 +84,7 @@ namespace BH.Adapter
 
         // Level 2 - Optional 
 
-        public virtual int UpdateProperty(Type type, List<object> ids, string property, object newValue)
+        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
         {
             return 0;
         }
@@ -117,19 +117,6 @@ namespace BH.Adapter
         protected virtual List<Type> GetDependencyTypes<T>()
         {
             return new List<Type>();
-        }
-
-
-        /***************************************************/
-        /**** Protected Methods                         ****/
-        /***************************************************/
-
-        protected virtual FilterQuery GenerateFilterQuery<T>(IEnumerable<T> objects) where T : BH.oM.Base.BHoMObject
-        {
-            FilterQuery filter = new FilterQuery();
-            filter.Type = typeof(T);
-            filter.Equalities[AdapterId] = objects.Select(x => x.CustomData[AdapterId].ToString()).ToList();
-            return filter;
         }
 
     }

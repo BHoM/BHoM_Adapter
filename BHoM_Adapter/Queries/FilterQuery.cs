@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using BH.oM.Base;
 
 namespace BH.Adapter.Queries
 {
@@ -37,9 +38,22 @@ namespace BH.Adapter.Queries
 
         /***************************************************/
 
-        //public FilterQuery(Func<object, bool> filter)
-        //{
-        //    Filter = filter;
-        //}
+        public IEnumerable<BHoMObject> Filter(IEnumerable<BHoMObject> objects)
+        {
+            IEnumerable<BHoMObject> result = objects;
+
+            if (Tag != "")
+                result = objects.Where(x => x.Tags.Contains(Tag));
+
+            if (Type != null)
+                result = result.Where(x => Type.IsAssignableFrom(x.GetType()));
+
+            foreach (KeyValuePair<string, object> kvp in Equalities)
+            {
+                //TODO: Need to check the equalities as well
+            }
+
+            return result;
+        }
     }
 }
