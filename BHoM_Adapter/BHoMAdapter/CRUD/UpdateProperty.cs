@@ -26,7 +26,7 @@ namespace BH.Adapter
                 return 0;
 
             // Pull the objects to update
-            List<object> objects = Pull(new List<IQuery> { filter }).ToList();
+            List<object> objects = Pull(filter).ToList();
 
             // Set their property
             objects.UpdateProperty(objectType, property, newValue);

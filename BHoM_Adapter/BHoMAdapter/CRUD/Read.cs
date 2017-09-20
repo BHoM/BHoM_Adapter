@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public abstract partial class IndexAdapter
+    public abstract partial class BHoMAdapter
     {
         /***************************************************/
         /**** BHoM Adapter Methods                      ****/

@@ -13,6 +13,13 @@ namespace BH.Adapter
         /**** Protected  Methods                        ****/
         /***************************************************/
 
+        protected virtual void Delete<T>(IEnumerable<T> objects, Dictionary<string, string> config = null) where T : BHoMObject
+        {
+            Delete(GenerateFilterQuery<T>(objects), config);
+        }
+
+        /***************************************************/
+
         protected virtual int Delete(Type type, string tag = "", Dictionary<string, string> config = null) 
         {
             if (tag == "")
@@ -30,8 +37,7 @@ namespace BH.Adapter
 
                 // Remove tag if other tags as well
                 IEnumerable<BHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateTag(multiTags);
-                //UpdateProperty(multiTags.Select(x => x.CustomData[AdapterId]), "Tags", (multiTags.Select(x => x.Tags), config);
+                UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]).ToList(), "Tags", multiTags.Select(x => x.Tags));
 
                 return ids.Count;
             }
