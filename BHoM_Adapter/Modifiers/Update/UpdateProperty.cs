@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BH.oM.Base;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static bool UpdateProperty(this List<object> objects, Type objectType, string property, object newValue)
+        public static bool UpdateProperty(this List<BHoMObject> objects, Type objectType, string property, object newValue)
         {
             PropertyInfo propInfo = objectType.GetProperty(property);
             Action<object, object> setProp = (Action<object, object>)Delegate.CreateDelegate(typeof(Action<object, object>), propInfo.GetSetMethod());
