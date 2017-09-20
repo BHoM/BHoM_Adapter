@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter : IAdapter
+    public abstract partial class BHoMAdapter 
     {
         /***************************************************/
         /**** Public Properties                         ****/
@@ -18,6 +18,9 @@ namespace BH.Adapter
         public string AdapterId { get; set; }
 
         public List<string> ErrorLog { get; set; } = new List<string>();
+
+        PushConfig PushConfiguration { get; set; } = new PushConfig();
+
 
 
         /***************************************************/
@@ -28,21 +31,17 @@ namespace BH.Adapter
         {
             bool success = true;
             foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
-                success &= Replace(typeGroup.ToList(), typeGroup.Key, tag);
+                success &= Replace(typeGroup, tag);
 
             return success;
         }
 
         /***************************************************/
 
-        public virtual IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null)
+        public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, string> config = null)
         {
-            // Make sure there is at least one query
-            if (query.Count() == 0)
-                return new List<object>();
-
             // Make sure this is a FilterQuery
-            FilterQuery filter = query.First() as FilterQuery;
+            FilterQuery filter = query as FilterQuery;
             if (filter == null)
                 return new List<object>();
 
@@ -76,13 +75,32 @@ namespace BH.Adapter
         /**** Protected Abstract CRUD Methods           ****/
         /***************************************************/
 
-        protected abstract bool Create(IEnumerable<object> objects, bool replaceAll = false);
+        // Level 1 - Always required
+
+        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false);
 
         protected abstract IEnumerable<BHoMObject> Read(Type type, List<object> ids);
 
-        protected abstract bool UpdateTags(IEnumerable<object> objects);
 
-        protected abstract int Delete(Type type, List<object> ids);
+        // Level 2 - Optional 
+
+        public virtual int UpdateProperty(Type type, List<object> ids, string property, object newValue)
+        {
+            return 0;
+        }
+
+        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        {
+            return 0;
+        }
+
+
+        // Optional Id query
+
+        protected virtual object GetNextId(Type objectType, bool refresh = false)
+        {
+            return null;
+        }
 
 
         /***************************************************/
