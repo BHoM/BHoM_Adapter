@@ -33,6 +33,7 @@ namespace BH.Adapter
             foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
                 success &= Replace(typeGroup, tag);
 
+
             return success;
         }
 
