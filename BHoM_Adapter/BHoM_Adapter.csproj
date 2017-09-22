@@ -80,6 +80,7 @@
     <Compile Include="Queries\IQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BHoMAdapter\CRUD\UpdateProperty.cs" />
+    <Compile Include="Modifiers\Tag\TagHandling.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
