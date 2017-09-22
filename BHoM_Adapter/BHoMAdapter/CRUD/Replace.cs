@@ -95,7 +95,7 @@ namespace BH.Adapter
             {
                 if (!item.CustomData.ContainsKey(AdapterId))
                 {
-                    item.CustomData[AdapterId] = GetNextId(typeof(T), refresh);
+                    item.CustomData[AdapterId] = GetNextId(item.GetType(), refresh);
                     refresh = false;
                 }
             }
