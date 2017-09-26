@@ -19,7 +19,7 @@ using BH.oM.Base;
 using System.Reflection;
 using BH.Adapter;
 
-namespace BH.Adapter.Strutural
+namespace BH.Adapter.Structural
 {
     public static partial class StructuralPusher
     {

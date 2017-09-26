@@ -14,7 +14,7 @@ using BH.Adapter.Queries;
 using BH.oM.DataStructure;
 using BH.Engine.DataStructure;
 
-namespace BH.Adapter.Strutural
+namespace BH.Adapter.Structural
 {
     public static partial class StructuralPusher
     {
