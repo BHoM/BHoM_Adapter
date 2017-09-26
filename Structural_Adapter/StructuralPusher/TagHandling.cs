@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BH.oM.Base;
 
-namespace BH.Adapter.Strutural
+namespace BH.Adapter.Structural
 {
     public static partial class StructuralPusher
     {
