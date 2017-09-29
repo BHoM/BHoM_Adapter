@@ -68,7 +68,6 @@
     <Compile Include="Modifiers\Convert\Compress.cs" />
     <Compile Include="Modifiers\Convert\Bson.cs" />
     <Compile Include="Modifiers\Convert\Json.cs" />
-    <Compile Include="IAdapter.cs" />
     <Compile Include="Modifiers\Merge\MergePropertyObjects.cs" />
     <Compile Include="Modifiers\Merge\MergeSets.cs" />
     <Compile Include="BHoMAdapter\CRUD\Replace.cs" />
