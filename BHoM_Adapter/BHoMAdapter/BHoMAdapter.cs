@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace BH.Adapter
 
         public List<string> ErrorLog { get; set; } = new List<string>();
 
-        AdapterConfig Config { get; set; } = new AdapterConfig();
+        public AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
 
@@ -30,8 +31,16 @@ namespace BH.Adapter
         public virtual bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, string> config = null)
         {
             bool success = true;
+            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
-                success &= Replace(typeGroup, tag);
+            {            
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key});
+
+                var list = miListObject.Invoke(typeGroup, new object[] {typeGroup});
+
+                success &= Replace(list as dynamic, tag);
+            }
+                
 
 
             return success;
@@ -80,7 +89,7 @@ namespace BH.Adapter
 
         protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false);
 
-        protected abstract IEnumerable<BHoMObject> Read(Type type, List<object> ids);
+        protected abstract IEnumerable<BHoMObject> Read(Type type, IList ids);
 
 
         // Level 2 - Optional 

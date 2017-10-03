@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -75,12 +76,23 @@ namespace BH.Adapter
 
         public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: BHoMObject
         {
+
+            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (Type t in GetDependencyTypes<T>())
             {
+
+
                 IEnumerable<object> merged = objects.MergePropertyObjects<T>(t);
                 foreach (var typeGroup in merged.GroupBy(x => x.GetType()))
-                    if (!Replace(typeGroup as dynamic, tag))
+                {
+                    MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
+
+                    var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
+
+                    if (!Replace(list as dynamic, tag))
                         return false;
+                }
+                    
             }
 
             return true;
