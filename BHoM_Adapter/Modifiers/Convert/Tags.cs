@@ -13,7 +13,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static string GetNameAndTagString(this BHoMObject obj)
+        public static string GetTaggedName(this BHoMObject obj)
         {
             string str = string.IsNullOrWhiteSpace(obj.Name) ? "" : obj.Name;
 
@@ -35,15 +35,15 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public static HashSet<string> GetTagsFromString(this string str)
+        public static HashSet<string> ToTagHashSet(this string str)    //GetTagsFromString
         {
             string name = "";
-            return str.GetTagsFromString(out name);
+            return str.ToTagHashSet(out name);
         }
 
         /***************************************************/
 
-        public static HashSet<string> GetTagsFromString(this string str, out string name)
+        public static HashSet<string> ToTagHashSet(this string str, out string name)
         {
             if (string.IsNullOrWhiteSpace(str))
             {
