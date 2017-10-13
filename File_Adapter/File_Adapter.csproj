@@ -48,17 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BHoMAdapter\Delete.cs" />
-    <Compile Include="BHoMAdapter\PushType.cs" />
-    <Compile Include="BHoMAdapter\UpdateTag.cs" />
-    <Compile Include="BHoMAdapter\Read.cs" />
-    <Compile Include="BHoMAdapter\Create.cs" />
+    <Compile Include="CRUD\Delete.cs" />
+    <Compile Include="CRUD\PushType.cs" />
+    <Compile Include="CRUD\Read.cs" />
+    <Compile Include="CRUD\Create.cs" />
     <Compile Include="FileAdapter.cs" />
-    <Compile Include="IAdapter\Delete.cs" />
-    <Compile Include="IAdapter\Execute.cs" />
-    <Compile Include="IAdapter\Pull.cs" />
-    <Compile Include="IAdapter\Push.cs" />
-    <Compile Include="IAdapter\Update.cs" />
+    <Compile Include="Legacy\Delete.cs" />
+    <Compile Include="Legacy\Execute.cs" />
+    <Compile Include="Legacy\Pull.cs" />
+    <Compile Include="Legacy\Push.cs" />
+    <Compile Include="Legacy\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +69,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Convert\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
