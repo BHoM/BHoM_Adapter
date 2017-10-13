@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,15 +14,19 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override IEnumerable<BHoMObject> Read(Type type = null, string tag = "")
+        protected override IEnumerable<BHoMObject> Read(Type type, IList ids)
         {
             IEnumerable<BHoMObject> everything = m_Readable ? ReadJson() : ReadBson();
 
             if (type != null)
                 everything = everything.Where(x => type.IsAssignableFrom(x.GetType()));
 
-            if (tag.Length > 0)
-                everything = everything.Where(x => x.Tags.Contains(tag));
+            if (ids != null)
+            {
+                HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
+                everything = everything.Where(x => !toDelete.Contains((Guid)x.CustomData[AdapterId]));
+            }
+                
 
             return everything;
         }

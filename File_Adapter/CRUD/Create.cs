@@ -12,15 +12,22 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override bool Create(IEnumerable<object> objects)
-        {
-            IEnumerable<BHoMObject> objectsToPush = objects.Cast<BHoMObject>();
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
 
+        protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
+        {
             if (m_Readable)
-                return CreateJson(objectsToPush);
+                return CreateJson(objects);
             else
-                return CreateBson(objectsToPush);
+                return CreateBson(objects);
         }
+
+
+        /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
 
         private bool CreateBson(IEnumerable<BHoMObject> objects, bool clearFile = false)
         {
@@ -41,6 +48,7 @@ namespace BH.Adapter.FileAdapter
             return true;
         }
 
+        /***************************************************/
 
         private bool CreateJson(IEnumerable<BHoMObject> objects, bool clearFile = false)
         {
