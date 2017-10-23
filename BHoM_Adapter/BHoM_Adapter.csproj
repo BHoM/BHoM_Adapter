@@ -73,6 +73,7 @@
     <Compile Include="BHoMAdapter\CRUD\Replace.cs" />
     <Compile Include="Modifiers\Merge\MapSpecialProperties.cs" />
     <Compile Include="Modifiers\Update\UpdateProperty.cs" />
+    <Compile Include="Queries\BatchQuery.cs" />
     <Compile Include="Queries\CustomQuery.cs" />
     <Compile Include="Queries\FilterQuery.cs" />
     <Compile Include="BHoMAdapter\BHoMAdapter.cs" />
