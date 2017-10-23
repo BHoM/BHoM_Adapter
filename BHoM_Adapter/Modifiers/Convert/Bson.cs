@@ -27,8 +27,35 @@ namespace BH.Adapter
 
         public static object FromBson(BsonDocument bson)
         {
+            /*Type type = BH.Engine.Reflection.Create.Type(bson.GetValue("_t").AsString);
+            if (!BsonClassMap.IsClassMapRegistered(type))
+                BsonClassMap.RegisterClassMap(new BsonClassMap(type));*/
+
+            if (!m_TypesRegistered)
+                RegisterTypes();
+
             bson.Remove("_id");
             return BsonSerializer.Deserialize(bson, typeof(object));
         }
+
+        /*******************************************/
+
+        private static void RegisterTypes()
+        {
+            foreach (Type type in BH.Engine.Reflection.Create.TypeList())
+            {
+                if (!type.IsGenericType)
+                {
+                    BsonClassMap.LookupClassMap(type);
+                    /*if (!BsonClassMap.IsClassMapRegistered(type))
+                        BsonClassMap.RegisterClassMap(new BsonClassMap(type));*/
+                }
+            }
+
+            m_TypesRegistered = true;
+        }
+
+
+        private static bool m_TypesRegistered = false;
     }
 }
