@@ -33,7 +33,7 @@ namespace BH.Adapter.Queries
         public FilterQuery(Type type, string tag = "")
         {
             Type = type;
-            Tag = Tag;
+            Tag = tag;
         }
 
         /***************************************************/
