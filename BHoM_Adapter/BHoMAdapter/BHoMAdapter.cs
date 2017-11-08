@@ -20,7 +20,7 @@ namespace BH.Adapter
 
         public List<string> ErrorLog { get; set; } = new List<string>();
 
-        public AdapterConfig Config { get; set; } = new AdapterConfig();
+        protected AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
 
@@ -28,7 +28,7 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, string> config = null)
+        public virtual bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -48,7 +48,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, string> config = null)
+        public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, object> config = null)
         {
             // Make sure this is a FilterQuery
             FilterQuery filter = query as FilterQuery;
@@ -61,21 +61,21 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, string> config = null)
+        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, object> config = null)
         {
             return PullUpdatePush(filter, property, newValue); 
         }
 
         /***************************************************/
 
-        public virtual int Delete(FilterQuery filter, Dictionary<string, string> config = null)
+        public virtual int Delete(FilterQuery filter, Dictionary<string, object> config = null)
         {
             return Delete(filter.Type, filter.Tag);
         }
 
         /***************************************************/
 
-        public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, string> config = null)
+        public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
         {
             return false;
         }
