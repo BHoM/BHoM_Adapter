@@ -17,7 +17,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        //public override bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, string> config = null)
+        //public override bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, object> config = null)
         //{
         //    // Make sure objects being pushed are tagged
         //    List<BHoMObject> objectsToPush = objects.Cast<BHoMObject>().ToList();

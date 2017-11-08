@@ -18,7 +18,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        //public override IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, string> config = null)
+        //public override IEnumerable<object> Pull(IEnumerable<IQuery> query, Dictionary<string, object> config = null)
         //{
         //    if (m_Readable)
         //        return PullJson();
