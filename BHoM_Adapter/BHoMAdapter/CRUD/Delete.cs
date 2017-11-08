@@ -13,7 +13,7 @@ namespace BH.Adapter
         /**** Protected  Methods                        ****/
         /***************************************************/
 
-        protected virtual int Delete(Type type, string tag = "", Dictionary<string, string> config = null) 
+        protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null) 
         {
             if (tag == "")
             {
