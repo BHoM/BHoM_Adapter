@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace BH.Adapter
     {
         public static string ToJson(this object obj)
         {
-
-            return Convert.ToBson(obj).ToJson<BsonDocument>();  
+            var jsonWriterSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+            return Convert.ToBson(obj).ToJson<BsonDocument>(jsonWriterSettings);  
         }
 
         /*******************************************/
