@@ -1,6 +1,8 @@
 ﻿using BH.oM.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Options;
+using MongoDB.Bson.Serialization.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -20,16 +22,6 @@ namespace BH.Adapter
                 BsonDocument document;
                 BsonDocument.TryParse(obj as string, out document);
                 return document;
-            }
-            else if (obj is CustomObject)
-            {
-                CustomObject co = obj as CustomObject;
-                BsonDocument doc = co.CustomData.ToBsonDocument();
-                if (co.Name.Length > 0)
-                    doc["Name"] = co.Name;
-                if (co.Tags.Count > 0)
-                    doc["Tags"] = new BsonArray(co.Tags);
-                return doc;
             }
             else
                 return obj.ToBsonDocument();
@@ -66,9 +58,29 @@ namespace BH.Adapter
         }
 
         /*******************************************/
+        /**** Private Methods                   ****/
+        /*******************************************/
+
+        static Convert()
+        {
+            RegisterTypes();
+        }
+
+        /*******************************************/
 
         private static void RegisterTypes()
         {
+            try
+            {
+                BsonSerializer.RegisterSerializer(typeof(object), new ObjectSerializer());
+                BsonSerializer.RegisterSerializer(typeof(List<object>), new ObjectListSerializer());
+                BsonSerializer.RegisterSerializer(typeof(CustomObject), new CustomObjectSerializer());
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Problem with initialisation of the Bson Serializer");
+            }
+
             foreach (Type type in BH.Engine.Reflection.Create.TypeList())
             {
                 if (!type.IsGenericType)
@@ -79,6 +91,69 @@ namespace BH.Adapter
         }
 
 
+        /*******************************************/
+        /**** Private Fields                    ****/
+        /*******************************************/
+
         private static bool m_TypesRegistered = false;
     }
+
+
+    /*******************************************/
+    /**** Bson Serializers                  ****/
+    /*******************************************/
+
+    public class CustomObjectSerializer : SerializerBase<CustomObject>
+    {
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, CustomObject value)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>(value.CustomData);
+            data["BHoM_Guid"] = value.BHoM_Guid;
+            if (value.Tags.Count > 0)
+                data["Tags"] = value.Tags;
+            if (value.Name.Length > 0)
+                data["Name"] = value.Name;
+            context.Writer.WriteStartDocument();
+            foreach (KeyValuePair<string, object> kvp in data)
+            {
+                context.Writer.WriteName(kvp.Key);
+                BsonSerializer.Serialize(context.Writer, kvp.Value);
+            }
+            context.Writer.WriteEndDocument();
+        }
+    }
+
+    /*******************************************/
+
+    public class ObjectSerializer : MongoDB.Bson.Serialization.Serializers.ObjectSerializer
+    {
+        CustomObjectSerializer customObjectSerializer = new CustomObjectSerializer();
+        ObjectListSerializer listSerializer = new ObjectListSerializer();
+
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
+        {
+            if (value is CustomObject)
+                customObjectSerializer.Serialize(context, args, value as CustomObject);
+            else if (value is List<object>)
+                listSerializer.Serialize(context, args, value as List<object>);
+            else
+                base.Serialize(context, args, value);
+        }
+    }
+
+    /*******************************************/
+
+    public class ObjectListSerializer : SerializerBase<List<object>>
+    {
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, List<object> value)
+        {
+            context.Writer.WriteStartArray();
+            foreach(object item in value)
+            {
+                BsonSerializer.Serialize(context.Writer, item);
+            }
+            context.Writer.WriteEndArray();
+        }
+    }
+
 }
