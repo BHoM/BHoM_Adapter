@@ -109,11 +109,24 @@ namespace BH.Adapter
         {
             Dictionary<string, object> data = new Dictionary<string, object>(value.CustomData);
             data["BHoM_Guid"] = value.BHoM_Guid;
-            if (value.Tags.Count > 0)
-                data["Tags"] = value.Tags;
-            if (value.Name.Length > 0)
-                data["Name"] = value.Name;
+
             context.Writer.WriteStartDocument();
+
+            if (value.Tags.Count > 0)
+            {
+                context.Writer.WriteName("Name");
+                BsonSerializer.Serialize(context.Writer, value.Name);
+            }
+
+            if (value.Name.Length > 0)
+            {
+                context.Writer.WriteName("Tags");
+                context.Writer.WriteStartArray();
+                foreach (string tag in value.Tags)
+                    context.Writer.WriteString(tag);
+                context.Writer.WriteEndArray();
+            }
+
             foreach (KeyValuePair<string, object> kvp in data)
             {
                 context.Writer.WriteName(kvp.Key);
