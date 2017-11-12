@@ -81,7 +81,7 @@ namespace BH.Adapter
                 Console.WriteLine("Problem with initialisation of the Bson Serializer");
             }
 
-            foreach (Type type in BH.Engine.Reflection.Create.TypeList())
+            foreach (Type type in BH.Engine.Reflection.Query.GetBHoMTypeList())
             {
                 if (!type.IsGenericType)
                     BsonClassMap.LookupClassMap(type);
