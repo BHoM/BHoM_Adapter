@@ -8,6 +8,7 @@ using BH.oM.Structural.Elements;
 using BH.Adapter;
 using BH.oM.Base;
 using BH.oM.Geometry;
+using System.Drawing;
 
 namespace Adapter_Test
 {
@@ -15,17 +16,25 @@ namespace Adapter_Test
     {
         static void Main(string[] args)
         {
-            
+            TestColourToBson();
         }
 
+
+        private static void TestColourToBson()
+        {
+            Color colour = Color.Aquamarine;
+
+            string direct = colour.ToJson();
+            string bh = BH.Adapter.Convert.ToJson(colour);
+        }
 
         private static void TestFileAdapter()
         {
             List<Node> nodes = new List<Node>
             {
-                new Node {Point = new Point(1, 2, 3), Name = "A"},
-                new Node {Point = new Point(4, 5, 6), Name = "B"},
-                new Node {Point = new Point(7, 8, 9), Name = "C"}
+                new Node {Point = new BH.oM.Geometry.Point(1, 2, 3), Name = "A"},
+                new Node {Point = new BH.oM.Geometry.Point(4, 5, 6), Name = "B"},
+                new Node {Point = new BH.oM.Geometry.Point(7, 8, 9), Name = "C"}
             };
 
             List<Bar> bars = new List<Bar>
