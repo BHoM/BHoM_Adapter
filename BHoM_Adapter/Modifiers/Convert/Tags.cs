@@ -13,7 +13,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static string GetTaggedName(this BHoMObject obj)
+        public static string GetTaggedName(this IObject obj)
         {
             string str = string.IsNullOrWhiteSpace(obj.Name) ? "" : obj.Name;
 
@@ -53,7 +53,7 @@ namespace BH.Adapter
 
             string[] arr = str.Split(new string[] { "__Tags__:" }, StringSplitOptions.None);
 
-            name = arr[0];
+            name = arr[0].TrimEnd(" ");
 
             if (arr.Length < 2)
                 return new HashSet<string>();
