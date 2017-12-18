@@ -31,7 +31,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public static IEnumerable<P> MergePropertyObjects<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : BHoMObject
+        public static IEnumerable<P> MergePropertyObjects<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : IObject
         {
             // Get the list of properties corresponding to type P
             Dictionary<Type, List<PropertyInfo>> propertyDictionary = typeof(T).GetProperties().GroupBy(x => x.PropertyType).ToDictionary(x => x.Key, x => x.ToList());
@@ -81,20 +81,20 @@ namespace BH.Adapter
         /**** Private Methods                           ****/
         /***************************************************/
 
-        private static Dictionary<Guid, T> GetDistinctDictionary<T>(this IEnumerable<T> list) where T : BHoMObject
+        private static Dictionary<Guid, T> GetDistinctDictionary<T>(this IEnumerable<T> list) where T : IObject
         {
             return list.GroupBy(x => x.BHoM_Guid).Select(x => x.First()).ToDictionary(x => x.BHoM_Guid);
         }
 
         /***************************************************/
 
-        private static Dictionary<Guid, T> CloneObjects<T>(Dictionary<Guid, T> dict) where T : BHoMObject
+        private static Dictionary<Guid, T> CloneObjects<T>(Dictionary<Guid, T> dict) where T : IObject
         {
             Dictionary<Guid, T> clones = new Dictionary<Guid, T>();
 
             foreach (KeyValuePair<Guid, T> kvp in dict)
             {
-                T obj = (T)kvp.Value.GetShallowClone();
+                T obj = (T)((kvp.Value as BHoMObject).GetShallowClone() as IObject);
                 obj.CustomData = new Dictionary<string, object>(kvp.Value.CustomData);
                 clones.Add(kvp.Key, obj);
             }

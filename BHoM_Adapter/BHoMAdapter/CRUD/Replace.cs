@@ -157,8 +157,8 @@ namespace BH.Adapter
         protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : BHoMObject
         {
             //Check if objects contains tag
-            IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag));
-            IEnumerable<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag));
+            IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated
+            IEnumerable<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag)).ToList();
 
             //Remove tag from existing objects
             foreach (T item in taggedObjects)
