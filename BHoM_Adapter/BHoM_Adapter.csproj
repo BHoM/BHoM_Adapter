@@ -65,6 +65,9 @@
     <Compile Include="BHoMAdapter\Configs\PushConfig.cs" />
     <Compile Include="BHoMAdapter\CRUD\Delete.cs" />
     <Compile Include="BHoMAdapter\CRUD\Read.cs" />
+    <Compile Include="Modifiers\Convert\BsonSerializers\CustomObjectSerializer.cs" />
+    <Compile Include="Modifiers\Convert\BsonSerializers\ColourSerializer.cs" />
+    <Compile Include="Modifiers\Convert\BsonSerializers\ObjectSerializer.cs" />
     <Compile Include="Modifiers\Convert\Cipher.cs" />
     <Compile Include="Modifiers\Convert\Compress.cs" />
     <Compile Include="Modifiers\Convert\Bson.cs" />

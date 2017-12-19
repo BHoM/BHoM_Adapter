@@ -11,7 +11,10 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
+using MongoDB.Bson.IO;
+using BH.Adapter.Modifiers.Convert.BsonSerializers;
+using MongoDB.Bson.Serialization.Conventions;
 
 namespace BH.Adapter
 {
@@ -52,6 +55,11 @@ namespace BH.Adapter
                     co.Tags = new HashSet<string>(((List<object>)dic["Tags"]).Cast<string>());
                     dic.Remove("Tags");
                 }
+                if (dic.ContainsKey("BHoM_Guid"))
+                {
+                    co.BHoM_Guid = (Guid)dic["BHoM_Guid"];
+                    dic.Remove("BHoM_Guid");
+                }
                 co.CustomData = dic;
                 return co;
             }
@@ -72,14 +80,17 @@ namespace BH.Adapter
 
         private static void RegisterTypes()
         {
+            // Define the conventions
+            var pack = new ConventionPack();
+            //pack.Add(new IgnoreIfNullConvention(true));
+            ConventionRegistry.Register("BHoM Conventions", pack, x => x is object);
+
+            // Register the types
             try
             {
-                BsonSerializer.RegisterSerializer(typeof(BHoMObject), new BHoMObjectSerializer());
                 BsonSerializer.RegisterSerializer(typeof(System.Drawing.Color), new ColourSerializer());
-                BsonSerializer.RegisterSerializer(typeof(IList), new ObjectListSerializer());
-                BsonSerializer.RegisterSerializer(typeof(Dictionary<string, object>), new DictionarySerializer());
                 BsonSerializer.RegisterSerializer(typeof(CustomObject), new CustomObjectSerializer());
-                BsonSerializer.RegisterSerializer(typeof(object), new ObjectSerializer());
+                BsonSerializer.RegisterSerializer(typeof(object), new BH_ObjectSerializer());
             }
             catch(Exception)
             {
@@ -88,11 +99,24 @@ namespace BH.Adapter
 
             foreach (Type type in BH.Engine.Reflection.Query.GetBHoMTypeList())
             {
-                if (!type.IsGenericType)
-                    BsonClassMap.LookupClassMap(type);
+                if (!type.IsGenericType && !BsonClassMap.IsClassMapRegistered(type))
+                    RegisterClassMap(type);
             }
+            RegisterClassMap(typeof(System.Drawing.Color));
 
             m_TypesRegistered = true;
+        }
+
+
+        /*******************************************/
+
+        private static void RegisterClassMap(Type type)
+        {
+            BsonClassMap cm = new BsonClassMap(type);
+            cm.AutoMap();
+            cm.SetDiscriminator(type.ToString());
+            cm.SetDiscriminatorIsRequired(true);
+            BsonClassMap.RegisterClassMap(cm);
         }
 
 
@@ -108,7 +132,7 @@ namespace BH.Adapter
     /**** Bson Serializers                  ****/
     /*******************************************/
 
-    public class CustomObjectSerializer : SerializerBase<CustomObject>
+    /*public class CustomObjectSerializer : SerializerBase<CustomObject>
     {
         public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, CustomObject value)
         {
@@ -139,11 +163,11 @@ namespace BH.Adapter
             }
             context.Writer.WriteEndDocument();
         }
-    }
+    }*/
 
     /*******************************************/
 
-    public class DictionarySerializer : SerializerBase<Dictionary<string, object>>
+    /*public class DictionarySerializer : SerializerBase<Dictionary<string, object>>
     {
         public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, Dictionary<string, object> value)
         {
@@ -156,35 +180,15 @@ namespace BH.Adapter
             }
             context.Writer.WriteEndDocument();
         }
-    }
+    }*/
+
+    
+
+    
 
     /*******************************************/
 
-    public class ColourSerializer : SerializerBase<System.Drawing.Color>
-    {
-        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, System.Drawing.Color value)
-        {
-            context.Writer.WriteStartDocument();
-
-            context.Writer.WriteName("A");
-            context.Writer.WriteInt32(value.A);
-
-            context.Writer.WriteName("R");
-            context.Writer.WriteInt32(value.R);
-
-            context.Writer.WriteName("G");
-            context.Writer.WriteInt32(value.G);
-
-            context.Writer.WriteName("B");
-            context.Writer.WriteInt32(value.B);
-
-            context.Writer.WriteEndDocument();
-        }
-    }
-
-    /*******************************************/
-
-    public class ObjectSerializer : MongoDB.Bson.Serialization.Serializers.ObjectSerializer
+    /*public class ObjectSerializer : MongoDB.Bson.Serialization.Serializers.ObjectSerializer
     {
         CustomObjectSerializer customObjectSerializer = new CustomObjectSerializer();
         BHoMObjectSerializer bhomObjectSerializer = new BHoMObjectSerializer();
@@ -205,12 +209,14 @@ namespace BH.Adapter
                 base.Serialize(context, args, null);
             else
                 BsonSerializer.Serialize(context.Writer, value as dynamic);
+
+            BsonSerializer.Serialize(context.Writer, value);
         }
-    }
+    }*/
 
     /*******************************************/
 
-    public class BHoMObjectSerializer : SerializerBase<BHoMObject>
+    /*public class BHoMObjectSerializer : SerializerBase<BHoMObject>
     {
         public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, BHoMObject value)
         {
@@ -235,11 +241,16 @@ namespace BH.Adapter
 
             context.Writer.WriteEndDocument();
         }
-    }
 
+        public override BHoMObject Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+        {
+            return base.Deserialize(context, args);
+        }
+    }*/
+    
     /*******************************************/
 
-    public class ObjectListSerializer : SerializerBase<IList>
+    /*public class ObjectListSerializer : SerializerBase<IList>
     {
         public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, IList value)
         {
@@ -250,6 +261,6 @@ namespace BH.Adapter
             }
             context.Writer.WriteEndArray();
         }
-    }
-
+    }*/
+    
 }

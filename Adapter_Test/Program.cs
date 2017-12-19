@@ -8,7 +8,14 @@ using BH.oM.Structural.Elements;
 using BH.Adapter;
 using BH.oM.Base;
 using BH.oM.Geometry;
-using System.Drawing;
+
+using BH.oM.Chrome.Views;
+using BH.oM.Chrome.Dimensions;
+using BH.oM.Chrome.Domains;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.IO;
+
 
 namespace Adapter_Test
 {
@@ -16,13 +23,63 @@ namespace Adapter_Test
     {
         static void Main(string[] args)
         {
-            TestColourToBson();
+            TestBsonConversion();
+        }
+
+
+        private static void TestBsonConversion()
+        {
+            BubbleChart bubbles = new BubbleChart
+            {
+                Parent = "body",
+                Id = "bubbles",
+                XDim = new AxisDimension()
+                {
+                    Property = "X",
+                    InDomain = new NumberDomain(0, 10)
+                },
+                YDim = new AxisDimension("Y"),
+                ColourDim = new ColourDimension
+                {
+                    OutDomain = new ColourDomain
+                    {
+                        Values = new List<System.Drawing.Color>
+                        {
+                            System.Drawing.Color.Aqua,
+                            System.Drawing.Color.Red,
+                            System.Drawing.Color.Green
+                        }
+                    }
+                },
+                Tags = new HashSet<string> { "Tag1", "Tag2" },
+                CustomData = new Dictionary<string, object>
+                {
+                    {"A", 1 },
+                    {"B", new Point(1,2,3) },
+                    {"C", new Node() }
+                }
+            };
+
+            Node node = new Node(new Point(1, 2, 3), "testNode");
+
+            object input = bubbles;
+
+            var jsonWriterSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+            /*BsonDocument doc = input.ToBsonDocument();
+            string json = doc.ToJson<BsonDocument>(jsonWriterSettings);
+            object obj = BsonSerializer.Deserialize(doc, typeof(object));
+            BubbleChart result = obj as BubbleChart;*/
+
+            BsonDocument doc2 = BH.Adapter.Convert.ToBson(bubbles);
+            string json2 = doc2.ToJson(jsonWriterSettings);
+            object obj2 = BH.Adapter.Convert.FromBson(doc2);
+            BubbleChart result2 = obj2 as BubbleChart;
         }
 
 
         private static void TestColourToBson()
         {
-            Color colour = Color.Aquamarine;
+            System.Drawing.Color colour = System.Drawing.Color.Aquamarine;
 
             string direct = colour.ToJson();
             string bh = BH.Adapter.Convert.ToJson(colour);
