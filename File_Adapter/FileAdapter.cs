@@ -1,12 +1,4 @@
-﻿using BH.Adapter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BH.Adapter.Queries;
-
-namespace BH.Adapter.FileAdapter
+﻿namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
