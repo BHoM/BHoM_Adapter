@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using BH.oM.Materials;
 using BH.oM.Base;
-using BH.oM.Structural.Elements;
 using BH.Adapter.Queries;
-using System.Collections;
+using BH.Engine.Reflection;
 
 namespace BH.Adapter
 {
@@ -41,7 +35,7 @@ namespace BH.Adapter
             IEnumerable<BHoMObject> objects = Read(filter.Type);
 
             // Set the property of the objects matching the filter
-            filter.Filter(objects).ToList().UpdateProperty(filter.Type, property, newValue);
+            filter.Filter(objects).ToList().SetPropertyValue(filter.Type, property, newValue);
 
             return objects;
         }
