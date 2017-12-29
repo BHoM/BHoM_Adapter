@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Collections.Generic;
 using BH.oM.Structural.Elements;
-using BH.Adapter;
-using BH.oM.Base;
 using BH.oM.Geometry;
-
 using BH.oM.Chrome.Views;
 using BH.oM.Chrome.Dimensions;
 using BH.oM.Chrome.Domains;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.IO;
 
 
@@ -55,14 +46,19 @@ namespace Adapter_Test
                 CustomData = new Dictionary<string, object>
                 {
                     {"A", 1 },
-                    {"B", new Point(1,2,3) },
+                    {"B", new Point { X = 1, Y = 2, Z = 3 } },
                     {"C", new Node() }
                 }
             };
 
-            Node node = new Node(new Point(1, 2, 3), "testNode");
+            Node node = new Node { Position = new Point { X = 1, Y = 2, Z = 3 }, Name = "testNode" };
 
-            object input = bubbles;
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            dic["Views"] = new List<View> { bubbles };
+            dic["Data'"] = new List<object> { node };
+            dic["Tag"] = "A";
+
+            object input = dic;
 
             var jsonWriterSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
             /*BsonDocument doc = input.ToBsonDocument();
@@ -70,10 +66,10 @@ namespace Adapter_Test
             object obj = BsonSerializer.Deserialize(doc, typeof(object));
             BubbleChart result = obj as BubbleChart;*/
 
-            BsonDocument doc2 = BH.Adapter.Convert.ToBson(bubbles);
+            BsonDocument doc2 = BH.Engine.Serialiser.Convert.ToBson(input);
             string json2 = doc2.ToJson(jsonWriterSettings);
-            object obj2 = BH.Adapter.Convert.FromBson(doc2);
-            BubbleChart result2 = obj2 as BubbleChart;
+            //object obj2 = BH.Adapter.Convert.FromBson(doc2);
+            //BubbleChart result2 = obj2 as BubbleChart;
         }
 
 
@@ -82,16 +78,16 @@ namespace Adapter_Test
             System.Drawing.Color colour = System.Drawing.Color.Aquamarine;
 
             string direct = colour.ToJson();
-            string bh = BH.Adapter.Convert.ToJson(colour);
+            string bh = BH.Engine.Serialiser.Convert.ToJson(colour);
         }
 
         private static void TestFileAdapter()
         {
             List<Node> nodes = new List<Node>
             {
-                new Node {Point = new BH.oM.Geometry.Point(1, 2, 3), Name = "A"},
-                new Node {Point = new BH.oM.Geometry.Point(4, 5, 6), Name = "B"},
-                new Node {Point = new BH.oM.Geometry.Point(7, 8, 9), Name = "C"}
+                new Node {Position = new Point { X = 1, Y = 2, Z = 3 }, Name = "A"},
+                new Node {Position = new Point { X = 4, Y = 5, Z = 6 }, Name = "B"},
+                new Node {Position = new Point { X = 7, Y = 8, Z = 9 }, Name = "C"}
             };
 
             List<Bar> bars = new List<Bar>

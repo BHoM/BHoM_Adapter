@@ -1,28 +1,23 @@
 ﻿using BH.oM.Base;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public static partial class Merge
+    public static partial class Query
     {
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static IEnumerable<object> MergePropertyObjects<T>(this IEnumerable<T> objects, Type propertyType) where T : BHoMObject
+        public static IEnumerable<object> DistinctProperties<T>(this IEnumerable<T> objects, Type propertyType) where T : BHoMObject
         {
             //MethodInfo method = typeof(Merge).GetMethod("MergePropertyObjects", new Type[] { typeof(List<T>) });
-            var method = typeof(Merge)
+            var method = typeof(Query)
                         .GetMethods()
-                        .Single(m => m.Name == "MergePropertyObjects" && m.IsGenericMethodDefinition && m.GetParameters().Count() == 1);
-
-
+                        .Single(m => m.Name == "DistinctProperties" && m.IsGenericMethodDefinition && m.GetParameters().Count() == 1);
 
             MethodInfo generic = method.MakeGenericMethod(new Type[] { typeof(T), propertyType });
             return (IEnumerable<object>) generic.Invoke(null, new object[] { objects });
@@ -31,7 +26,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public static IEnumerable<P> MergePropertyObjects<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : IObject
+        public static IEnumerable<P> DistinctProperties<T, P>(this IEnumerable<T> objects) where T : BHoMObject where P : IObject
         {
             // Get the list of properties corresponding to type P
             Dictionary<Type, List<PropertyInfo>> propertyDictionary = typeof(T).GetProperties().GroupBy(x => x.PropertyType).ToDictionary(x => x.Key, x => x.ToList());
@@ -60,7 +55,7 @@ namespace BH.Adapter
             }
 
             // Clone the distinct property objects
-            Dictionary<Guid, P> cloneDictionary = CloneObjects<P>(propertyObjects.GetDistinctDictionary());
+            Dictionary<Guid, P> cloneDictionary = CloneObjects<P>(propertyObjects.DistinctDictionary());
 
 
             //Assign cloned distinct property objects back into input objects
@@ -81,7 +76,7 @@ namespace BH.Adapter
         /**** Private Methods                           ****/
         /***************************************************/
 
-        private static Dictionary<Guid, T> GetDistinctDictionary<T>(this IEnumerable<T> list) where T : IObject
+        private static Dictionary<Guid, T> DistinctDictionary<T>(this IEnumerable<T> list) where T : IObject
         {
             return list.GroupBy(x => x.BHoM_Guid).Select(x => x.First()).ToDictionary(x => x.BHoM_Guid);
         }
@@ -102,5 +97,6 @@ namespace BH.Adapter
             return clones;
         }
 
+        /***************************************************/
     }
 }

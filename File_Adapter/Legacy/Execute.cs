@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BH.oM.Base;
-using BHC = BH.Adapter.Convert;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Collections;
-using BH.Adapter.Queries;
-using BH.Adapter;
+﻿using System.Collections.Generic;
 
 namespace BH.Adapter.FileAdapter
 {

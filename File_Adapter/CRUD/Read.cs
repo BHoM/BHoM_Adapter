@@ -7,8 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -35,7 +33,7 @@ namespace BH.Adapter.FileAdapter
         private IEnumerable<BHoMObject> ReadJson()
         {
             string[] json = File.ReadAllLines(m_FilePath);
-            return json.Select(x => Convert.FromJson(x) as BHoMObject);
+            return json.Select(x => Engine.Serialiser.Convert.FromJson(x) as BHoMObject);
         }
 
 
