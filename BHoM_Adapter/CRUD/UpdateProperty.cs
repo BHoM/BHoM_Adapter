@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BH.oM.Base;
-using BH.Adapter.Queries;
+using BH.oM.Queries;
 using BH.Engine.Reflection;
 
 namespace BH.Adapter
