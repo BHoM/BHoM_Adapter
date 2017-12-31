@@ -105,7 +105,7 @@ namespace BH.Adapter
 
         // Optional Id query
 
-        protected virtual object GetNextId(Type objectType, bool refresh = false)
+        protected virtual object NextId(Type objectType, bool refresh = false)
         {
             return null;
         }
@@ -115,14 +115,14 @@ namespace BH.Adapter
         /**** Protected Type Methods                    ****/
         /***************************************************/
 
-        protected virtual IEqualityComparer<T> GetComparer<T>()
+        protected virtual IEqualityComparer<T> Comparer<T>()
         {
             return EqualityComparer<T>.Default;
         }
 
         /***************************************************/
 
-        protected virtual List<Type> GetDependencyTypes<T>()
+        protected virtual List<Type> DependencyTypes<T>()
         {
             return new List<Type>();
         }
