@@ -68,8 +68,6 @@
     <Compile Include="BHoMAdapter\AdapterConfig.cs" />
     <Compile Include="BHoMAdapter\CRUD\Delete.cs" />
     <Compile Include="BHoMAdapter\CRUD\Read.cs" />
-    <Compile Include="HelperMethods\Modify\ApplyTaggedName.cs" />
-    <Compile Include="HelperMethods\Query\DistinctProperties.cs" />
     <Compile Include="HelperMethods\Modify\UpdatePropertiesFrom.cs" />
     <Compile Include="BHoMAdapter\CRUD\Replace.cs" />
     <Compile Include="HelperMethods\Modify\MapSpecialProperties.cs" />
@@ -80,7 +78,6 @@
     <Compile Include="Queries\IQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BHoMAdapter\CRUD\UpdateProperty.cs" />
-    <Compile Include="HelperMethods\Query\TaggedName.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
