@@ -17,7 +17,7 @@ namespace BH.Adapter
         protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : BHoMObject
         {
             // Make sure objects are distinct 
-            List<T> newObjects = objectsToPush.Distinct(GetComparer<T>()).ToList();
+            List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
 
             // Make sure objects  are tagged
             if (tag != "")
@@ -53,7 +53,7 @@ namespace BH.Adapter
                 AssignId(objectsToCreate);
 
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it)
-                IEqualityComparer<T> comparer = GetComparer<T>();
+                IEqualityComparer<T> comparer = Comparer<T>();
                 foreach (T item in objectsToPush)
                     item.CustomData[AdapterId] = objectsToCreate.First(x => comparer.Equals(x, item)).CustomData[AdapterId].ToString();
             }
@@ -74,7 +74,7 @@ namespace BH.Adapter
         {
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
-            foreach (Type t in GetDependencyTypes<T>())
+            foreach (Type t in DependencyTypes<T>())
             {
 
 
@@ -103,7 +103,7 @@ namespace BH.Adapter
             {
                 if (!item.CustomData.ContainsKey(AdapterId))
                 {
-                    item.CustomData[AdapterId] = GetNextId(item.GetType(), refresh);
+                    item.CustomData[AdapterId] = NextId(item.GetType(), refresh);
                     refresh = false;
                 }
             }
@@ -113,7 +113,7 @@ namespace BH.Adapter
 
         protected bool MergeIntoSet<T>(IEnumerable<T> objects, IEnumerable<T> set, out IEnumerable<Tuple<T,T>> mergedObjects, out IEnumerable<T> unmergedObjects) where T : BHoMObject
         {
-            IEqualityComparer<T> comparer = GetComparer<T>();
+            IEqualityComparer<T> comparer = Comparer<T>();
 
             VennDiagram<T> diagram = Engine.DataStructure.Create.VennDiagram(objects, set, comparer);
             diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
@@ -138,7 +138,7 @@ namespace BH.Adapter
             // Merge objects if required
             if (Config.MergeWithComparer)
             {
-                VennDiagram<T> diagram = Engine.DataStructure.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), GetComparer<T>());
+                VennDiagram<T> diagram = Engine.DataStructure.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
                 diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
                 newObjects = diagram.OnlySet1;
             }
@@ -164,7 +164,7 @@ namespace BH.Adapter
             Delete(typeof(T), taggedObjects.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
 
             // Get objects without the tag that can potentially be merged with the new objects
-            IEqualityComparer<T> comparer = GetComparer<T>();
+            IEqualityComparer<T> comparer = Comparer<T>();
             VennDiagram<T> diagram1 = Engine.DataStructure.Create.VennDiagram(newObjects, nonTaggedObjects, comparer);
 
             // Check and map properties
