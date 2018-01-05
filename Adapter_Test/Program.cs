@@ -27,9 +27,9 @@ namespace Adapter_Test
                 XDim = new AxisDimension()
                 {
                     Property = "X",
-                    InDomain = new NumberDomain(0, 10)
+                    InDomain = (NumberDomain)10
                 },
-                YDim = new AxisDimension("Y"),
+                YDim = (AxisDimension)"Y",
                 ColourDim = new ColourDimension
                 {
                     OutDomain = new ColourDomain
