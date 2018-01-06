@@ -14,63 +14,9 @@ namespace Adapter_Test
     {
         static void Main(string[] args)
         {
-            TestBsonConversion();
+            
         }
 
-
-        private static void TestBsonConversion()
-        {
-            BubbleChart bubbles = new BubbleChart
-            {
-                Parent = "body",
-                Id = "bubbles",
-                XDim = new AxisDimension()
-                {
-                    Property = "X",
-                    InDomain = (NumberDomain)10
-                },
-                YDim = (AxisDimension)"Y",
-                ColourDim = new ColourDimension
-                {
-                    OutDomain = new ColourDomain
-                    {
-                        Values = new List<System.Drawing.Color>
-                        {
-                            System.Drawing.Color.Aqua,
-                            System.Drawing.Color.Red,
-                            System.Drawing.Color.Green
-                        }
-                    }
-                },
-                Tags = new HashSet<string> { "Tag1", "Tag2" },
-                CustomData = new Dictionary<string, object>
-                {
-                    {"A", 1 },
-                    {"B", new Point { X = 1, Y = 2, Z = 3 } },
-                    {"C", new Node() }
-                }
-            };
-
-            Node node = new Node { Position = new Point { X = 1, Y = 2, Z = 3 }, Name = "testNode" };
-
-            Dictionary<string, object> dic = new Dictionary<string, object>();
-            dic["Views"] = new List<View> { bubbles };
-            dic["Data'"] = new List<object> { node };
-            dic["Tag"] = "A";
-
-            object input = dic;
-
-            var jsonWriterSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
-            /*BsonDocument doc = input.ToBsonDocument();
-            string json = doc.ToJson<BsonDocument>(jsonWriterSettings);
-            object obj = BsonSerializer.Deserialize(doc, typeof(object));
-            BubbleChart result = obj as BubbleChart;*/
-
-            BsonDocument doc2 = BH.Engine.Serialiser.Convert.ToBson(input);
-            string json2 = doc2.ToJson(jsonWriterSettings);
-            //object obj2 = BH.Adapter.Convert.FromBson(doc2);
-            //BubbleChart result2 = obj2 as BubbleChart;
-        }
 
 
         private static void TestColourToBson()
