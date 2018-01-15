@@ -16,6 +16,8 @@ namespace BH.Adapter
 
         public string AdapterId { get; set; }
 
+        public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
+
         public List<string> ErrorLog { get; set; } = new List<string>();
 
         protected AdapterConfig Config { get; set; } = new AdapterConfig();
@@ -76,6 +78,21 @@ namespace BH.Adapter
         public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
         {
             return false;
+        }
+
+
+        /***************************************************/
+        /**** Public Events                             ****/
+        /***************************************************/
+
+        public event EventHandler DataUpdated;
+
+        /***************************************************/
+
+        protected virtual void OnDataUpdated()
+        {
+            if (DataUpdated != null)
+                DataUpdated.Invoke(this, new EventArgs());
         }
 
 
