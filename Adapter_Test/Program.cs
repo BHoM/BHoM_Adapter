@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using BH.oM.Structural.Elements;
 using BH.oM.Geometry;
-using BH.oM.Chrome.Views;
-using BH.oM.Chrome.Dimensions;
-using BH.oM.Chrome.Domains;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 
