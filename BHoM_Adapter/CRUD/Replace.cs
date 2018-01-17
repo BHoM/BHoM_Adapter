@@ -14,7 +14,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : BHoMObject
+        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -70,7 +70,7 @@ namespace BH.Adapter
         /**** Helper Methods                            ****/
         /***************************************************/
 
-        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: BHoMObject
+        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IObject
         {
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -79,16 +79,23 @@ namespace BH.Adapter
 
 
                 IEnumerable<object> merged = objects.DistinctProperties<T>(t);
-                foreach (var typeGroup in merged.GroupBy(x => x.GetType()))
-                {
-                    MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
 
-                    var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
+                var list = miListObject.Invoke(merged, new object[] { merged });
 
-                    if (!Replace(list as dynamic, tag))
-                        return false;
-                }
-                    
+                if (!Replace(list as dynamic, tag))
+                    return false;
+
+                //foreach (var typeGroup in merged.GroupBy(x => x.GetType()))
+                //{
+                //    MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
+
+                //    var list = miListObject.Invoke(typeGroup.ToList(), new object[] { typeGroup.ToList() });
+
+                //    if (!Replace(list as dynamic, tag))
+                //        return false;
+                //}
+
             }
 
             return true;
@@ -96,14 +103,14 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected void AssignId<T>(IEnumerable<T> objects) where T: BHoMObject
+        protected void AssignId<T>(IEnumerable<T> objects) where T: IObject
         {
             bool refresh = true;
             foreach (T item in objects)
             {
                 if (!item.CustomData.ContainsKey(AdapterId))
                 {
-                    item.CustomData[AdapterId] = NextId(item.GetType(), refresh);
+                    item.CustomData[AdapterId] = NextId(typeof(T), refresh);
                     refresh = false;
                 }
             }
@@ -111,7 +118,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected bool MergeIntoSet<T>(IEnumerable<T> objects, IEnumerable<T> set, out IEnumerable<Tuple<T,T>> mergedObjects, out IEnumerable<T> unmergedObjects) where T : BHoMObject
+        protected bool MergeIntoSet<T>(IEnumerable<T> objects, IEnumerable<T> set, out IEnumerable<Tuple<T,T>> mergedObjects, out IEnumerable<T> unmergedObjects) where T : IObject
         {
             IEqualityComparer<T> comparer = Comparer<T>();
 
@@ -126,7 +133,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag) where T : BHoMObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag) where T : IObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -150,7 +157,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : BHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : IObject
         {
             //Check if objects contains tag
             IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated

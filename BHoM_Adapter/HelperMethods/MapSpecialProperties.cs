@@ -9,7 +9,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static bool MapSpecialProperties(this BHoMObject target, BHoMObject source, string adapterKey) 
+        public static bool MapSpecialProperties(this IObject target, IObject source, string adapterKey) 
         {
             // Add tags from source to target
             foreach (string tag in source.Tags)
@@ -34,7 +34,7 @@ namespace BH.Adapter
         /**** Private Methods                           ****/
         /***************************************************/
 
-        private static void _MapSpecialProperties(BHoMObject target, BHoMObject source)
+        private static void _MapSpecialProperties(IObject target, IObject source)
         {
         }
 
