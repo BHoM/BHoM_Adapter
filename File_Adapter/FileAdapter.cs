@@ -18,6 +18,7 @@
 
             m_FilePath = folder + fileName + (readable ? ".json" : ".bson");
             m_Readable = readable;
+            this.Config.UseAdapterId = false;
         }
 
 
