@@ -11,10 +11,10 @@ namespace BH.Adapter
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
 
-        protected IEnumerable<BHoMObject> Read(Type type, string tag = "")
+        protected IEnumerable<IObject> Read(Type type, string tag = "")
         {
             // Get the objects based on the ids
-            IEnumerable<BHoMObject> objects = Read(type, null as List<object>);
+            IEnumerable<IObject> objects = Read(type, null as List<object>);
 
             // Filter by tag if any 
             if (tag == "")

@@ -26,7 +26,7 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<BHoMObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual bool Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -85,9 +85,9 @@ namespace BH.Adapter
 
         // Level 1 - Always required
 
-        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : BHoMObject;
+        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IObject;
 
-        protected abstract IEnumerable<BHoMObject> Read(Type type, IList ids);
+        protected abstract IEnumerable<IObject> Read(Type type, IList ids);
 
 
         // Level 2 - Optional 
