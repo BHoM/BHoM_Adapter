@@ -20,14 +20,14 @@ namespace BH.Adapter
             else
             {
                 // Get all with tag
-                IEnumerable<BHoMObject> withTag = Read(type, tag);
+                IEnumerable<IObject> withTag = Read(type, tag);
 
                 // Get indices of all with that tag only
                 IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x);
                 Delete(type, ids);
 
                 // Remove tag if other tags as well
-                IEnumerable<BHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
+                IEnumerable<IObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
                 UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]), "Tags", multiTags.Select(x => x.Tags));
 
                 return ids.Count();
