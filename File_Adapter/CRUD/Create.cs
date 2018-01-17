@@ -18,9 +18,9 @@ namespace BH.Adapter.FileAdapter
         protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
         {
             if (m_Readable)
-                return CreateJson(objects);
+                return CreateJson((IEnumerable<IObject>)objects);
             else
-                return CreateBson(objects);
+                return CreateBson((IEnumerable<IObject>)objects);
         }
 
 
@@ -28,7 +28,7 @@ namespace BH.Adapter.FileAdapter
         /**** Private Methods                           ****/
         /***************************************************/
 
-        private bool CreateBson(IEnumerable<BHoMObject> objects, bool clearFile = false)
+        private bool CreateBson(IEnumerable<IObject> objects, bool clearFile = false)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace BH.Adapter.FileAdapter
 
         /***************************************************/
 
-        private bool CreateJson(IEnumerable<BHoMObject> objects, bool clearFile = false)
+        private bool CreateJson(IEnumerable<IObject> objects, bool clearFile = false)
         {
             try
             {
