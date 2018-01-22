@@ -28,7 +28,7 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -48,6 +48,8 @@ namespace BH.Adapter
 
         /***************************************************/
 
+        /***************************************************/
+
         public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, object> config = null)
         {
             // Make sure this is a FilterQuery
@@ -55,8 +57,40 @@ namespace BH.Adapter
             if (filter == null)
                 return new List<object>();
 
-            // Read the objects
-            return Read(filter.Type, filter.Tag);
+            // Read the IObjects
+            if (typeof(IObject).IsAssignableFrom(filter.Type))
+                return Read(filter.Type, filter.Tag);
+
+            // Read the IResults
+            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
+            {
+                IList cases, objectIds;
+                object caseObject, idObject;
+
+                if (filter.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
+                    cases = caseObject as IList;
+                else
+                    cases = null;
+
+                if (filter.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
+                    objectIds = idObject as IList;
+                else
+                    objectIds = null;
+
+                return Extract(filter.Type, objectIds, cases);
+            }
+
+            return new List<object>();
+        }
+
+        /***************************************************/
+
+        public virtual bool PullTo(BHoMAdapter to, IQuery query, Dictionary<string, object> config = null)
+        {
+            string tag = "";
+            if (query is FilterQuery)
+                tag = (query as FilterQuery).Tag;
+            return to.Push(this.Pull(query, config), tag);
         }
 
         /***************************************************/
@@ -117,6 +151,11 @@ namespace BH.Adapter
         protected virtual int Delete(Type type, IEnumerable<object> ids)
         {
             return 0;
+        }
+
+        protected virtual IEnumerable<BH.oM.Common.IResult> Extract(Type type, IList ids = null, IList cases = null)
+        {
+            return new List<BH.oM.Common.IResult>();
         }
 
 
