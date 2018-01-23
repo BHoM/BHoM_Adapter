@@ -65,7 +65,8 @@ namespace BH.Adapter
             if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
             {
                 IList cases, objectIds;
-                object caseObject, idObject;
+                int divisions;
+                object caseObject, idObject, divObj;
 
                 if (filter.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
                     cases = caseObject as IList;
@@ -77,7 +78,19 @@ namespace BH.Adapter
                 else
                     objectIds = null;
 
-                return Extract(filter.Type, objectIds, cases);
+                if (filter.Equalities.TryGetValue("Divisions", out divObj))
+                {
+                    if (divObj is int)
+                        divisions = (int)divObj;
+                    else if (!int.TryParse(divObj.ToString(), out divisions))
+                        divisions = 5;
+                }
+                else
+                    divisions = 5;
+
+                List<BH.oM.Common.IResult> results = Extract(filter.Type, objectIds, cases, divisions).ToList();
+                results.Sort();
+                return results;
             }
 
             return new List<object>();
@@ -153,7 +166,7 @@ namespace BH.Adapter
             return 0;
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResult> Extract(Type type, IList ids = null, IList cases = null)
+        protected virtual IEnumerable<BH.oM.Common.IResult> Extract(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
         }
