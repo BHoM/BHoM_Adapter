@@ -41,7 +41,7 @@ namespace BH.Adapter
                 success &= Replace(list as dynamic, tag);
             }
                 
-
+            
 
             return success;
         }
@@ -88,7 +88,7 @@ namespace BH.Adapter
                 else
                     divisions = 5;
 
-                List<BH.oM.Common.IResult> results = Extract(filter.Type, objectIds, cases, divisions).ToList();
+                List<BH.oM.Common.IResult> results = ReadResults(filter.Type, objectIds, cases, divisions).ToList();
                 results.Sort();
                 return results;
             }
@@ -166,7 +166,7 @@ namespace BH.Adapter
             return 0;
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResult> Extract(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
         }
