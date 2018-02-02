@@ -23,6 +23,9 @@ namespace BH.Adapter
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
+            //Read all the existing objects of that type
+            IEnumerable<T> existing = Read(typeof(T)).Cast<T>();
+
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
@@ -30,21 +33,21 @@ namespace BH.Adapter
                     return false;
             }
 
-            //Read all the existing objects of that type
-            IEnumerable<T> existing = Read(typeof(T)).Cast<T>();
-
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
             bool overwriteObjects = false;
+
+            IEnumerable<T> objectsToDelete;
 
             if (Config.ProcessInMemory)
             {
                 objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
                 overwriteObjects = true;
+                objectsToDelete = new List<T>();
             }
             else
             {
-                objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
+                objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag, out objectsToDelete);
             }
 
             // Assign Id if needed
@@ -58,6 +61,9 @@ namespace BH.Adapter
                     item.CustomData[AdapterId] = objectsToCreate.First(x => comparer.Equals(x, item)).CustomData[AdapterId].ToString();
             }
 
+            //Delete elements to be replaced. Only applies to replace through API
+            if(!Config.ProcessInMemory)
+                Delete(typeof(T), objectsToDelete.Select(x => x.CustomData[AdapterId]));
 
             // Create objects
             if (!Create(objectsToCreate, overwriteObjects))
@@ -157,7 +163,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : IObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag, out IEnumerable<T> objectsToDelete) where T : IObject
         {
             //Check if objects contains tag
             IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated
@@ -186,9 +192,8 @@ namespace BH.Adapter
             //Update the tags
             UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]), "Tags", diagram2.OnlySet2.Select(x => x.Tags));
 
-            //Delete objects to be replaced
-            IEnumerable<T> objectsToDelete = diagram1.Intersection.Select(x => x.Item2).Concat(diagram2.Intersection.Select(x => x.Item2));
-            Delete(typeof(T), objectsToDelete.Select(x => x.CustomData[AdapterId]));
+            //Define objects to be objects to be replaced for deletion
+            objectsToDelete = diagram1.Intersection.Select(x => x.Item2).Concat(diagram2.Intersection.Select(x => x.Item2));
 
             // return the objects to push
             return newObjects;

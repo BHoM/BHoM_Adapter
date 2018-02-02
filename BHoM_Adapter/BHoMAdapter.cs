@@ -28,7 +28,7 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<object> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual bool Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -103,7 +103,7 @@ namespace BH.Adapter
             string tag = "";
             if (query is FilterQuery)
                 tag = (query as FilterQuery).Tag;
-            return to.Push(this.Pull(query, config), tag);
+            return to.Push(this.Pull(query, config).Cast<IObject>(), tag);
         }
 
         /***************************************************/
