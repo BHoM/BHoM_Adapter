@@ -28,22 +28,24 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual bool Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual IEnumerable<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
+
+            if (Config.CloneBeforePush)
+                objects = objects.Select(x => x.GetShallowClone()).ToList();
+
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
-            {            
-                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key});
+            {
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
 
-                var list = miListObject.Invoke(typeGroup, new object[] {typeGroup});
+                var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
 
                 success &= Replace(list as dynamic, tag);
             }
-                
-            
 
-            return success;
+            return success ? objects : new List<IObject>();
         }
 
         /***************************************************/
@@ -103,7 +105,10 @@ namespace BH.Adapter
             string tag = "";
             if (query is FilterQuery)
                 tag = (query as FilterQuery).Tag;
-            return to.Push(this.Pull(query, config).Cast<IObject>(), tag);
+
+            IEnumerable<object> objects = this.Pull(query, config);
+            int count = objects.Count();
+            return to.Push(objects.Cast<IObject>(), tag).Count() == count;
         }
 
         /***************************************************/
