@@ -28,15 +28,15 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual IEnumerable<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
 
-            if (Config.CloneBeforePush)
-                objects = objects.Select(x => x.GetShallowClone()).ToList();
+            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.GetShallowClone()).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
-            foreach (var typeGroup in objects.GroupBy(x => x.GetType()))
+            foreach (var typeGroup in objectsToPush.GroupBy(x => x.GetType()))
             {
                 MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
 
@@ -45,7 +45,7 @@ namespace BH.Adapter
                 success &= Replace(list as dynamic, tag);
             }
 
-            return success ? objects : new List<IObject>();
+            return success ? objectsToPush : new List<IObject>();
         }
 
         /***************************************************/
