@@ -28,13 +28,13 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual List<IBHoMObject> Push(IEnumerable<IBHoMObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
 
-            List<IBHoMObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.GetShallowClone()).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
 
-
+            Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (var typeGroup in objectsToPush.GroupBy(x => x.GetType()))
             {
@@ -42,10 +42,11 @@ namespace BH.Adapter
 
                 var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
 
-                success &= Replace(list as dynamic, tag);
+                if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
+                    success &= Replace(list as dynamic, tag);
             }
 
-            return success ? objectsToPush : new List<IBHoMObject>();
+            return success ? objectsToPush : new List<IObject>();
         }
 
         /***************************************************/
@@ -154,7 +155,7 @@ namespace BH.Adapter
 
         // Level 1 - Always required
 
-        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IBHoMObject;
+        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IObject;
 
         protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
 
