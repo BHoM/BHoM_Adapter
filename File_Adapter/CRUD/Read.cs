@@ -12,7 +12,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override IEnumerable<IObject> Read(Type type, IList ids)
+        protected override IEnumerable<IBHoMObject> Read(Type type, IList ids)
         {
             IEnumerable<BHoMObject> everything = m_Readable ? ReadJson() : ReadBson();
 
