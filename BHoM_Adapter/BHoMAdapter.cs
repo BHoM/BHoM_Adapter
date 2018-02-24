@@ -28,11 +28,11 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IBHoMObject> Push(IEnumerable<IBHoMObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
             bool success = true;
 
-            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.GetShallowClone()).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+            List<IBHoMObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.GetShallowClone()).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
 
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -45,7 +45,7 @@ namespace BH.Adapter
                 success &= Replace(list as dynamic, tag);
             }
 
-            return success ? objectsToPush : new List<IObject>();
+            return success ? objectsToPush : new List<IBHoMObject>();
         }
 
         /***************************************************/
@@ -59,8 +59,8 @@ namespace BH.Adapter
             if (filter == null)
                 return new List<object>();
 
-            // Read the IObjects
-            if (typeof(IObject).IsAssignableFrom(filter.Type))
+            // Read the IBHoMObjects
+            if (typeof(IBHoMObject).IsAssignableFrom(filter.Type))
                 return Read(filter.Type, filter.Tag);
 
             // Read the IResults
@@ -108,7 +108,7 @@ namespace BH.Adapter
 
             IEnumerable<object> objects = this.Pull(query, config);
             int count = objects.Count();
-            return to.Push(objects.Cast<IObject>(), tag).Count() == count;
+            return to.Push(objects.Cast<IBHoMObject>(), tag).Count() == count;
         }
 
         /***************************************************/
@@ -154,9 +154,9 @@ namespace BH.Adapter
 
         // Level 1 - Always required
 
-        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IObject;
+        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IBHoMObject;
 
-        protected abstract IEnumerable<IObject> Read(Type type, IList ids);
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
 
 
         // Level 2 - Optional 

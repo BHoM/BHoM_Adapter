@@ -14,7 +14,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IObject
+        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -76,7 +76,7 @@ namespace BH.Adapter
         /**** Helper Methods                            ****/
         /***************************************************/
 
-        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IObject
+        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IBHoMObject
         {
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -109,7 +109,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected void AssignId<T>(IEnumerable<T> objects) where T: IObject
+        protected void AssignId<T>(IEnumerable<T> objects) where T: IBHoMObject
         {
             bool refresh = true;
             foreach (T item in objects)
@@ -124,7 +124,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected bool MergeIntoSet<T>(IEnumerable<T> objects, IEnumerable<T> set, out IEnumerable<Tuple<T,T>> mergedObjects, out IEnumerable<T> unmergedObjects) where T : IObject
+        protected bool MergeIntoSet<T>(IEnumerable<T> objects, IEnumerable<T> set, out IEnumerable<Tuple<T,T>> mergedObjects, out IEnumerable<T> unmergedObjects) where T : IBHoMObject
         {
             IEqualityComparer<T> comparer = Comparer<T>();
 
@@ -139,7 +139,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag) where T : IObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag) where T : IBHoMObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -163,7 +163,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag, out IEnumerable<T> objectsToDelete) where T : IObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag, out IEnumerable<T> objectsToDelete) where T : IBHoMObject
         {
             //Check if objects contains tag
             IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated
