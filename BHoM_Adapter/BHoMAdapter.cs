@@ -109,7 +109,7 @@ namespace BH.Adapter
 
             IEnumerable<object> objects = this.Pull(query, config);
             int count = objects.Count();
-            return to.Push(objects.Cast<IBHoMObject>(), tag).Count() == count;
+            return to.Push(objects.Cast<IObject>(), tag).Count() == count;
         }
 
         /***************************************************/
@@ -175,6 +175,16 @@ namespace BH.Adapter
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
+        }
+
+        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
+        {
+            Type objectType = typeof(T);
+            if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            {
+                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
+            }
+            return Create(objects);
         }
 
 
