@@ -15,7 +15,7 @@ namespace BH.Adapter.FileAdapter
         /**** Constructors                              ****/
         /***************************************************/
 
-        public FileAdapter(string folder = "C:\\", string fileName = "objects", bool readable = false)
+        public FileAdapter(string folder = "C:\\", string fileName = "objects", bool readable = true)
         {
 
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
