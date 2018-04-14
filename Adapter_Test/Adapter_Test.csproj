@@ -6,7 +6,7 @@
     <ProjectGuid>{4F4938DD-91B8-4E40-8914-16E701ED0C89}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BH.Adapter.Test</RootNamespace>
+    <RootNamespace>BH.Test.Adapter</RootNamespace>
     <AssemblyName>Adapter_Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

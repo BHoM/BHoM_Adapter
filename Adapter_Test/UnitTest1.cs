@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace BH.Adapter.Test
+namespace BH.Test.Adapter
 {
     [TestClass]
     public class UnitTest1
