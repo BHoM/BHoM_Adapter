@@ -52,6 +52,12 @@ bld/
 [Bb]uild/
 [Pp]ackages/
 
+# Playground #
+##############
+
+Adapter_Playground/
+
+
 # Visual Studio User File #
 ###########################
 *.suo
