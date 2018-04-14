@@ -7,8 +7,8 @@
     <ProjectGuid>{7018BA2D-56BB-423C-8E3E-E523852C5C7E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Adapter_Test</RootNamespace>
-    <AssemblyName>Adapter_Test</AssemblyName>
+    <RootNamespace>Adapter_Playground</RootNamespace>
+    <AssemblyName>Adapter_Playground</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
