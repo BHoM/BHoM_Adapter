@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BHoM_Adapter", "BHoM_Adapter\BHoM_Adapter.csproj", "{C99A5DDF-78B1-4224-81AC-C5B90D03E423}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter_Test", "Adapter_Test\Adapter_Test.csproj", "{7018BA2D-56BB-423C-8E3E-E523852C5C7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter_Playground", "Adapter_Playground\Adapter_Playground.csproj", "{7018BA2D-56BB-423C-8E3E-E523852C5C7E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File_Adapter", "File_Adapter\File_Adapter.csproj", "{014E441F-D0FA-42DC-90D2-DE6FFC9BAF30}"
 EndProject
