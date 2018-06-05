@@ -72,6 +72,7 @@
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Replace.cs" />
+    <Compile Include="CRUD\UpdateOnly.cs" />
     <Compile Include="HelperMethods\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
