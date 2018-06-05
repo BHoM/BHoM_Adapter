@@ -32,6 +32,14 @@ namespace BH.Adapter
         {
             bool success = true;
 
+            string pushType;
+
+            object ptObj;
+            if (config != null && config.TryGetValue("PushType", out ptObj))
+                pushType = ptObj.ToString();
+            else
+                pushType = "Replace";
+
             List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
 
             Type iBHoMObjectType = typeof(IBHoMObject);
@@ -43,13 +51,18 @@ namespace BH.Adapter
                 var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
 
                 if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
-                    success &= Replace(list as dynamic, tag);
+                {
+                    if (pushType == "Replace")
+                        success &= Replace(list as dynamic, tag);
+                    else if (pushType == "UpdateOnly")
+                    {
+                        success &= UpdateOnly(list as dynamic, tag);
+                    }
+                }
             }
 
             return success ? objectsToPush : new List<IObject>();
         }
-
-        /***************************************************/
 
         /***************************************************/
 
