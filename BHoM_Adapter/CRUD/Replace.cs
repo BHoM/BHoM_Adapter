@@ -24,7 +24,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             //Read all the existing objects of that type
-            IEnumerable<T> existing = Read(typeof(T)).Cast<T>();
+            IEnumerable<T> existing = Read(typeof(T)).Where(x => x != null).Cast<T>();
 
             // Merge and push the dependencies
             if (Config.SeparateProperties)
