@@ -109,6 +109,13 @@ namespace BH.Adapter
                 return results;
             }
 
+            // Read the IResultCollections
+            if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filter.Type))
+            {               
+                List<BH.oM.Common.IResultCollection> results = ReadResults(filter.Type, query).ToList();
+                return results;
+            }
+
             return new List<object>();
         }
 
@@ -188,6 +195,11 @@ namespace BH.Adapter
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
+        }
+
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(Type type, IQuery query)
+        {
+            return new List<BH.oM.Common.IResultCollection>();
         }
 
         protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
