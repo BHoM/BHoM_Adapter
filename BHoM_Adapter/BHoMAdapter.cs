@@ -75,8 +75,8 @@ namespace BH.Adapter
 
             // Read the IBHoMObjects
             if (typeof(IBHoMObject).IsAssignableFrom(filter.Type))
-                return Read(filter.Type, filter.Tag);
-
+                return Read(filter);
+            
             // Read the IResults
             if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
             {
@@ -112,7 +112,7 @@ namespace BH.Adapter
             // Read the IResultCollections
             if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filter.Type))
             {               
-                List<BH.oM.Common.IResultCollection> results = ReadResults(filter.Type, query).ToList();
+                List<BH.oM.Common.IResultCollection> results = ReadResults(filter).ToList();
                 return results;
             }
 
@@ -197,7 +197,7 @@ namespace BH.Adapter
             return new List<BH.oM.Common.IResult>();
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(Type type, IQuery query)
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterQuery query)
         {
             return new List<BH.oM.Common.IResultCollection>();
         }
