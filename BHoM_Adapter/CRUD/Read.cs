@@ -27,7 +27,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<IBHoMObject> Read(FilterQuery query)
+        public virtual IEnumerable<IBHoMObject> Read(FilterQuery query)
         {
             IList objectIds = null;
             object idObject;
