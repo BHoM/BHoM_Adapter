@@ -34,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BHoM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BH.oM.1.0.0\lib\net45\BHoM.dll</HintPath>
+    <Reference Include="BHoM, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BH.oM.2.0.0\lib\net45\BHoM.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
@@ -61,10 +61,10 @@
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
     </Reference>
-    <Reference Include="Reflection_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Reflection_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Reflection.1.0.0\lib\net452\Reflection_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="Serialiser_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Serialiser_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Serialiser.1.0.0\lib\net452\Serialiser_Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />

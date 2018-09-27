@@ -34,19 +34,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BHoM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BH.oM.1.0.0\lib\net45\BHoM.dll</HintPath>
+    <Reference Include="BHoM, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BH.oM.2.0.0\lib\net45\BHoM.dll</HintPath>
     </Reference>
-    <Reference Include="BHoM_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BHoM_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Base.1.0.0\lib\net452\BHoM_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="DataManipulation_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DataManipulation_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.DataManipulation.1.0.0\lib\net452\DataManipulation_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="DataStructure_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DataStructure_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.DataStructure.1.0.0\lib\net452\DataStructure_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="Geometry_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Geometry_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Geometry.1.0.0\lib\net452\Geometry_Engine.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
@@ -55,7 +55,7 @@
     <Reference Include="ICSharpCode.Decompiler, Version=3.1.0.3652, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
       <HintPath>..\packages\ICSharpCode.Decompiler.3.1.0.3652\lib\net45\ICSharpCode.Decompiler.dll</HintPath>
     </Reference>
-    <Reference Include="Library_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Library_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Library.1.0.0\lib\net452\Library_Engine.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -76,13 +76,13 @@
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
     </Reference>
-    <Reference Include="Reflection_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Reflection_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Reflection.1.0.0\lib\net452\Reflection_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="Serialiser_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Serialiser_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Serialiser.1.0.0\lib\net452\Serialiser_Engine.dll</HintPath>
     </Reference>
-    <Reference Include="Structure_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Structure_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Structure.1.0.0\lib\net452\Structure_Engine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
