@@ -34,8 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BHoM, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BH.oM.2.0.0\lib\net45\BHoM.dll</HintPath>
+    <Reference Include="BHoM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BH.oM.1.0.0\lib\net45\BHoM.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="BHoM_Engine, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BH.Engine.Base.1.0.0\lib\net452\BHoM_Engine.dll</HintPath>
