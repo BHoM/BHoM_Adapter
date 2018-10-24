@@ -51,16 +51,18 @@ namespace BH.Adapter
             if (Config.UseAdapterId)
             {
                 AssignId(objectsToCreate);
-
-                // Map Ids to the original set of objects (before we extracted the distincts elements from it)
-                IEqualityComparer<T> comparer = Comparer<T>();
-                foreach (T item in objectsToPush)
-                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId].ToString();
             }
 
             // Create objects
             if (!Create(objectsToCreate, overwriteObjects))
                 return false;
+            else if (Config.UseAdapterId)
+            {
+                // Map Ids to the original set of objects (before we extracted the distincts elements from it)
+                IEqualityComparer<T> comparer = Comparer<T>();
+                foreach (T item in objectsToPush)
+                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId].ToString();
+            }
 
             return true;
         }
