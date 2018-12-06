@@ -24,7 +24,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             //Read all the existing objects of that type
-            IEnumerable<T> existing = Read(typeof(T)).Where(x => x != null).Cast<T>();
+            IEnumerable<T> existing = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
 
             // Merge and push the dependencies
             if (Config.SeparateProperties)
@@ -61,7 +61,7 @@ namespace BH.Adapter
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it)
                 IEqualityComparer<T> comparer = Comparer<T>();
                 foreach (T item in objectsToPush)
-                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId].ToString();
+                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];
             }
 
             return true;
