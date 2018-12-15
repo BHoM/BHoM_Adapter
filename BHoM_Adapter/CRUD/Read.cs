@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using BH.oM.DataManipulation.Queries;
+using BH.oM.Base.CRUD;
 
 namespace BH.Adapter
 {
@@ -13,10 +14,10 @@ namespace BH.Adapter
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
 
-        protected IEnumerable<IBHoMObject> Read(Type type, string tag = "")
+        protected virtual IEnumerable<IBHoMObject> Read(Type type, string tag = "", CrudConfig config = null)
         {
             // Get the objects based on the ids
-            IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
+            IEnumerable<IBHoMObject> objects = Read(type, null as List<object>, config);
 
             // Filter by tag if any 
             if (tag == "")
@@ -27,7 +28,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual IEnumerable<IBHoMObject> Read(FilterQuery query)
+        public virtual IEnumerable<IBHoMObject> Read(FilterQuery query, CrudConfig config = null)
         {
             IList objectIds = null;
             object idObject;
@@ -35,7 +36,7 @@ namespace BH.Adapter
                 objectIds = idObject as IList;
 
             // Get the objects based on the ids
-            IEnumerable<IBHoMObject> objects = Read(query.Type, objectIds);
+            IEnumerable<IBHoMObject> objects = Read(query.Type, objectIds, config);
 
             // Filter by tag if any 
             if (query.Tag == "")

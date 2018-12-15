@@ -1,5 +1,6 @@
 ﻿using BH.Engine.Reflection;
 using BH.oM.Base;
+using BH.oM.Base.CRUD;
 using BH.oM.DataStructure;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "", CrudConfig config = null) where T : IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -24,12 +25,12 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             //Read all the existing objects of that type
-            IEnumerable<T> existing = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
+            IEnumerable<T> existing = Read(typeof(T), "", config).Where(x => x != null && x is T).Cast<T>();
 
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
-                if (!ReplaceDependencies<T>(newObjects, tag))
+                if (!ReplaceDependencies<T>(newObjects, tag, config))
                     return false;
             }
 
@@ -44,7 +45,7 @@ namespace BH.Adapter
             }
             else
             {
-                objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
+                objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag, config);
             }
 
             // Assign Id if needed
@@ -54,7 +55,7 @@ namespace BH.Adapter
             }
 
             // Create objects
-            if (!Create(objectsToCreate, overwriteObjects))
+            if (!Create(objectsToCreate, overwriteObjects, config))
                 return false;
             else if (Config.UseAdapterId)
             {
@@ -71,7 +72,7 @@ namespace BH.Adapter
         /**** Helper Methods                            ****/
         /***************************************************/
 
-        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IBHoMObject
+        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag, CrudConfig config = null) where T: IBHoMObject
         {
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -83,7 +84,7 @@ namespace BH.Adapter
 
                 var list = miListObject.Invoke(merged, new object[] { merged });
 
-                if (!Replace(list as dynamic, tag))
+                if (!Replace(list as dynamic, tag, config))
                     return false;
 
             }
@@ -133,7 +134,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag, CrudConfig config = null) where T : IBHoMObject
         {
             //Check if objects contains tag
             IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated
@@ -144,7 +145,7 @@ namespace BH.Adapter
                 item.Tags.Remove(tag);
 
             // Delete object without a tag left
-            Delete(typeof(T), taggedObjects.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
+            Delete(typeof(T), taggedObjects.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]), config);
 
             // Get objects without the tag that can potentially be merged with the new objects
             IEqualityComparer<T> comparer = Comparer<T>();
@@ -160,10 +161,10 @@ namespace BH.Adapter
             diagram2.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
 
             //Update the tags
-            UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]), "Tags", diagram2.OnlySet2.Select(x => x.Tags));
+            UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]), "Tags", diagram2.OnlySet2.Select(x => x.Tags), config);
 
             //Update the objects in the venn diagram intersections
-            UpdateObjects(diagram1.Intersection.Select(x => x.Item1).Concat(diagram2.Intersection.Select(x => x.Item1)));
+            UpdateObjects(diagram1.Intersection.Select(x => x.Item1).Concat(diagram2.Intersection.Select(x => x.Item1)), config);
 
             // return the objects to push
             return diagram2.OnlySet1;

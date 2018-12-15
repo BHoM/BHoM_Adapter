@@ -1,4 +1,5 @@
 ﻿using BH.oM.Base;
+using BH.oM.Base.CRUD;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
@@ -12,7 +13,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override IEnumerable<IBHoMObject> Read(Type type, IList ids)
+        protected override IEnumerable<IBHoMObject> Read(Type type, IList ids, CrudConfig config = null)
         {
             IEnumerable<BHoMObject> everything = m_Readable ? ReadJson() : ReadBson();
 

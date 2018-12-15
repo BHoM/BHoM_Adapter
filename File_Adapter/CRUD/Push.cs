@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BH.oM.Base;
+using BH.oM.Base.CRUD;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -13,11 +14,13 @@ namespace BH.Adapter.FileAdapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", CrudConfig config = null)
         {
             CreateFileAndFolder();
 
             return base.Push(objects, tag, config);
         }
+
+        /***************************************************/
     }
 }

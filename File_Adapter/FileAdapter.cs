@@ -59,5 +59,7 @@ namespace BH.Adapter.FileAdapter
 
         private string m_FilePath;
         private bool m_Readable;
+
+        /***************************************************/
     }
 }

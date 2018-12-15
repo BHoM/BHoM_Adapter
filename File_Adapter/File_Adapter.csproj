@@ -37,6 +37,10 @@
     <Reference Include="MongoDB.Bson, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Bson.2.7.2\lib\net45\MongoDB.Bson.dll</HintPath>
     </Reference>
+    <Reference Include="Reflection_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\BHoM_Engine\Build\Reflection_Engine.dll</HintPath>
+    </Reference>
     <Reference Include="Serialiser_Engine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM_Engine\Build\Serialiser_Engine.dll</HintPath>
@@ -59,15 +63,11 @@
   <ItemGroup>
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Push.cs" />
-    <Compile Include="CRUD\PushType.cs" />
+    <Compile Include="CRUD\PushConfig.cs" />
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="FileAdapter.cs" />
-    <Compile Include="Legacy\Delete.cs" />
-    <Compile Include="Legacy\Execute.cs" />
-    <Compile Include="Legacy\Pull.cs" />
-    <Compile Include="Legacy\Push.cs" />
-    <Compile Include="Legacy\Update.cs" />
+    <Compile Include="CRUD\Execute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

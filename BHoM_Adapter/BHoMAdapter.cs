@@ -1,4 +1,5 @@
 ﻿using BH.oM.Base;
+using BH.oM.Base.CRUD;
 using BH.oM.DataManipulation.Queries;
 using System;
 using System.Collections;
@@ -18,8 +19,6 @@ namespace BH.Adapter
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
-        public List<string> ErrorLog { get; set; } = new List<string>();
-
         protected AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
@@ -28,17 +27,12 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", CrudConfig config = null)
         {
             bool success = true;
 
-            string pushType;
-
-            object ptObj;
-            if (config != null && config.TryGetValue("PushType", out ptObj))
-                pushType = ptObj.ToString();
-            else
-                pushType = "Replace";
+            if (config == null)
+                config = new CrudConfig();
 
             List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
 
@@ -52,11 +46,14 @@ namespace BH.Adapter
 
                 if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
                 {
-                    if (pushType == "Replace")
-                        success &= Replace(list as dynamic, tag);
-                    else if (pushType == "UpdateOnly")
+                    switch (config.ActionType)
                     {
-                        success &= UpdateOnly(list as dynamic, tag);
+                        case PushActionType.Replace:
+                            success &= Replace(list as dynamic, tag, config);
+                            break;
+                        case PushActionType.UpdateOnly:
+                            success &= UpdateOnly(list as dynamic, tag, config);
+                            break;
                     }
                 }
             }
@@ -66,7 +63,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, object> config = null)
+        public virtual IEnumerable<object> Pull(IQuery query, CrudConfig config = null)
         {
             // Make sure this is a FilterQuery
             FilterQuery filter = query as FilterQuery;
@@ -75,7 +72,7 @@ namespace BH.Adapter
 
             // Read the IBHoMObjects
             if (typeof(IBHoMObject).IsAssignableFrom(filter.Type))
-                return Read(filter);
+                return Read(filter, config);
             
             // Read the IResults
             if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
@@ -104,7 +101,7 @@ namespace BH.Adapter
                 else
                     divisions = 5;
 
-                List<BH.oM.Common.IResult> results = ReadResults(filter.Type, objectIds, cases, divisions).ToList();
+                List<BH.oM.Common.IResult> results = ReadResults(filter.Type, objectIds, cases, divisions, config).ToList();
                 results.Sort();
                 return results;
             }
@@ -112,7 +109,7 @@ namespace BH.Adapter
             // Read the IResultCollections
             if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filter.Type))
             {               
-                List<BH.oM.Common.IResultCollection> results = ReadResults(filter).ToList();
+                List<BH.oM.Common.IResultCollection> results = ReadResults(filter, config).ToList();
                 return results;
             }
 
@@ -121,34 +118,34 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual bool PullTo(BHoMAdapter to, IQuery query, Dictionary<string, object> config = null)
+        public virtual bool PullTo(BHoMAdapter to, IQuery query, CrudConfig sourceConfig = null, CrudConfig targetConfig = null)
         {
             string tag = "";
             if (query is FilterQuery)
                 tag = (query as FilterQuery).Tag;
 
-            IEnumerable<object> objects = this.Pull(query, config);
+            IEnumerable<object> objects = this.Pull(query, sourceConfig);
             int count = objects.Count();
-            return to.Push(objects.Cast<IObject>(), tag).Count() == count;
+            return to.Push(objects.Cast<IObject>(), tag, targetConfig).Count() == count;
         }
 
         /***************************************************/
 
-        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, object> config = null)
+        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, CrudConfig config = null)
         {
-            return PullUpdatePush(filter, property, newValue); 
+            return PullUpdatePush(filter, property, newValue, config); 
         }
 
         /***************************************************/
 
-        public virtual int Delete(FilterQuery filter, Dictionary<string, object> config = null)
+        public virtual int Delete(FilterQuery filter, CrudConfig config = null)
         {
-            return Delete(filter.Type, filter.Tag);
+            return Delete(filter.Type, filter.Tag, config);
         }
 
         /***************************************************/
 
-        public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
+        public virtual bool Execute(string command, IExecuteParams parameters = null, CrudConfig config = null)
         {
             return false;
         }
@@ -173,46 +170,57 @@ namespace BH.Adapter
         /**** Protected Abstract CRUD Methods           ****/
         /***************************************************/
 
+        /***************************************************/
         // Level 1 - Always required
 
-        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IObject;
+        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false, CrudConfig config = null) where T : IObject;
 
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
+        /***************************************************/
 
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids, CrudConfig config = null);
 
+        /***************************************************/
         // Level 2 - Optional 
 
-        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
+        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue, CrudConfig config = null)
         {
             return 0;
         }
 
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        /***************************************************/
+
+        protected virtual int Delete(Type type, IEnumerable<object> ids, CrudConfig config = null)
         {
             return 0;
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        /***************************************************/
+
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5, CrudConfig config = null)
         {
             return new List<BH.oM.Common.IResult>();
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterQuery query)
+        /***************************************************/
+
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterQuery query, CrudConfig config = null)
         {
             return new List<BH.oM.Common.IResultCollection>();
         }
 
-        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
+        /***************************************************/
+
+        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects, CrudConfig config = null) where T:IObject
         {
             Type objectType = typeof(T);
             if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
-                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
+                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]), config);
             }
-            return Create(objects);
+            return Create(objects, false, config);
         }
 
-
+        /***************************************************/
         // Optional Id query
 
         protected virtual object NextId(Type objectType, bool refresh = false)

@@ -1,5 +1,6 @@
 ﻿using BH.Engine.Reflection;
 using BH.oM.Base;
+using BH.oM.Base.CRUD;
 using BH.oM.DataStructure;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", CrudConfig config = null) where T : IBHoMObject
         {
             List<T> newObjects = objectsToPush.ToList();
 
@@ -25,12 +26,12 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
-                if (!ReplaceDependencies<T>(newObjects, tag))
+                if (!ReplaceDependencies<T>(newObjects, tag, config))
                     return false;
             }
 
 
-            return UpdateObjects(newObjects);
+            return UpdateObjects(newObjects, config);
 
         }
 

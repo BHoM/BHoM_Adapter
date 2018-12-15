@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BH.Engine.Serialiser;
+using BH.oM.Base.CRUD;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -15,7 +16,7 @@ namespace BH.Adapter.FileAdapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
+        protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false, CrudConfig config = null)
         {
             if (m_Readable)
                 return CreateJson((IEnumerable<IBHoMObject>)objects);
@@ -40,7 +41,7 @@ namespace BH.Adapter.FileAdapter
             }
             catch (Exception e)
             {
-                ErrorLog.Add(e.Message);
+                Engine.Reflection.Compute.RecordError(e.Message);
                 return false;
             }
 
@@ -60,11 +61,13 @@ namespace BH.Adapter.FileAdapter
             }
             catch (Exception e)
             {
-                ErrorLog.Add(e.Message);
+                Engine.Reflection.Compute.RecordError(e.Message);
                 return false;
             }
 
             return true;
         }
+
+        /***************************************************/
     }
 }
