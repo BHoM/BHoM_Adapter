@@ -46,7 +46,7 @@ namespace BH.Adapter
 
                 if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
                 {
-                    switch (config.ActionType)
+                    switch (config.PushActionType)
                     {
                         case PushActionType.Replace:
                             success &= Replace(list as dynamic, tag, config);
