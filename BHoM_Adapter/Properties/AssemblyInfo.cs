@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("BH.Adapter")]
 [assembly: AssemblyDescription("BHoM Adapter")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("BuroHappold")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("BH.Adapter")]
 [assembly: AssemblyCopyright("Copyright © https://github.com/BHoM")]
 [assembly: AssemblyTrademark("")]
