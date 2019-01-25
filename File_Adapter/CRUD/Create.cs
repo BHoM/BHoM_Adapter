@@ -40,9 +40,9 @@ namespace BH.Adapter.FileAdapter
         protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
         {
             if (m_Readable)
-                return CreateJson((IEnumerable<IBHoMObject>)objects);
+                return CreateJson((IEnumerable<IBHoMObject>)objects, replaceAll);
             else
-                return CreateBson((IEnumerable<IBHoMObject>)objects);
+                return CreateBson((IEnumerable<IBHoMObject>)objects, replaceAll);
         }
 
 
