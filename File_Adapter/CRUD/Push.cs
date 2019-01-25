@@ -39,19 +39,18 @@ namespace BH.Adapter.FileAdapter
         {
             CreateFileAndFolder();
 
-            bool success = true;
-
             List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
-
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 
             if (objects.Count() != objects.Count())
                 Engine.Reflection.Compute.RecordError("The file adapter can currently only be used with BHoMObjects. Please check your input data");
 
-            this.Replace<IBHoMObject>(bhomObjects, tag);
+            bool success = this.Replace<IBHoMObject>(bhomObjects, tag);
 
             return success ? objectsToPush : new List<IObject>();
         }
+
+        /***************************************************/
     }
 }
