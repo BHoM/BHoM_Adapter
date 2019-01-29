@@ -43,8 +43,8 @@ namespace BH.Adapter.FileAdapter
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 
-            if (objects.Count() != objects.Count())
-                Engine.Reflection.Compute.RecordError("The file adapter can currently only be used with BHoMObjects. Please check your input data");
+            if (bhomObjects.Count() != objects.Count())
+                Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects. Please check your input data");
 
             bool success = this.Replace<IBHoMObject>(bhomObjects, tag);
 
