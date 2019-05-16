@@ -65,8 +65,8 @@ namespace BH.Adapter
         private static void _MapSpecialProperties(Node target, Node source)
         {
             //Check if the source is constraint och taget not, if so add source constraint to target
-            if (source.Constraint != null && target.Constraint == null)
-                target.Constraint = source.Constraint;
+            if (source.Support != null && target.Support == null)
+                target.Support = source.Support;
 
             //If target does not have name, take sources name //TODO: could that be done for all BHoM objects?
             if (string.IsNullOrWhiteSpace(target.Name))
