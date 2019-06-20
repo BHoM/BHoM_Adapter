@@ -22,7 +22,7 @@
 
 using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.DataStructure;
+using BH.oM.Data.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -143,7 +143,7 @@ namespace BH.Adapter
             // Merge objects if required
             if (Config.MergeWithComparer)
             {
-                VennDiagram<T> diagram = Engine.DataStructure.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
+                VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
                 diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
                 newObjects = diagram.OnlySet1;
             }
@@ -170,13 +170,13 @@ namespace BH.Adapter
 
             // Get objects without the tag that can potentially be merged with the new objects
             IEqualityComparer<T> comparer = Comparer<T>();
-            VennDiagram<T> diagram1 = Engine.DataStructure.Create.VennDiagram(newObjects, nonTaggedObjects, comparer);
+            VennDiagram<T> diagram1 = Engine.Data.Create.VennDiagram(newObjects, nonTaggedObjects, comparer);
 
             // Check and map properties
             diagram1.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
 
             // Get objectsmultiple tags that can potentially be merged with the new objects
-            VennDiagram<T> diagram2 = Engine.DataStructure.Create.VennDiagram(diagram1.OnlySet1, taggedObjects.Where(x => x.Tags.Count > 0), comparer);
+            VennDiagram<T> diagram2 = Engine.Data.Create.VennDiagram(diagram1.OnlySet1, taggedObjects.Where(x => x.Tags.Count > 0), comparer);
 
             // Check and map properties
             diagram2.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
