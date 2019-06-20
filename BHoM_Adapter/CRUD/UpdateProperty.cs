@@ -23,9 +23,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using BH.oM.Base;
-using BH.oM.DataManipulation.Queries;
+using BH.oM.Data.Requests;
 using BH.Engine.Reflection;
-using BH.Engine.DataManipulation;
+using BH.Engine.Data;
 
 namespace BH.Adapter
 {
@@ -35,7 +35,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        public int PullUpdatePush(FilterQuery filter, string property, object newValue) 
+        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
         {
             if (Config.ProcessInMemory)
             {
@@ -52,7 +52,7 @@ namespace BH.Adapter
         /**** Helper Methods                            ****/
         /***************************************************/
 
-        public IEnumerable<IBHoMObject> UpdateInMemory(FilterQuery filter, string property, object newValue)
+        public IEnumerable<IBHoMObject> UpdateInMemory(FilterRequest filter, string property, object newValue)
         {
             // Pull the objects to update
             IEnumerable<IBHoMObject> objects = Read(filter.Type);
@@ -65,7 +65,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public int UpdateThroughAPI(FilterQuery filter, string property, object newValue)
+        public int UpdateThroughAPI(FilterRequest filter, string property, object newValue)
         {
             IEnumerable<object> ids = Pull(filter).Select(x => ((IBHoMObject)x).CustomData[AdapterId]);
             return UpdateProperty(filter.Type, ids, property, newValue);

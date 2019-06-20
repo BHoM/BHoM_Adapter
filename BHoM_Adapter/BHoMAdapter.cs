@@ -21,7 +21,7 @@
  */
 
 using BH.oM.Base;
-using BH.oM.DataManipulation.Queries;
+using BH.oM.Data.Requests;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -88,10 +88,10 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual IEnumerable<object> Pull(IQuery query, Dictionary<string, object> config = null)
+        public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
             // Make sure this is a FilterQuery
-            FilterQuery filter = query as FilterQuery;
+            FilterRequest filter = request as FilterRequest;
             if (filter == null)
                 return new List<object>();
 
@@ -143,27 +143,27 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual bool PullTo(BHoMAdapter to, IQuery query, Dictionary<string, object> config = null)
+        public virtual bool PullTo(BHoMAdapter to, IRequest request, Dictionary<string, object> config = null)
         {
             string tag = "";
-            if (query is FilterQuery)
-                tag = (query as FilterQuery).Tag;
+            if (request is FilterRequest)
+                tag = (request as FilterRequest).Tag;
 
-            IEnumerable<object> objects = this.Pull(query, config);
+            IEnumerable<object> objects = this.Pull(request, config);
             int count = objects.Count();
             return to.Push(objects.Cast<IObject>(), tag).Count() == count;
         }
 
         /***************************************************/
 
-        public virtual int UpdateProperty(FilterQuery filter, string property, object newValue, Dictionary<string, object> config = null)
+        public virtual int UpdateProperty(FilterRequest filter, string property, object newValue, Dictionary<string, object> config = null)
         {
             return PullUpdatePush(filter, property, newValue); 
         }
 
         /***************************************************/
 
-        public virtual int Delete(FilterQuery filter, Dictionary<string, object> config = null)
+        public virtual int Delete(FilterRequest filter, Dictionary<string, object> config = null)
         {
             return Delete(filter.Type, filter.Tag);
         }
@@ -219,7 +219,7 @@ namespace BH.Adapter
             return new List<BH.oM.Common.IResult>();
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterQuery query)
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterRequest request)
         {
             return new List<BH.oM.Common.IResultCollection>();
         }
