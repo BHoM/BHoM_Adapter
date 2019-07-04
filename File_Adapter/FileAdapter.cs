@@ -33,22 +33,22 @@ namespace BH.Adapter.FileAdapter
         /**** Properties                                ****/
         /***************************************************/
 
-
         /***************************************************/
         /**** Constructors                              ****/
         /***************************************************/
+        [Input("folder", "Defaults to the path of your default drive (usually C://)")]
         [Input("fileName","Insert filename with extension.\nCurrently supports only .json and .bson file types.")]
-        public FileAdapter(string folder = "C:\\", string fileName = "objects.json")
+        public FileAdapter(string folder = null, string fileName = "objects.json")
         {
+            if (folder == null)
+                Path.GetPathRoot(Environment.SystemDirectory);
+
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
             {
-                folder = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\BHoM\DataSets\" + folder;
+                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"\BHoM\DataSets\", folder);
             }
 
-            if (!folder.EndsWith("\\"))
-                folder += "\\";
-
-            m_FilePath = folder + fileName;
+            m_FilePath = Path.Combine(folder, fileName);
 
             if (!Path.HasExtension(m_FilePath))
             {
@@ -61,7 +61,7 @@ namespace BH.Adapter.FileAdapter
             if (ext != ".json" && ext != ".bson")
                     Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
 
-            m_isBSON = ext == ".bson";
+            m_isJSON = ext == ".json";
             this.Config.UseAdapterId = false;
         }
 
@@ -89,6 +89,6 @@ namespace BH.Adapter.FileAdapter
         /***************************************************/
 
         private string m_FilePath;
-        private bool m_isBSON;
+        private bool m_isJSON;
     }
 }
