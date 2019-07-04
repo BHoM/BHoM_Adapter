@@ -23,6 +23,7 @@
 using System.Linq;
 using System;
 using System.IO;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -36,7 +37,7 @@ namespace BH.Adapter.FileAdapter
         /***************************************************/
         /**** Constructors                              ****/
         /***************************************************/
-
+        [Input("fileName","Insert filename with extension.\nCurrently supports only .json and .bson file types.")]
         public FileAdapter(string folder = "C:\\", string fileName = "objects.json")
         {
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
