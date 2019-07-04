@@ -69,7 +69,7 @@ namespace BH.Adapter.FileAdapter
 
             if (valueInserted && !System.IO.File.Exists(m_FilePath))
             {
-                Engine.Reflection.Compute.RecordWarning($"File not found:\n{m_FilePath}.");
+                Engine.Reflection.Compute.RecordWarning($"File not found: {m_FilePath}");
                 return;
             }
 
