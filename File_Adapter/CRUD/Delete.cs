@@ -31,7 +31,7 @@ namespace BH.Adapter.FileAdapter
     {
         protected override int Delete(Type type, IEnumerable<object> ids)
         {
-            IEnumerable<BHoMObject> everything = m_Readable ? ReadJson() : ReadBson();
+            IEnumerable<BHoMObject> everything = m_isBSON ? ReadJson() : ReadBson();
             int initialCount = everything.Count();
 
             HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
@@ -39,7 +39,7 @@ namespace BH.Adapter.FileAdapter
             everything = everything.Where(x => (type == null || !type.IsAssignableFrom(x.GetType())) && (toDelete.Contains((Guid)x.CustomData[AdapterId])));
 
             bool ok = true;
-            if (m_Readable)
+            if (m_isBSON)
                 ok = CreateJson(everything, true);
             else
                 ok = CreateBson(everything, true);
