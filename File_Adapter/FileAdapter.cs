@@ -38,10 +38,21 @@ namespace BH.Adapter.FileAdapter
         /***************************************************/
         [Input("folder", "Defaults to the path of your default drive (usually C://)")]
         [Input("fileName","Insert filename with extension.\nCurrently supports only .json and .bson file types.")]
-        public FileAdapter(string folder = null, string fileName = "objects.json")
+        public FileAdapter(string folder = null, string fileName = "")
         {
+            bool valueInserted = true;
+
             if (folder == null)
-                Path.GetPathRoot(Environment.SystemDirectory);
+            {
+                valueInserted = false;
+                folder = Path.GetPathRoot(Environment.SystemDirectory);
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                valueInserted = false;
+                fileName = "objects.json";
+            }
 
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
             {
@@ -55,7 +66,13 @@ namespace BH.Adapter.FileAdapter
                 Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
                 return;
             }
-            
+
+            if (valueInserted && !System.IO.File.Exists(m_FilePath))
+            {
+                Engine.Reflection.Compute.RecordWarning($"File not found:\n{m_FilePath}.");
+                return;
+            }
+
             string ext = Path.GetExtension(m_FilePath);
 
             if (ext != ".json" && ext != ".bson")
