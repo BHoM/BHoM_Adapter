@@ -56,7 +56,7 @@ namespace BH.Adapter.FileAdapter
 
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
             {
-                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"\BHoM\DataSets\", folder);
+                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BHoM", "DataSets", folder);
             }
 
             m_FilePath = Path.Combine(folder, fileName);
