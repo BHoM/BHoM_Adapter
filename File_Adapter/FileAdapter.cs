@@ -37,10 +37,8 @@ namespace BH.Adapter.FileAdapter
         /**** Constructors                              ****/
         /***************************************************/
 
-        public FileAdapter(string folder = "C:\\", string fileName = "objects", bool readable = true)
+        public FileAdapter(string folder = "C:\\", string fileName = "objects.json")
         {
-
-
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
             {
                 folder = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\BHoM\DataSets\" + folder;
@@ -51,19 +49,18 @@ namespace BH.Adapter.FileAdapter
 
             m_FilePath = folder + fileName;
 
-            if (Path.HasExtension(m_FilePath))
+            if (!Path.HasExtension(m_FilePath))
             {
-                string ext = Path.GetExtension(m_FilePath);
-
-                if (ext != ".json" && ext != ".bson")
-                    Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
+                Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
+                return;
             }
-            else
-                m_FilePath = m_FilePath + (readable ? ".json" : ".bson");
+            
+            string ext = Path.GetExtension(m_FilePath);
 
+            if (ext != ".json" && ext != ".bson")
+                    Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
 
-
-            m_Readable = readable;
+            m_isBSON = ext == ".bson";
             this.Config.UseAdapterId = false;
         }
 
@@ -91,6 +88,6 @@ namespace BH.Adapter.FileAdapter
         /***************************************************/
 
         private string m_FilePath;
-        private bool m_Readable;
+        private bool m_isBSON;
     }
 }

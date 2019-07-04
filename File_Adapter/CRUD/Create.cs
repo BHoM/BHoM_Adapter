@@ -39,7 +39,7 @@ namespace BH.Adapter.FileAdapter
 
         protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
         {
-            if (m_Readable)
+            if (m_isBSON)
                 return CreateJson((IEnumerable<IBHoMObject>)objects, replaceAll);
             else
                 return CreateBson((IEnumerable<IBHoMObject>)objects, replaceAll);

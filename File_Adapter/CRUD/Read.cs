@@ -36,7 +36,7 @@ namespace BH.Adapter.FileAdapter
     {
         protected override IEnumerable<IBHoMObject> Read(Type type, IList ids)
         {
-            IEnumerable<BHoMObject> everything = m_Readable ? ReadJson() : ReadBson();
+            IEnumerable<BHoMObject> everything = m_isBSON ? ReadJson() : ReadBson();
 
             if (type != null)
                 everything = everything.Where(x => type.IsAssignableFrom(x.GetType()));
