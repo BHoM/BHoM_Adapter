@@ -40,6 +40,7 @@ namespace BH.Adapter.FileAdapter
         public FileAdapter(string folder = "C:\\", string fileName = "objects", bool readable = true)
         {
 
+
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
             {
                 folder = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\BHoM\DataSets\" + folder;
@@ -48,7 +49,17 @@ namespace BH.Adapter.FileAdapter
             if (!folder.EndsWith("\\"))
                 folder += "\\";
 
-            m_FilePath = folder + fileName + (readable ? ".json" : ".bson");
+            m_FilePath = folder + fileName;
+
+            if (Path.HasExtension(m_FilePath))
+            {
+                string ext = Path.GetExtension(m_FilePath);
+
+                if (ext != ".json" && ext != ".bson")
+                    Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
+            }
+            else
+                m_FilePath = m_FilePath + (readable ? ".json" : ".bson");
 
 
 
