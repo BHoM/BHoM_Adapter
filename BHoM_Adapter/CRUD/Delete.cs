@@ -24,11 +24,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BH.oM.Base;
+using BH.oM.Data.Requests;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
+
+        /***************************************************/
+        /**** Public Adapter Methods                    ****/
+        /***************************************************/
+
+        public virtual int Delete(FilterRequest filter, Dictionary<string, object> config = null)
+        {
+            return Delete(filter.Type, filter.Tag);
+        }
+
+        /***************************************************/
+        /**** Protected Abstract CRUD Methods           ****/
+        /***************************************************/
+
+        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        {
+            return 0;
+        }
+
+
         /***************************************************/
         /**** Protected  Methods                        ****/
         /***************************************************/

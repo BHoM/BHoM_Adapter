@@ -31,6 +31,80 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
+
+        /***************************************************/
+        /**** Public Adapter Methods                    ****/
+        /***************************************************/
+
+        public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
+        {
+            // Make sure this is a FilterQuery
+            FilterRequest filter = request as FilterRequest;
+            if (filter == null)
+                return new List<object>();
+
+            // Read the IBHoMObjects
+            if (typeof(IBHoMObject).IsAssignableFrom(filter.Type))
+                return Read(filter);
+
+            // Read the IResults
+            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
+            {
+                IList cases, objectIds;
+                int divisions;
+                object caseObject, idObject, divObj;
+
+                if (filter.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
+                    cases = caseObject as IList;
+                else
+                    cases = null;
+
+                if (filter.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
+                    objectIds = idObject as IList;
+                else
+                    objectIds = null;
+
+                if (filter.Equalities.TryGetValue("Divisions", out divObj))
+                {
+                    if (divObj is int)
+                        divisions = (int)divObj;
+                    else if (!int.TryParse(divObj.ToString(), out divisions))
+                        divisions = 5;
+                }
+                else
+                    divisions = 5;
+
+                List<BH.oM.Common.IResult> results = ReadResults(filter.Type, objectIds, cases, divisions).ToList();
+                results.Sort();
+                return results;
+            }
+
+            // Read the IResultCollections
+            if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filter.Type))
+            {
+                List<BH.oM.Common.IResultCollection> results = ReadResults(filter).ToList();
+                return results;
+            }
+
+            return new List<object>();
+        }
+
+        /***************************************************/
+        /**** Protected Abstract CRUD Methods           ****/
+        /***************************************************/
+
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
+
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        {
+            return new List<BH.oM.Common.IResult>();
+        }
+
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterRequest request)
+        {
+            return new List<BH.oM.Common.IResultCollection>();
+        }
+
         /***************************************************/
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
@@ -65,5 +139,9 @@ namespace BH.Adapter
             else
                 return objects.Where(x => x.Tags.Contains(request.Tag));
         }
+
+
+
+
     }
 }

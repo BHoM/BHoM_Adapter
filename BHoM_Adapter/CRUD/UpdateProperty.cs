@@ -26,16 +26,39 @@ using BH.oM.Base;
 using BH.oM.Data.Requests;
 using BH.Engine.Reflection;
 using BH.Engine.Data;
+using System;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
+        /**** Public Adapter Methods                    ****/
+        /***************************************************/
+
+        public virtual int UpdateProperty(FilterRequest filter, string property, object newValue, Dictionary<string, object> config = null)
+        {
+            return UpdateProperty(filter, property, newValue);
+        }
+
+
+        /***************************************************/
+        /**** Protected Abstract CRUD Methods           ****/
+        /***************************************************/
+
+
+        // Level 2 - Optional 
+
+        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
+        {
+            return 0;
+        }
+
+        /***************************************************/
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
+        public int UpdateProperty(FilterRequest filter, string property, object newValue) 
         {
             if (Config.ProcessInMemory)
             {
