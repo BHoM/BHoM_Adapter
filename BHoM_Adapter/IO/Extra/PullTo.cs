@@ -26,12 +26,5 @@ namespace BH.Adapter
             int count = objects.Count();
             return to.Push(objects.Cast<IObject>(), tag).Count() == count;
         }
-
-        /***************************************************/
-
-        public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
-        {
-            return false;
-        }
     }
 }

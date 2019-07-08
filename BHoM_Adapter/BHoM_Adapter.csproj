@@ -73,11 +73,13 @@
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Read.cs" />
-    <Compile Include="Extra\Extra.cs" />
-    <Compile Include="Push\Push.cs" />
-    <Compile Include="Push\Replace.cs" />
+    <Compile Include="IO\Extra\Execute.cs" />
+    <Compile Include="IO\Extra\PullTo.cs" />
+    <Compile Include="IO\Pull\Pull.cs" />
+    <Compile Include="IO\Push\Push.cs" />
+    <Compile Include="IO\Push\Replace.cs" />
     <Compile Include="CRUD\Update.cs" />
-    <Compile Include="Push\MapSpecialProperties.cs" />
+    <Compile Include="IO\Push\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CRUD\UpdateProperty.cs" />
