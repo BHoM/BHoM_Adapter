@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.Engine.Base;
 using BH.oM.Data.Requests;
 using System;
 using System.Collections;
@@ -62,7 +63,8 @@ namespace BH.Adapter
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+            List<IObject> objectsToPush = objects.Select(x => x is BHoMObject ? ((BHoMObject)x).DeepClone() : x).ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+
 
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
