@@ -24,6 +24,7 @@ using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.oM.Data.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -56,8 +57,15 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
-                if (!ReplaceDependencies<T>(newObjects, tag))
-                    return false;
+                //if (!ReplaceDependencies<T>(newObjects, tag))
+                //    return false;
+
+                var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
+
+                foreach (var depObj in dependencyObjects)
+                {
+                    Replace(depObj.Value as dynamic, tag);
+                }
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
@@ -97,6 +105,26 @@ namespace BH.Adapter
         /***************************************************/
         /**** Helper Methods                            ****/
         /***************************************************/
+
+        public Dictionary<Type, IEnumerable> GetDependencyObjects<T>(IEnumerable<T> objects, string tag) where T : IBHoMObject
+        {
+            Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
+
+            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
+            foreach (Type t in DependencyTypes<T>())
+            {
+
+                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
+
+                var list = miListObject.Invoke(merged, new object[] { merged });
+
+                dict.Add(t, list as IEnumerable);
+            }
+
+            return dict;
+        }
+
 
         public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IBHoMObject
         {
