@@ -188,40 +188,35 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> newObjects, IEnumerable<T> existingObjects, string tag) where T : IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> existingObjs, string tag) where T : IBHoMObject
         {
-            //Check if objects contains tag
-            IEnumerable<T> taggedObjects = existingObjects.Where(x => x.Tags.Contains(tag)).ToList(); //ToList() necessary for the method to work correctly. The for each loop below removes the items from the IEnumerable when the tag is removed if not copied to a new list before hand. To be investigated
-            IEnumerable<T> nonTaggedObjects = existingObjects.Where(x => !x.Tags.Contains(tag)).ToList();
-
-            //Remove tag from existing objects
-            foreach (T item in taggedObjects)
-                item.Tags.Remove(tag);
-
-            // Delete object without a tag left
-            Delete(typeof(T), taggedObjects.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
-
-            // Get objects without the tag that can potentially be merged with the new objects
             IEqualityComparer<T> comparer = Comparer<T>();
-            VennDiagram<T> diagram1 = Engine.Data.Create.VennDiagram(newObjects, nonTaggedObjects, comparer);
+            VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, existingObjs, comparer);
 
-            // Check and map properties
-            diagram1.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
+            // Objects to push that do not have any overlap with the existing ones
+            List<T> objsToPush_exclusive = diagram.OnlySet1.ToList();
 
-            // Get objectsmultiple tags that can potentially be merged with the new objects
-            VennDiagram<T> diagram2 = Engine.Data.Create.VennDiagram(diagram1.OnlySet1, taggedObjects.Where(x => x.Tags.Count > 0), comparer);
+            // Objects existing in the model that do not have any overlap with the objects being pushed
+            List<T> existingObjs_exclusive = diagram.OnlySet2.ToList();
 
-            // Check and map properties
-            diagram2.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
+            // Discard exclusive existing objects that do not contain the currently specified tag
+            existingObjs_exclusive.RemoveAll(x => !x.Tags.Contains(tag));
 
-            //Update the tags
-            UpdateProperty(typeof(T), diagram2.OnlySet2.Select(x => x.CustomData[AdapterId]), "Tags", diagram2.OnlySet2.Select(x => x.Tags));
+            // Remove the current tag from exclusive existing objects
+            existingObjs_exclusive.ForEach(x => x.Tags.Remove(tag));
 
-            //Update the objects in the venn diagram intersections
-            UpdateObjects(diagram1.Intersection.Select(x => x.Item1).Concat(diagram2.Intersection.Select(x => x.Item1)));
+            // Delete exclusive existing objects that do not have any other tag except the current tag from the model
+            Delete(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
 
-            // return the objects to push
-            return diagram2.OnlySet1;
+            //Update the tags for the rest of the existing objects in the model
+            UpdateProperty(typeof(T), existingObjs_exclusive.Select(x => x.CustomData[AdapterId]), "Tags", existingObjs_exclusive.Select(x => x.Tags));
+
+            // Map properties for the objects that overlap (between existing and pushed) and Update them
+            diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
+            UpdateObjects(diagram.Intersection.Select(x => x.Item1));
+
+            // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
+            return objsToPush_exclusive;
         }
 
     }
