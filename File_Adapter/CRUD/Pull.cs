@@ -1,6 +1,6 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BH.oM.Base;
 
+using BH.oM.Data.Requests;
 using System.IO;
 
 namespace BH.Adapter.FileAdapter
@@ -37,26 +38,20 @@ namespace BH.Adapter.FileAdapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public override IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            if (!Path.HasExtension(m_FilePath))
+            if (!System.IO.File.Exists(m_FilePath))
+            {
+                Engine.Reflection.Compute.RecordError($"File not found: {m_FilePath} - Cannot pull from this file");
+                return null;
+            }
+            else if (!Path.HasExtension(m_FilePath))
             {
                 Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
                 return null;
             }
 
-            CreateFileAndFolder();
-
-            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
-
-            IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
-
-            if (bhomObjects.Count() != objects.Count())
-                Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects. Please check your input data");
-
-            bool success = this.Replace<IBHoMObject>(bhomObjects, tag);
-
-            return success ? objectsToPush : new List<IObject>();
+            return base.Pull(request, config);
         }
 
         /***************************************************/
