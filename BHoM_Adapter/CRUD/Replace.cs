@@ -60,7 +60,8 @@ namespace BH.Adapter
                 var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
 
                 foreach (var depObj in dependencyObjects)
-                    Replace(depObj.Value as dynamic, tag);
+                    if (!Replace(depObj.Value as dynamic, tag))
+                        return false;
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
