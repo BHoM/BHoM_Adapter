@@ -57,15 +57,10 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
-                //if (!ReplaceDependencies<T>(newObjects, tag))
-                //    return false;
-
                 var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
 
                 foreach (var depObj in dependencyObjects)
-                {
                     Replace(depObj.Value as dynamic, tag);
-                }
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
@@ -123,27 +118,6 @@ namespace BH.Adapter
             }
 
             return dict;
-        }
-
-
-        public bool ReplaceDependencies<T>(IEnumerable<T> objects, string tag) where T: IBHoMObject
-        {
-
-            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
-            foreach (Type t in DependencyTypes<T>())
-            {
-
-                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
-                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
-
-                var list = miListObject.Invoke(merged, new object[] { merged });
-
-                if (!Replace(list as dynamic, tag))
-                    return false;
-
-            }
-
-            return true;
         }
 
         /***************************************************/
