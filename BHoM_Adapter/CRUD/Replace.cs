@@ -210,7 +210,10 @@ namespace BH.Adapter
             Delete(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
 
             // Update the tags for the rest of the existing objects in the model
-            UpdateProperty(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]), "Tags", existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
+            UpdateProperty(typeof(T), 
+                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]), 
+                "Tags", 
+                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
             // Map properties for the objects that overlap (between existing and pushed) and Update them
             diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
