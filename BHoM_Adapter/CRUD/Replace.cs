@@ -199,7 +199,8 @@ namespace BH.Adapter
             // Objects existing in the model that do not have any overlap with the objects being pushed
             List<T> existingObjs_exclusive = diagram.OnlySet2.ToList();
 
-            // Discard exclusive existing objects that do not contain the currently specified tag
+            // Do not consider exclusive existing objects that do not contain the currently specified tag. 
+            // Those objects do not need any update, so they will be left as they are.
             existingObjs_exclusive.RemoveAll(x => !x.Tags.Contains(tag));
 
             // Remove the current tag from exclusive existing objects
@@ -208,7 +209,7 @@ namespace BH.Adapter
             // Delete exclusive existing objects that do not have any other tag except the current tag from the model
             Delete(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
 
-            //Update the tags for the rest of the existing objects in the model
+            // Update the tags for the rest of the existing objects in the model
             UpdateProperty(typeof(T), existingObjs_exclusive.Select(x => x.CustomData[AdapterId]), "Tags", existingObjs_exclusive.Select(x => x.Tags));
 
             // Map properties for the objects that overlap (between existing and pushed) and Update them
