@@ -82,7 +82,7 @@ namespace BH.Adapter.FileAdapter
             }
             catch (Exception e)
             {
-                ErrorLog.Add(e.Message);
+                BH.Engine.Reflection.Compute.RecordError(e.Message);
                 return false;
             }
 
