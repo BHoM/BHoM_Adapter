@@ -145,7 +145,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual bool PullTo(BHoMAdapter to, IRequest request, Dictionary<string, object> config = null)
+        public virtual bool Move(BHoMAdapter to, IRequest request, Dictionary<string, object> config = null)
         {
             string tag = "";
             if (request is FilterRequest)
