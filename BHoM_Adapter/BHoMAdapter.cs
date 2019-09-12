@@ -145,15 +145,15 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual bool Move(BHoMAdapter to, IRequest request, Dictionary<string, object> config = null)
+        public virtual bool Move(BHoMAdapter to, IRequest request, Dictionary<string, object> pullConfig = null, Dictionary<string, object> pushConfig = null)
         {
             string tag = "";
             if (request is FilterRequest)
                 tag = (request as FilterRequest).Tag;
 
-            IEnumerable<object> objects = this.Pull(request, config);
+            IEnumerable<object> objects = Pull(request, pullConfig);
             int count = objects.Count();
-            return to.Push(objects.Cast<IObject>(), tag).Count() == count;
+            return to.Push(objects.Cast<IObject>(), tag, pushConfig).Count() == count;
         }
 
         /***************************************************/
