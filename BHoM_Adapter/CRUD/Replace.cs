@@ -57,7 +57,7 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (Config.SeparateProperties)
             {
-                var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
+                var dependencyObjects = GetDependencyObjects<T>(objectsToPush, tag);
 
                 foreach (var depObj in dependencyObjects)
                     if (!Replace(depObj.Value as dynamic, tag))
