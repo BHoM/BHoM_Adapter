@@ -63,7 +63,8 @@ namespace BH.Adapter
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = Modify.PrepareObjects(objects, Config, tag, pushConfig);
+            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig);
+            objectsToPush = Modify.CloneBHoMObjects(objectsToPush, Config);
 
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
