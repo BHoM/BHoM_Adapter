@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,45 +20,55 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using System;
+using BH.Engine.Base;
+using BH.oM.Base;
+using BH.oM.Structure.Elements;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BH.oM.Base;
 
-using System.IO;
-
-namespace BH.Adapter.FileAdapter
+namespace BH.Adapter
 {
-    public partial class FileAdapter
+    public static partial class Modify
     {
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public static List<IObject> PrepareObjects(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
-            if (!Path.HasExtension(m_FilePath))
+            bool wrapNonBHoMObjects = false;
+            object wrapNonBHoMObjValue;
+
+            if (config != null && config.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
+
+
+            List<IObject> objectsToPush = objects.Select(x =>
             {
-                Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
-                return null;
-            }
+                if (x is BHoMObject)
+                {
+                    // Deep clone the object for immutability in the UI
+                    var clonedObj = ((BHoMObject)x).DeepClone();
 
-            CreateFileAndFolder();
+                    // Apply the tag to the cloned IBHoMObject
+                    if (!string.IsNullOrWhiteSpace(tag))
+                        clonedObj.Tags.Add(tag);
+                }
 
-            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x is BHoMObject ? ((BHoMObject)x).GetShallowClone() : x).ToList() : objects.ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+                if (wrapNonBHoMObjects)
+                {
+                    var wrappedObj = new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } };
 
-            IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
+                    // Apply the tag to the wrapped IBHoMObject
+                    if (!string.IsNullOrWhiteSpace(tag))
+                        wrappedObj.Tags.Add(tag);
+                }
 
-            //if (bhomObjects.Count() != objects.Count())
-            //    Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects. Please check your input data");
+                // Return the non-BHoMObject untouched, if none of the above applies.
+                return x;
+            })
+            .ToList(); //ToList() necessary for the return collection to function properly for cloned objects
 
-            bool success = this.Replace<IBHoMObject>(bhomObjects, tag);
-
-            return success ? objectsToPush : new List<IObject>();
+            return objectsToPush;
         }
-
-        /***************************************************/
     }
 }
