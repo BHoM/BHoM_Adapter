@@ -37,7 +37,7 @@ namespace BH.Adapter
 
         public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
         {
-            if (Config.ProcessInMemory)
+            if (AdapterConfig.ProcessInMemory)
             {
                 IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
                 Create(objects, true);

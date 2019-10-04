@@ -29,6 +29,7 @@ namespace BH.Adapter
         public bool MergeWithComparer { get; set; } = false;
         public bool UseAdapterId { get; set; } = true;
         public bool CloneBeforePush { get; set; } = true;
+        public bool WrapNonBHoMObjects { get; set; } = false;
     }
 }
 

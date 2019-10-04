@@ -34,12 +34,12 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static List<IObject> PrepareObjects(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public static List<IObject> PrepareObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
         {
-            bool wrapNonBHoMObjects = false;
+            bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
             object wrapNonBHoMObjValue;
 
-            if (config != null && config.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
+            if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
 
 
             List<IObject> objectsToPush = objects.Select(x =>

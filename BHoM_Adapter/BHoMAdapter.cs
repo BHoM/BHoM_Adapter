@@ -43,7 +43,7 @@ namespace BH.Adapter
 
         public List<string> ErrorLog { get; set; } = new List<string>();
 
-        protected AdapterConfig Config { get; set; } = new AdapterConfig();
+        protected AdapterConfig AdapterConfig { get; set; } = new AdapterConfig();
 
 
 
@@ -51,19 +51,19 @@ namespace BH.Adapter
         /**** Public Adapter Methods                    ****/
         /***************************************************/
 
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> pushConfig = null)
         {
             bool success = true;
 
             string pushType;
 
             object ptObj;
-            if (config != null && config.TryGetValue("PushType", out ptObj))
+            if (pushConfig != null && pushConfig.TryGetValue("PushType", out ptObj))
                 pushType = ptObj.ToString();
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = Modify.PrepareObjects(objects);
+            List<IObject> objectsToPush = Modify.PrepareObjects(objects, AdapterConfig, tag, pushConfig);
 
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -228,7 +228,7 @@ namespace BH.Adapter
         protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
         {
             Type objectType = typeof(T);
-            if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            if (AdapterConfig.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
                 Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
             }
