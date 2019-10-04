@@ -42,10 +42,6 @@ namespace BH.Adapter
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
 
-            // Make sure objects  are tagged
-            if (tag != "")
-                newObjects.ForEach(x => x.Tags.Add(tag));
-
             //Read all the existing objects of that type
             IEnumerable<T> existing;
 

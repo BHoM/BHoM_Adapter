@@ -63,8 +63,7 @@ namespace BH.Adapter
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = objects.Select(x => x is BHoMObject ? ((BHoMObject)x).DeepClone() : x).ToList(); //ToList() necessary for the return collection to function properly for cloned objects
-
+            List<IObject> objectsToPush = Modify.PrepareObjects(objects);
 
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -82,7 +81,7 @@ namespace BH.Adapter
                     {
                         success &= UpdateOnly(list as dynamic, tag);
                     }
-                }
+                } 
             }
 
             return success ? objectsToPush : new List<IObject>();
