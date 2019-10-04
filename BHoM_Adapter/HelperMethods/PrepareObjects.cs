@@ -45,25 +45,12 @@ namespace BH.Adapter
             List<IObject> objectsToPush = objects.Select(x =>
             {
                 if (x is BHoMObject)
-                {
-                    // Deep clone the object for immutability in the UI
-                    var clonedObj = ((BHoMObject)x).DeepClone();
-
-                    // Apply the tag to the cloned IBHoMObject
-                    if (!string.IsNullOrWhiteSpace(tag))
-                        clonedObj.Tags.Add(tag);
-                }
+                    return ((BHoMObject)x).DeepClone(); // Deep clone the object for immutability in the UI
 
                 if (wrapNonBHoMObjects)
-                {
-                    var wrappedObj = new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } };
+                    return new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } }; // Wraps non-IBHoMObject in a custom BHoMObject
 
-                    // Apply the tag to the wrapped IBHoMObject
-                    if (!string.IsNullOrWhiteSpace(tag))
-                        wrappedObj.Tags.Add(tag);
-                }
-
-                // Return the non-BHoMObject untouched, if none of the above applies.
+                // If none of the above applies, return the non-BHoMObject untouched
                 return x;
             })
             .ToList(); //ToList() necessary for the return collection to function properly for cloned objects

@@ -43,7 +43,7 @@ namespace BH.Adapter
 
         public List<string> ErrorLog { get; set; } = new List<string>();
 
-        protected AdapterConfig AdapterConfig { get; set; } = new AdapterConfig();
+        protected AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
 
@@ -63,7 +63,7 @@ namespace BH.Adapter
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = Modify.PrepareObjects(objects, AdapterConfig, tag, pushConfig);
+            List<IObject> objectsToPush = Modify.PrepareObjects(objects, Config, tag, pushConfig);
 
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
@@ -228,7 +228,7 @@ namespace BH.Adapter
         protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
         {
             Type objectType = typeof(T);
-            if (AdapterConfig.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
                 Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
             }
