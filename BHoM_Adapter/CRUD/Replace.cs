@@ -42,6 +42,10 @@ namespace BH.Adapter
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
 
+            // Make sure objects  are tagged
+            if (tag != "")
+                newObjects.ForEach(x => x.Tags.Add(tag));
+
             //Read all the existing objects of that type
             IEnumerable<T> existing;
 
@@ -51,7 +55,7 @@ namespace BH.Adapter
                 existing = new List<T>();
 
             // Merge and push the dependencies
-            if (AdapterConfig.SeparateProperties)
+            if (Config.SeparateProperties)
             {
                 var dependencyObjects = GetDependencyObjects<T>(objectsToPush, tag);
 
@@ -64,7 +68,7 @@ namespace BH.Adapter
             IEnumerable<T> objectsToCreate = newObjects;
             bool overwriteObjects = false;
 
-            if (AdapterConfig.ProcessInMemory)
+            if (Config.ProcessInMemory)
             {
                 objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
                 overwriteObjects = true;
@@ -75,7 +79,7 @@ namespace BH.Adapter
             }
 
             // Assign Id if needed
-            if (AdapterConfig.UseAdapterId)
+            if (Config.UseAdapterId)
             {
                 AssignId(objectsToCreate);
             }
@@ -83,7 +87,7 @@ namespace BH.Adapter
             // Create objects
             if (!Create(objectsToCreate, overwriteObjects))
                 return false;
-            else if (AdapterConfig.UseAdapterId)
+            else if (Config.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it)
                 IEqualityComparer<T> comparer = Comparer<T>();
@@ -145,7 +149,7 @@ namespace BH.Adapter
             multiTaggedObjects.ForEach(x => x.Tags.Remove(tag));
 
             // Merge objects if required
-            if (AdapterConfig.MergeWithComparer)
+            if (Config.MergeWithComparer)
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
                 diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
