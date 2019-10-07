@@ -48,7 +48,10 @@ namespace BH.Adapter.FileAdapter
 
             CreateFileAndFolder();
 
-            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, config);
+            // Wrap non-BHoM objects into a Custom BHoMObject to make them work as BHoMObjects.
+            List<IObject> objectsToPush = Config.WrapNonBHoMObjects ? Modify.WrapNonBHoMObjects(objects, Config, tag, config).ToList() : objects.ToList();
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
