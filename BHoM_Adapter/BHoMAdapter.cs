@@ -64,7 +64,7 @@ namespace BH.Adapter
                 pushType = "Replace";
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them work as BHoMObjects.
-            List<IObject> objectsToPush = Config.WrapNonBHoMObjects ? Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig).ToList() : objects.ToList();
+            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig).ToList();
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
