@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using BH.oM.Base;
 
 using System.IO;
+using BH.Engine.Base;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -48,7 +49,7 @@ namespace BH.Adapter.FileAdapter
             CreateFileAndFolder();
 
             List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, config);
-            objectsToPush = Modify.CloneBHoMObjects(objectsToPush, Config);
+            objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 

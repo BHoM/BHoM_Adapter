@@ -34,36 +34,22 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static List<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
+        public static IEnumerable<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
         {
+            // Read pushConfig. If present, that overrides the Adapter Config.
             bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
             object wrapNonBHoMObjValue;
-
             if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
 
-
-            List<IObject> objectsToPush = objects.Select(x =>
+            IEnumerable<IObject> objectsToPush = objects.Select(x =>
             {
-                if (x is BHoMObject)
-                    return ((BHoMObject)x).DeepClone(); 
-
                 if (wrapNonBHoMObjects)
                     return new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } }; // Wraps non-IBHoMObject in a custom BHoMObject
 
-                // If none of the above applies, return the non-BHoMObject untouched
                 return x;
-            })
-            .ToList(); //ToList() necessary for the return collection to function properly for cloned objects
+            });
 
             return objectsToPush;
-        }
-
-        public static List<IObject> CloneBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig)
-        {
-            if (adapterConfig.CloneBeforePush)
-                return objects.Select(x => x is BHoMObject ? ((BHoMObject)x).DeepClone() : x).ToList(); // Deep clone for immutability in the UI
-            else
-                return objects.ToList();
         }
     }
 }
