@@ -55,17 +55,21 @@ namespace BH.Adapter
         {
             bool success = true;
 
+            // Get the Push Type from the pushConfig.
             string pushType;
-
             object ptObj;
             if (pushConfig != null && pushConfig.TryGetValue("PushType", out ptObj))
                 pushType = ptObj.ToString();
             else
                 pushType = "Replace";
 
-            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig);
-            objectsToPush = Modify.CloneBHoMObjects(objectsToPush, Config);
+            // Wrap non-BHoM objects into a Custom BHoMObject to make them work as BHoMObjects. Useful only for specific Toolkits.
+            List<IObject> objectsToPush = Config.WrapNonBHoMObjects ? Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig).ToList() : objects.ToList();
+            
+            // Clone the objects for immutability in the UI.
+            objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
+            // Perform the actual Push.
             Type iBHoMObjectType = typeof(IBHoMObject);
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (var typeGroup in objectsToPush.GroupBy(x => x.GetType()))
