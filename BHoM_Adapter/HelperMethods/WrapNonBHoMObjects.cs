@@ -36,20 +36,23 @@ namespace BH.Adapter
 
         public static IEnumerable<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
         {
-            // Read pushConfig. If present, that overrides the Adapter Config.
+            // This method is disabled unless 1) WrapNonBHoMObjects is set to true in the Adapter Config, or 2) if the pushConfig "WrapNonBHoMObjects" is set to true.
+
+            // Read pushConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Config.
             bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
             object wrapNonBHoMObjValue;
             if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
 
-            IEnumerable<IObject> objectsToPush = objects.Select(x =>
+            if (wrapNonBHoMObjects)
             {
-                if (wrapNonBHoMObjects)
-                    return new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } }; // Wraps non-IBHoMObject in a custom BHoMObject
+                IEnumerable<IObject> objectsToPush = objects.Select(x => x is BHoMObject ?
+                    x : new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } } // Wraps non-BHoMObject in a custom BHoMObject);
+                    ); 
 
-                return x;
-            });
+                return objectsToPush;
+            }
 
-            return objectsToPush;
+            return objects;
         }
     }
 }
