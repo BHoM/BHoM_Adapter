@@ -67,7 +67,7 @@ namespace BH.Adapter
             List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig).ToList();
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
+            objectsToPush = Config.CloneBeforePush ? objectsToPush.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             // Perform the actual Push.
             Type iBHoMObjectType = typeof(IBHoMObject);
