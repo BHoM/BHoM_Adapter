@@ -54,8 +54,9 @@ namespace BH.Adapter.FileAdapter
 
             if (!Path.HasExtension(m_FilePath))
             {
-                Engine.Reflection.Compute.RecordWarning($"No extension specified in the FileName input. Default is .json.");
+                Engine.Reflection.Compute.RecordNote($"No extension specified in the FileName input. Default is .json.");
                 ext = ".json";
+                m_FilePath += ext;
             }
 
             if (ext != ".json" && ext != ".bson")
