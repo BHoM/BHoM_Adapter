@@ -50,19 +50,10 @@ namespace BH.Adapter.FileAdapter
                 folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BHoM", "DataSets", folder);
 
             m_FilePath = Path.Combine(folder, fileName);
-            string ext = Path.GetExtension(m_FilePath);
 
-            if (!Path.HasExtension(m_FilePath))
-            {
-                Engine.Reflection.Compute.RecordNote($"No extension specified in the FileName input. Default is .json.");
-                ext = ".json";
-                m_FilePath += ext;
-            }
+            ProcessExtension(ref m_FilePath);
 
-            if (ext != ".json" && ext != ".bson")
-                throw new Exception($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
-
-            m_isJSON = ext == ".json";
+            m_isJSON = Path.GetExtension(m_FilePath) == ".json";
             this.Config.UseAdapterId = false;
         }
 
@@ -72,11 +63,8 @@ namespace BH.Adapter.FileAdapter
 
         public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
         {
-            if (!Path.HasExtension(m_FilePath))
-            {
-                Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
+            if (!ProcessExtension(ref m_FilePath))
                 return null;
-            }
 
             CreateFileAndFolder();
 
@@ -106,7 +94,9 @@ namespace BH.Adapter.FileAdapter
             }
             else if (!Path.HasExtension(m_FilePath))
             {
-                Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
+                Engine.Reflection.Compute.RecordNote($"No extension specified in the FileName input. Default is .json.");
+                m_FilePath += ".json";
+
                 return null;
             }
 
@@ -116,6 +106,26 @@ namespace BH.Adapter.FileAdapter
         /***************************************************/
         /**** Private Methods                           ****/
         /***************************************************/
+
+        private bool ProcessExtension(ref string filePath)
+        {
+            string ext = Path.GetExtension(filePath);
+
+            if (!Path.HasExtension(m_FilePath))
+            {
+                Engine.Reflection.Compute.RecordNote($"No extension specified in the FileName input. Default is .json.");
+                ext = ".json";
+                filePath += ext;
+            }
+
+            if (ext != ".json" && ext != ".bson")
+            {
+                Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
+                return false;
+            }
+
+            return true;
+        }
 
         private void CreateFileAndFolder()
         {
