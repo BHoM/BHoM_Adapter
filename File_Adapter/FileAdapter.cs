@@ -50,11 +50,13 @@ namespace BH.Adapter.FileAdapter
                 folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BHoM", "DataSets", folder);
 
             m_FilePath = Path.Combine(folder, fileName);
+            string ext = Path.GetExtension(m_FilePath);
 
             if (!Path.HasExtension(m_FilePath))
-                Engine.Reflection.Compute.RecordError($"Please include the extension type in the FileName input.");
-
-            string ext = Path.GetExtension(m_FilePath);
+            {
+                Engine.Reflection.Compute.RecordWarning($"No extension specified in the FileName input. Default is .json.");
+                ext = ".json";
+            }
 
             if (ext != ".json" && ext != ".bson")
                 Engine.Reflection.Compute.RecordError($"File_Adapter currently supports only .json and .bson extension types.\nSpecified file extension: {ext}");
