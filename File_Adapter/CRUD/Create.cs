@@ -37,12 +37,15 @@ namespace BH.Adapter.FileAdapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        protected override bool Create<T>(IEnumerable<T> objects, bool replaceAll = false)
+        protected override bool Create<T>(IEnumerable<T> objects)
         {
+
+            bool clearFile = Config.ProcessInMemory;
+
             if (m_isJSON)
-                return CreateJson((IEnumerable<IBHoMObject>)objects, replaceAll);
+                return CreateJson((IEnumerable<IBHoMObject>)objects, clearFile);
             else
-                return CreateBson((IEnumerable<IBHoMObject>)objects, replaceAll);
+                return CreateBson((IEnumerable<IBHoMObject>)objects, clearFile);
         }
 
 

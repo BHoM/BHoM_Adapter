@@ -40,7 +40,7 @@ namespace BH.Adapter
             if (Config.ProcessInMemory)
             {
                 IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
-                Create(objects, true);
+                Create(objects);
                 return objects.Count();
             }
             else
