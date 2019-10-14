@@ -203,7 +203,7 @@ namespace BH.Adapter
 
         // Level 1 - Always required
 
-        protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false) where T : IObject;
+        protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
 
         protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
 
