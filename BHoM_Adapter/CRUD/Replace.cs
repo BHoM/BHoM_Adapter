@@ -66,26 +66,18 @@ namespace BH.Adapter
 
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
-            bool overwriteObjects = false;
 
             if (Config.ProcessInMemory)
-            {
                 objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
-                overwriteObjects = true;
-            }
             else
-            {
                 objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
-            }
 
             // Assign Id if needed
             if (Config.UseAdapterId)
-            {
                 AssignId(objectsToCreate);
-            }
 
             // Create objects
-            if (!Create(objectsToCreate, overwriteObjects))
+            if (!Create(objectsToCreate))
                 return false;
             else if (Config.UseAdapterId)
             {
