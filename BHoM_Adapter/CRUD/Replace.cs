@@ -37,7 +37,7 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected bool Replace<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -55,12 +55,12 @@ namespace BH.Adapter
                 existing = new List<T>();
 
             // Merge and push the dependencies
-            if (Config.SeparateProperties)
+            if (Config.HandleDependencies)
             {
                 var dependencyObjects = GetDependencyObjects<T>(objectsToPush, tag);
 
                 foreach (var depObj in dependencyObjects)
-                    if (!Replace(depObj.Value as dynamic, tag))
+                    if (!CRUD(depObj.Value as dynamic, tag))
                         return false;
             }
 
@@ -115,7 +115,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected void AssignId<T>(IEnumerable<T> objects) where T: IBHoMObject
+        protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
             bool refresh = true;
             foreach (T item in objects)
@@ -177,9 +177,9 @@ namespace BH.Adapter
             Delete(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
 
             // Update the tags for the rest of the existing objects in the model
-            UpdateProperty(typeof(T), 
-                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]), 
-                "Tags", 
+            UpdateProperty(typeof(T),
+                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]),
+                "Tags",
                 existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
             // Map properties for the objects that overlap (between existing and pushed) and Update them

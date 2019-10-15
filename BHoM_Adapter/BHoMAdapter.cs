@@ -81,7 +81,7 @@ namespace BH.Adapter
                 if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
                 {
                     if (pushType == "Replace")
-                        success &= Replace(list as dynamic, tag);
+                        success &= CRUD(list as dynamic, tag);
                     else if (pushType == "UpdateOnly")
                     {
                         success &= UpdateOnly(list as dynamic, tag);
