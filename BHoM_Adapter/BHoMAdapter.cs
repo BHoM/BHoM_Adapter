@@ -96,33 +96,33 @@ namespace BH.Adapter
 
         public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            // Make sure this is a FilterQuery
-            FilterRequest filter = request as FilterRequest;
-            if (filter == null)
-                return new List<object>();
+            // Make sure this is a FilterRequest
+            FilterRequest filterReq = request as FilterRequest;
+            if (filterReq == null)
+                return Read(request);
 
             // Read the IBHoMObjects
-            if (typeof(IBHoMObject).IsAssignableFrom(filter.Type))
-                return Read(filter);
+            if (typeof(IBHoMObject).IsAssignableFrom(filterReq.Type))
+                return Read(filterReq);
             
             // Read the IResults
-            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filter.Type))
+            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
             {
                 IList cases, objectIds;
                 int divisions;
                 object caseObject, idObject, divObj;
 
-                if (filter.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
+                if (filterReq.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
                     cases = caseObject as IList;
                 else
                     cases = null;
 
-                if (filter.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
+                if (filterReq.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
                     objectIds = idObject as IList;
                 else
                     objectIds = null;
 
-                if (filter.Equalities.TryGetValue("Divisions", out divObj))
+                if (filterReq.Equalities.TryGetValue("Divisions", out divObj))
                 {
                     if (divObj is int)
                         divisions = (int)divObj;
@@ -132,15 +132,15 @@ namespace BH.Adapter
                 else
                     divisions = 5;
 
-                List<BH.oM.Common.IResult> results = ReadResults(filter.Type, objectIds, cases, divisions).ToList();
+                List<BH.oM.Common.IResult> results = ReadResults(filterReq.Type, objectIds, cases, divisions).ToList();
                 results.Sort();
                 return results;
             }
 
             // Read the IResultCollections
-            if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filter.Type))
+            if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filterReq.Type))
             {               
-                List<BH.oM.Common.IResultCollection> results = ReadResults(filter).ToList();
+                List<BH.oM.Common.IResultCollection> results = ReadResults(filterReq).ToList();
                 return results;
             }
 
@@ -182,75 +182,9 @@ namespace BH.Adapter
         }
 
 
-        /***************************************************/
-        /**** Public Events                             ****/
-        /***************************************************/
-
-        public event EventHandler DataUpdated;
 
         /***************************************************/
-
-        protected virtual void OnDataUpdated()
-        {
-            if (DataUpdated != null)
-                DataUpdated.Invoke(this, new EventArgs());
-        }
-
-
-        /***************************************************/
-        /**** Protected Abstract CRUD Methods           ****/
-        /***************************************************/
-
-        // Level 1 - Always required
-
-        protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
-
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
-
-
-        // Level 2 - Optional 
-
-        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
-        {
-            return 0;
-        }
-
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
-        {
-            return 0;
-        }
-
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
-        {
-            return new List<BH.oM.Common.IResult>();
-        }
-
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterRequest request)
-        {
-            return new List<BH.oM.Common.IResultCollection>();
-        }
-
-        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T:IObject
-        {
-            Type objectType = typeof(T);
-            if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
-            {
-                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
-            }
-            return Create(objects);
-        }
-
-
-        // Optional Id query
-
-        protected virtual object NextId(Type objectType, bool refresh = false)
-        {
-            return null;
-        }
-
-
-        /***************************************************/
-        /**** Protected Type Methods                    ****/
+        /**** Protected Methods                         ****/
         /***************************************************/
 
         protected virtual IEqualityComparer<T> Comparer<T>()
@@ -265,5 +199,28 @@ namespace BH.Adapter
             return new List<Type>();
         }
 
+        /***************************************************/
+
+        protected virtual object NextId(Type objectType, bool refresh = false)
+        {
+            return null;
+        }
+
+
+
+        /***************************************************/
+        /**** Public Events                             ****/
+        /***************************************************/
+
+        public event EventHandler DataUpdated;
+
+        /***************************************************/
+
+        protected virtual void OnDataUpdated()
+        {
+            if (DataUpdated != null)
+                DataUpdated.Invoke(this, new EventArgs());
+        }
+     
     }
 }
