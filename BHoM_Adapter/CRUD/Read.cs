@@ -31,6 +31,23 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
+
+        /***************************************************/
+        /**** Protected CRUD Methods                    ****/
+        /***************************************************/
+
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
+
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        {
+            return new List<BH.oM.Common.IResult>();
+        }
+
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterRequest request)
+        {
+            return new List<BH.oM.Common.IResultCollection>();
+        }
+
         /***************************************************/
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
@@ -45,6 +62,13 @@ namespace BH.Adapter
                 return objects;
             else
                 return objects.Where(x => x.Tags.Contains(tag));
+        }
+
+        /***************************************************/
+
+        public virtual IEnumerable<IBHoMObject> Read(IRequest request)
+        {
+            return new List<IBHoMObject>();
         }
 
         /***************************************************/

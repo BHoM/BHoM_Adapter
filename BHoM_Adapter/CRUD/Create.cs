@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,51 +20,23 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Base;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
-using BH.oM.Base;
+using BH.oM.Data.Requests;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        /***************************************************/
-        /**** Protected Abstract CRUD Methods           ****/
-        /***************************************************/
-
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
-        {
-            return 0;
-        }
-
 
         /***************************************************/
-        /**** Protected  Methods                        ****/
+        /**** Protected Abstract CRUD Method            ****/
         /***************************************************/
 
-        protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null) 
-        {
-            if (tag == "")
-            {
-                return Delete(type, null as List<object>);
-            }
-            else
-            {
-                // Get all with tag
-                IEnumerable<IBHoMObject> withTag = Read(type, tag);
-
-                // Get indices of all with that tag only
-                IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x);
-                Delete(type, ids);
-
-                // Remove tag if other tags as well
-                IEnumerable<IBHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]), "Tags", multiTags.Select(x => x.Tags));
-
-                return ids.Count();
-            }
-        }
+        protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
 
     }
 }

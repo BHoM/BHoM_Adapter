@@ -33,6 +33,21 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
+        /**** Protected CRUD Method                     ****/
+        /***************************************************/
+
+        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T : IObject
+        {
+            Type objectType = typeof(T);
+            if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            {
+                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
+            }
+            return Create(objects);
+        }
+
+
+        /***************************************************/
         /**** Protected Methods                         ****/
         /***************************************************/
 

@@ -26,11 +26,23 @@ using BH.oM.Base;
 using BH.oM.Data.Requests;
 using BH.Engine.Reflection;
 using BH.Engine.Data;
+using System;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
+
+        /***************************************************/
+        /**** Protected Abstract CRUD Method            ****/
+        /***************************************************/
+
+        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
+        {
+            return 0;
+        }
+
+
         /***************************************************/
         /**** Protected Methods                         ****/
         /***************************************************/
