@@ -96,10 +96,9 @@ namespace BH.Adapter
 
         public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            // If the provided request is a FilterRequest, 
-            // the Pull calls a default implementation of Read() that returns the objects based on that.
-            // For use cases different than those inherent to the FilterRequest, you should implement your own IRequests.
-            // Please refer to the wiki for further information.
+            // If the provided request is a FilterRequest, the Pull calls default implementations of Read() based on that.
+            // For use cases different than those inherent to the FilterRequest (refer to the wiki for further info), 
+            // you should implement your own IRequests and override the specific Read() methods.
 
             // Check if it is a FilterRequest 
             FilterRequest filterReq = request as FilterRequest;
@@ -159,7 +158,6 @@ namespace BH.Adapter
         {
             return false;
         }
-
 
 
         /***************************************************/

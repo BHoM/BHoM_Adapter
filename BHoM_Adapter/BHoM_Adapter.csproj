@@ -83,10 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterConfig.cs" />
+    <Compile Include="CRUD\Create.cs" />
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Replace.cs" />
-    <Compile Include="CRUD\UpdateOnly.cs" />
+    <Compile Include="CRUD\Update.cs" />
     <Compile Include="HelperMethods\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="HelperMethods\WrapNonBHoMObjects.cs" />

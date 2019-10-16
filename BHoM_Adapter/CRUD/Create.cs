@@ -31,11 +31,13 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-
         /***************************************************/
         /**** Protected Abstract CRUD Method            ****/
         /***************************************************/
 
+        // Create must exclusively contain the logic to generate the objects in the external software.
+        // It must be implemented at the Toolkit level.
+        // It gets called by the Push, in the context of the CRUD method.
         protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
 
     }
