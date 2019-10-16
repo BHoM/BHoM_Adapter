@@ -29,18 +29,9 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        /***************************************************/
-        /**** Protected Abstract CRUD Methods           ****/
-        /***************************************************/
-
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
-        {
-            return 0;
-        }
-
 
         /***************************************************/
-        /**** Protected  Methods                        ****/
+        /**** Protected Methods                         ****/
         /***************************************************/
 
         protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null) 
@@ -64,6 +55,19 @@ namespace BH.Adapter
 
                 return ids.Count();
             }
+        }
+
+
+        /***************************************************/
+        /**** Protected CRUD Methods                    ****/
+        /***************************************************/
+
+        // This is the 
+        // It must be implemented at the Toolkit level.
+        // It gets called by the Push, in the context of the CRUD method.
+        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        {
+            return 0;
         }
 
     }

@@ -36,15 +36,20 @@ namespace BH.Adapter
         /**** Protected CRUD Methods                    ****/
         /***************************************************/
 
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
+        // This is the most basic Read method that returns objects depending on their Type and Id. 
+        // It's needed for the CRUD method to work, and it must be implemented at the Toolkit level.
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids); //CRUD
 
+        // This is the most basic Read method that returns `IResult`s depending on Type, Ids of the objects owning the IResult, Load Cases and Divisions.
+        // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
-        }
+        } // CRUD
 
-        // This method should be implemented (overrided) at the Toolkit level.
-        // If used as it is, it will return results only in case the request is a FilterRequest.
+        // This method should be used to return a an IEnumerable<IResult>.
+        // The default implementation here will return results only in case the request is a FilterRequest.
+        // It should be implemented (overrided) at the Toolkit level in order for it to work with other implementations of IRequest.
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(IRequest request)
         {
             // Check if it is a filterRequest.
@@ -53,7 +58,7 @@ namespace BH.Adapter
                 return ReadResults(filterReq);
 
             return new List<BH.oM.Common.IResult>();
-        }
+        } //ADAPTER
 
         // This is a default implementation that returns an Enumerable<IResults> from a FilterRequest.
         // It can be overridden at the Toolkit level if needed.
@@ -62,6 +67,7 @@ namespace BH.Adapter
             if (!typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
                 return new List<BH.oM.Common.IResult>();
 
+            // Extract all needed information from the FilterRequest
             IList cases, objectIds;
             int divisions;
             object caseObject, idObject, divObj;
@@ -86,21 +92,34 @@ namespace BH.Adapter
             else
                 divisions = 5;
 
+            // Call the ReadResults basic method using all the extracted information from the FilterRequest
             List<BH.oM.Common.IResult> results = ReadResults(filterReq.Type, objectIds, cases, divisions).ToList();
             results.Sort();
             return results;
-        }
+        } //ADAPTER
 
+        // This method should be used to return a IEnumerable<IResultCollection>.
+        // The default implementation here will return results only in case the request is a FilterRequest.
+        // It should be implemented (overrided) at the Toolkit level in order for it to work with other implementations of IRequest.
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(IRequest request)
+        {
+            // Check if it is a filterRequest.
+            FilterRequest filterReq = request as FilterRequest;
+            if (filterReq == null)
+                return ReadResultCollection(filterReq);
+
+            return new List<BH.oM.Common.IResultCollection>();
+        } //ADAPTER
 
         // This method should be used to return a IResultCollection.
         // It must be implemented (overrided) at the Toolkit level.
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(FilterRequest filterReq)
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(FilterRequest filterReq) 
         {
             if (!typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filterReq.Type))
                 return new List<BH.oM.Common.IResultCollection>();
 
             return new List<BH.oM.Common.IResultCollection>();
-        }
+        } //ADAPTER
 
         /***************************************************/
         /**** BHoM Adapter Methods                      ****/
