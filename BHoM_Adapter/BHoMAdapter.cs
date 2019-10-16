@@ -96,53 +96,32 @@ namespace BH.Adapter
 
         public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            // Make sure this is a FilterRequest
-            FilterRequest filterReq = request as FilterRequest;
-            if (filterReq == null)
-                return Read(request);
+            // If the provided request is a FilterRequest, 
+            // the Pull calls a default implementation of Read() that returns the objects based on that.
+            // For use cases different than those inherent to the FilterRequest, you should implement your own IRequests.
+            // Please refer to the wiki for further information.
 
-            // Read the IBHoMObjects
+            // Check if it is a FilterRequest 
+            FilterRequest filterReq = request as FilterRequest;
+            if (filterReq != null)
+            {
+                // If it's a FilterRequest, check if it should read IResults or Objects with that.
+                if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
+                    return ReadResults(filterReq);
+
+                return Read(filterReq);
+            }
+            else
+            {
+                // If it's not a FilterRequest, run the default Read(IRequest request) method.
+                // That method will have to be implemented at the Toolkit level, as by default it's empty.
+                // Whether the request is meant to return Results or Object will have to be checked within that method.
+                return Read(request);
+            }
+
+            // Use the FilterRequest to read
             if (typeof(IBHoMObject).IsAssignableFrom(filterReq.Type))
                 return Read(filterReq);
-            
-            // Read the IResults
-            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
-            {
-                IList cases, objectIds;
-                int divisions;
-                object caseObject, idObject, divObj;
-
-                if (filterReq.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
-                    cases = caseObject as IList;
-                else
-                    cases = null;
-
-                if (filterReq.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
-                    objectIds = idObject as IList;
-                else
-                    objectIds = null;
-
-                if (filterReq.Equalities.TryGetValue("Divisions", out divObj))
-                {
-                    if (divObj is int)
-                        divisions = (int)divObj;
-                    else if (!int.TryParse(divObj.ToString(), out divisions))
-                        divisions = 5;
-                }
-                else
-                    divisions = 5;
-
-                List<BH.oM.Common.IResult> results = ReadResults(filterReq.Type, objectIds, cases, divisions).ToList();
-                results.Sort();
-                return results;
-            }
-
-            // Read the IResultCollections
-            if (typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filterReq.Type))
-            {               
-                List<BH.oM.Common.IResultCollection> results = ReadResults(filterReq).ToList();
-                return results;
-            }
 
             return new List<object>();
         }

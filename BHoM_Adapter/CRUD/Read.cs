@@ -43,8 +43,62 @@ namespace BH.Adapter
             return new List<BH.oM.Common.IResult>();
         }
 
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResults(FilterRequest request)
+        // This method should be implemented (overrided) at the Toolkit level.
+        // If used as it is, it will return results only in case the request is a FilterRequest.
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(IRequest request)
         {
+            // Check if it is a filterRequest.
+            FilterRequest filterReq = request as FilterRequest;
+            if (filterReq == null)
+                return ReadResults(filterReq);
+
+            return new List<BH.oM.Common.IResult>();
+        }
+
+        // This is a default implementation that returns an Enumerable<IResults> from a FilterRequest.
+        // It can be overridden at the Toolkit level if needed.
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(FilterRequest filterReq)
+        {
+            if (!typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
+                return new List<BH.oM.Common.IResult>();
+
+            IList cases, objectIds;
+            int divisions;
+            object caseObject, idObject, divObj;
+
+            if (filterReq.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
+                cases = caseObject as IList;
+            else
+                cases = null;
+
+            if (filterReq.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
+                objectIds = idObject as IList;
+            else
+                objectIds = null;
+
+            if (filterReq.Equalities.TryGetValue("Divisions", out divObj))
+            {
+                if (divObj is int)
+                    divisions = (int)divObj;
+                else if (!int.TryParse(divObj.ToString(), out divisions))
+                    divisions = 5;
+            }
+            else
+                divisions = 5;
+
+            List<BH.oM.Common.IResult> results = ReadResults(filterReq.Type, objectIds, cases, divisions).ToList();
+            results.Sort();
+            return results;
+        }
+
+
+        // This method should be used to return a IResultCollection.
+        // It must be implemented (overrided) at the Toolkit level.
+        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(FilterRequest filterReq)
+        {
+            if (!typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filterReq.Type))
+                return new List<BH.oM.Common.IResultCollection>();
+
             return new List<BH.oM.Common.IResultCollection>();
         }
 
@@ -66,7 +120,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual IEnumerable<IBHoMObject> Read(IRequest request)
+        public virtual IEnumerable<object> Read(IRequest request)
         {
             return new List<IBHoMObject>();
         }
