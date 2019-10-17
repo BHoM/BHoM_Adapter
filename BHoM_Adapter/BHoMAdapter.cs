@@ -205,7 +205,7 @@ namespace BH.Adapter
 
         protected abstract bool Create<T>(IEnumerable<T> objects, bool replaceAll = false);
 
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
+        protected abstract IEnumerable<object> Read(Type type, IList ids);
 
 
         // Level 2 - Optional 
