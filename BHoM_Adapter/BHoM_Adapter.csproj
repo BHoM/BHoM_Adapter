@@ -87,6 +87,7 @@
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Replace.cs" />
     <Compile Include="CRUD\UpdateOnly.cs" />
+    <Compile Include="HelperMethods\FilterByTag.cs" />
     <Compile Include="HelperMethods\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="HelperMethods\WrapNonBHoMObjects.cs" />

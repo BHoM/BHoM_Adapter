@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -21,41 +21,35 @@
  */
 
 using BH.oM.Base;
-using System;
+using BH.oM.Structure.Elements;
 using System.Collections.Generic;
-using System.Collections;
 using System.Linq;
-using BH.oM.Data.Requests;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Modify
     {
         /***************************************************/
-        /**** BHoM Adapter Methods                      ****/
+        /**** Public Methods                            ****/
         /***************************************************/
 
-        protected IEnumerable<object> Read(Type type, string tag = "")
+        public static IEnumerable<IBHoMObject> FilterByTag(this IEnumerable<IBHoMObject> objects, string tag = "")
         {
-            // Get the objects based on the ids
-            IEnumerable<object> objects = Read(type, null as List<object>);
-
-            return objects.FilterByTag(tag);
+            if (tag != "")
+                return objects.Where(x => x.Tags.Contains(tag));
+            else
+                return objects;
         }
 
-        /***************************************************/
-
-        public virtual IEnumerable<object> Read(FilterRequest request)
+        public static IEnumerable<object> FilterByTag(this IEnumerable<object> objects, string tag = "")
         {
-            IList objectIds = null;
-            object idObject;
-            if (request.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
-                objectIds = idObject as IList;
-
-            // Get the objects based on the ids
-            IEnumerable<object> objects = Read(request.Type, objectIds);
-
-            return objects.FilterByTag(request.Tag);
+            if (tag != "")
+                return objects
+                               .OfType<IBHoMObject>().Where(x => x.Tags.Contains(tag))
+                               .Concat(objects.Where(x => !(x is IBHoMObject)));
+            else
+                return objects;
         }
     }
 }
+

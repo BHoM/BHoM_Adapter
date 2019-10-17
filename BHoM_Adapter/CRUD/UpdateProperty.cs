@@ -35,11 +35,11 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
+        public int PullUpdatePush(FilterRequest filter, string property, object newValue)
         {
             if (Config.ProcessInMemory)
             {
-                IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
+                IEnumerable<object> objects = UpdateInMemory(filter, property, newValue);
                 Create(objects, true);
                 return objects.Count();
             }
@@ -52,13 +52,13 @@ namespace BH.Adapter
         /**** Helper Methods                            ****/
         /***************************************************/
 
-        public IEnumerable<IBHoMObject> UpdateInMemory(FilterRequest filter, string property, object newValue)
+        public IEnumerable<object> UpdateInMemory(FilterRequest filter, string property, object newValue)
         {
             // Pull the objects to update
-            IEnumerable<IBHoMObject> objects = Read(filter.Type);
+            IEnumerable<object> objects = Read(filter.Type);
 
             // Set the property of the objects matching the filter
-            filter.FilterData(objects).ToList().SetPropertyValue(filter.Type, property, newValue);
+            filter.FilterData(objects.OfType<IBHoMObject>()).ToList().SetPropertyValue(filter.Type, property, newValue);
 
             return objects;
         }
