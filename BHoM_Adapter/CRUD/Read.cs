@@ -35,17 +35,17 @@ namespace BH.Adapter
         /**** BHoM Adapter Methods                      ****/
         /***************************************************/
 
-        protected IEnumerable<object> Read(Type type, string tag = "")
+        protected IEnumerable<IObject> Read(Type type, string tag = "")
         {
             // Get the objects based on the ids
-            IEnumerable<object> objects = Read(type, null as List<object>);
+            IEnumerable<IObject> objects = Read(type, null as List<object>);
 
             return objects.FilterByTag(tag);
         }
 
         /***************************************************/
 
-        public virtual IEnumerable<object> Read(FilterRequest request)
+        public virtual IEnumerable<IObject> Read(FilterRequest request)
         {
             IList objectIds = null;
             object idObject;
@@ -53,7 +53,7 @@ namespace BH.Adapter
                 objectIds = idObject as IList;
 
             // Get the objects based on the ids
-            IEnumerable<object> objects = Read(request.Type, objectIds);
+            IEnumerable<IObject> objects = Read(request.Type, objectIds);
 
             return objects.FilterByTag(request.Tag);
         }

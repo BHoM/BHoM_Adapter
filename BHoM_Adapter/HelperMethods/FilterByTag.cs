@@ -33,15 +33,7 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static IEnumerable<IBHoMObject> FilterByTag(this IEnumerable<IBHoMObject> objects, string tag = "")
-        {
-            if (tag != "")
-                return objects.Where(x => x.Tags.Contains(tag));
-            else
-                return objects;
-        }
-
-        public static IEnumerable<object> FilterByTag(this IEnumerable<object> objects, string tag = "")
+        public static IEnumerable<IObject> FilterByTag(this IEnumerable<IObject> objects, string tag = "")
         {
             if (tag != "")
                 return objects
