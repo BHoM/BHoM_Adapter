@@ -39,7 +39,7 @@ namespace BH.Adapter
         /***************************************************/
         /**** Basic Methods                             ****/
         /***************************************************/
-        // These methods provide the basic functionalities for the CRUD to work.
+        /* These methods provide the basic functionalities for the CRUD to work. */
 
         // This is the most basic Read method that returns objects depending on their Type and Id. 
         // It's needed for the CRUD method to work, and it must be implemented at the Toolkit level.
@@ -55,12 +55,11 @@ namespace BH.Adapter
         /***************************************************/
         /**** Wrapper methods                           ****/
         /***************************************************/
-        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
-
+        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
 
         /******* IRequest Wrapper methods *******/
-        // These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest.
+        /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
 
         public virtual IEnumerable<IBHoMObject> Read(IRequest request)
         {
@@ -91,8 +90,8 @@ namespace BH.Adapter
 
 
         /******* Additional Wrapper methods *******/
-        // These methods contain some additional logic to avoid boilerplate.
-        // If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods.
+        /* These methods contain some additional logic to avoid boilerplate.
+           If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods. */
 
         public virtual IEnumerable<IBHoMObject> Read(FilterRequest request) //Not really used except in Github_Toolkit
         {

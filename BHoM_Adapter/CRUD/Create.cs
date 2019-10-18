@@ -37,7 +37,7 @@ namespace BH.Adapter
         /***************************************************/
         /**** Basic methods                             ****/
         /***************************************************/
-        // These methods provide the basic functionalities for the CRUD to work.
+        /* These methods provide the basic functionalities for the CRUD to work. */
 
         // The Create must only contain the logic that generates the objects in the external software.
         // It is primarily called by the Push, in the context of the CRUD method, and also by other methods that require it (Update, UpdateProperty).

@@ -37,24 +37,24 @@ namespace BH.Adapter
         /***************************************************/
         /**** Basic Methods                             ****/
         /***************************************************/
-        // These methods provide the basic functionalities for the CRUD to work.
+        /* These methods provide the basic functionalities for the CRUD to work. */
 
 
-        // This is the most basic Delete method that returns objects depending on their Type and Id. 
-        // It is not mandatory for a simple export/import scenario. Toolkits need to implement this only to get the full CRUD to work.
+        // Basic Delete method that returns objects depending on their Type and Id. 
+        // Its implementation is facultative (not needed for a simple export/import scenario). 
+        // Toolkits need to implement (override) this only to get the full CRUD to work.
         protected virtual int Delete(Type type, IEnumerable<object> ids)
         {
             return 0;
         }
 
         /**** Wrapper methods                           ****/
-        /***************************************************/
-        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
+        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
 
 
         /******* IRequest Wrapper methods *******/
-        // These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest.
+        /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
 
         public virtual int Delete(IRequest request)
         {
@@ -70,7 +70,7 @@ namespace BH.Adapter
             return Delete(request.Type, request.Tag);
         }
 
-        protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null) 
+        protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null)
         {
             if (tag == "")
             {
