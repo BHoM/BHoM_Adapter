@@ -31,7 +31,7 @@ using System.Reflection;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter 
+    public abstract partial class BHoMAdapter
     {
         /***************************************************/
         /**** Public Properties                         ****/
@@ -46,11 +46,13 @@ namespace BH.Adapter
         protected AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
+        /******************************************************/
+        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
+        /******************************************************/
+        // These methods represent Actions that the Adapter can complete. 
+        // They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab.
 
-        /***************************************************/
-        /**** Public Adapter Methods                    ****/
-        /***************************************************/
-
+        // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
         public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> pushConfig = null)
         {
             bool success = true;
@@ -86,7 +88,7 @@ namespace BH.Adapter
                     {
                         success &= UpdateOnly(list as dynamic, tag);
                     }
-                } 
+                }
             }
 
             return success ? objectsToPush : new List<IObject>();
@@ -94,11 +96,11 @@ namespace BH.Adapter
 
         /***************************************************/
 
+        // Calls the appropriate basic CRUD/Read method.
         public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            // If the provided request is a FilterRequest, the Pull calls default implementations of Read() based on that.
-            // For use cases different than those inherent to the FilterRequest (refer to the wiki for further info), 
-            // you should implement your own IRequests and override the specific Read() methods.
+            // If the provided request is a FilterRequest, the specific wrapper method for FilterRequest is called.
+            // For all other cases, Toolkits should implement specific IRequests and the related CRUD Wrapper method(s).
 
             // Check if it is a FilterRequest 
             FilterRequest filterReq = request as FilterRequest;
@@ -107,26 +109,27 @@ namespace BH.Adapter
                 // If it's a FilterRequest, check if it should read IResults or Objects with that.
                 if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
                     return ReadResults(filterReq);
-
-                return Read(filterReq);
+                else
+                    return Read(filterReq);
             }
-            else
-            {
-                // If it's not a FilterRequest, run the default Read(IRequest request) method.
-                // That method will have to be implemented at the Toolkit level, as by default it's empty.
-                // Whether the request is meant to return Results or Object will have to be checked within that method.
+
+            // ----------------------------------------------------------- //
+
+            if (request is IRequest)
                 return Read(request);
-            }
 
-            // Use the FilterRequest to read
-            if (typeof(IBHoMObject).IsAssignableFrom(filterReq.Type))
-                return Read(filterReq);
+            if (request is IResultRequest)
+                return ReadResults(request);
+
+            if (request is IResultCollectionRequest)
+                return ReadResultCollection(request);
 
             return new List<object>();
         }
 
         /***************************************************/
 
+        // Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.
         public virtual bool Move(BHoMAdapter to, IRequest request, Dictionary<string, object> pullConfig = null, Dictionary<string, object> pushConfig = null)
         {
             string tag = "";
@@ -140,20 +143,22 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        public virtual int UpdateProperty(FilterRequest filter, string property, object newValue, Dictionary<string, object> config = null)
+        // Calls the basic CRUD/Delete method.
+        public virtual int Delete(IRequest request, Dictionary<string, object> config = null)
         {
-            return PullUpdatePush(filter, property, newValue); 
+            // If the provided request is a FilterRequest, the specific wrapper method for FilterRequest is called.
+            // For all other cases, Toolkits should implement specific IRequests and the related CRUD Wrapper method(s).
+
+            FilterRequest filterReq = request as FilterRequest;
+            if (filterReq != null)
+                return Delete(filterReq);
+
+            return Delete(request);
         }
 
         /***************************************************/
 
-        public virtual int Delete(FilterRequest filter, Dictionary<string, object> config = null)
-        {
-            return Delete(filter.Type, filter.Tag);
-        }
-
-        /***************************************************/
-
+        // Used to send specific commands to the external software, if it supports it. It should be implemented (overridden) at the Toolkit level.
         public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
         {
             return false;
@@ -164,16 +169,19 @@ namespace BH.Adapter
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        protected virtual IEqualityComparer<T> Comparer<T>()
+        // This field has to be implemented (overridden) at the Toolkit level for the CRUD method to work.
+        // It tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed.
+        // E.g. A Line has dependency type of Points. See the wiki or look at existing Toolkit implementations for more info.
+        protected virtual List<Type> DependencyTypes<T>()
         {
-            return EqualityComparer<T>.Default;
+            return new List<Type>();
         }
 
         /***************************************************/
 
-        protected virtual List<Type> DependencyTypes<T>()
+        protected virtual IEqualityComparer<T> Comparer<T>()
         {
-            return new List<Type>();
+            return EqualityComparer<T>.Default;
         }
 
         /***************************************************/
@@ -182,8 +190,6 @@ namespace BH.Adapter
         {
             return null;
         }
-
-
 
         /***************************************************/
         /**** Public Events                             ****/
@@ -198,6 +204,6 @@ namespace BH.Adapter
             if (DataUpdated != null)
                 DataUpdated.Invoke(this, new EventArgs());
         }
-     
+
     }
 }

@@ -29,16 +29,19 @@ using BH.oM.Data.Requests;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Protected Abstract CRUD Method            ****/
+        /**** Basic methods                             ****/
         /***************************************************/
+        // These methods provide the basic functionalities for the CRUD to work.
 
-        // Create must exclusively contain the logic to generate the objects in the external software.
-        // It must be implemented at the Toolkit level.
-        // It gets called by the Push, in the context of the CRUD method.
+        // The Create must only contain the logic that generates the objects in the external software.
+        // It is primarily called by the Push, in the context of the CRUD method, and also by other methods that require it (Update, UpdateProperty).
+        // It must be implemented (overrided) at the Toolkit level.
         protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
-
     }
 }

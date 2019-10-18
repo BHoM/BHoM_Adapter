@@ -66,6 +66,9 @@
       <HintPath>..\..\BHoM_Engine\Build\Reflection_Engine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Reflection_oM">
+      <HintPath>..\..\BHoM\Build\Reflection_oM.dll</HintPath>
+    </Reference>
     <Reference Include="Structure_oM">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\Structure_oM.dll</HintPath>
@@ -86,7 +89,7 @@
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Read.cs" />
-    <Compile Include="CRUD\Replace.cs" />
+    <Compile Include="HelperMethods\CRUD.cs" />
     <Compile Include="CRUD\Update.cs" />
     <Compile Include="HelperMethods\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />

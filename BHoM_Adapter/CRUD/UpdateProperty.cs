@@ -30,13 +30,19 @@ using System;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
 
         /***************************************************/
-        /**** Protected Abstract CRUD Method            ****/
+        /**** Basic Methods                             ****/
         /***************************************************/
+        // These methods provide the basic functionalities for the CRUD to work.
 
+        // This method is different from the normal Update method as it only updates a property of the object.
+        // It needs to be implemented at the Toolkit level for the full CRUD to work.
         public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
         {
             return 0;
@@ -44,25 +50,16 @@ namespace BH.Adapter
 
 
         /***************************************************/
-        /**** Protected Methods                         ****/
+        /**** Wrapper methods                           ****/
         /***************************************************/
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
 
-        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
+        public int UpdateThroughAPI(FilterRequest filter, string property, object newValue)
         {
-            if (Config.ProcessInMemory)
-            {
-                IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
-                Create(objects);
-                return objects.Count();
-            }
-            else
-                return UpdateThroughAPI(filter, property, newValue);
+            IEnumerable<object> ids = Pull(filter).Select(x => ((IBHoMObject)x).CustomData[AdapterId]);
+            return UpdateProperty(filter.Type, ids, property, newValue);
         }
-
-
-        /***************************************************/
-        /**** Helper Methods                            ****/
-        /***************************************************/
 
         public IEnumerable<IBHoMObject> UpdateInMemory(FilterRequest filter, string property, object newValue)
         {
@@ -75,12 +72,17 @@ namespace BH.Adapter
             return objects;
         }
 
-        /***************************************************/
-
-        public int UpdateThroughAPI(FilterRequest filter, string property, object newValue)
+        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
         {
-            IEnumerable<object> ids = Pull(filter).Select(x => ((IBHoMObject)x).CustomData[AdapterId]);
-            return UpdateProperty(filter.Type, ids, property, newValue);
+            if (Config.ProcessInMemory)
+            {
+                IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
+                Create(objects);
+                return objects.Count();
+            }
+            else
+                return UpdateThroughAPI(filter, property, newValue);
         }
+      
     }
 }
