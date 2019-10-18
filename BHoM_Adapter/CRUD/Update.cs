@@ -38,9 +38,9 @@ namespace BH.Adapter
         /***************************************************/
         /**** Basic Methods                             ****/
         /***************************************************/
-        // These methods provide the basic functionalities for the CRUD to work.
+        /* These methods provide the basic functionalities for the CRUD to work. */
 
-        // Unlike the Create, Delete and Read, this Update method already exposes a simple implementation: it calls Delete and then Create.
+        // Unlike the Create, Delete and Read, this method already exposes a simple implementation: it calls Delete and then Create.
         // It can be overridden at the Toolkit level if a more appropriate implementation is required.
         protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T : IObject
         {
@@ -52,12 +52,19 @@ namespace BH.Adapter
             return Create(objects);
         }
 
+        // This method is different from the UpdateObjects in that it should only update a single property of an object without re-writing the whole object.
+        // Its main usage is to update the Tags of an IBHoMObject in the CRUD method.
+        // It needs to be implemented at the Toolkit level for the full CRUD to work.
+        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
+        {
+            return 0;
+        }
 
         /***************************************************/
         /**** Wrapper methods                           ****/
         /***************************************************/
-        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
+        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
 
         protected bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
