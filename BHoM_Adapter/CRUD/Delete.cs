@@ -24,15 +24,51 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BH.oM.Base;
+using BH.oM.Data.Requests;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
 
         /***************************************************/
-        /**** Protected Methods                         ****/
+        /**** Basic Methods                             ****/
         /***************************************************/
+        // These methods provide the basic functionalities for the CRUD to work.
+
+
+        // This is the most basic Delete method that returns objects depending on their Type and Id. 
+        // It is not mandatory for a simple export/import scenario. Toolkits need to implement this only to get the full CRUD to work.
+        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        {
+            return 0;
+        }
+
+        /**** Wrapper methods                           ****/
+        /***************************************************/
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
+
+
+        /******* IRequest Wrapper methods *******/
+        // These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest.
+
+        public virtual int Delete(IRequest request)
+        {
+            return 0;
+        }
+
+        /******* Additional Wrapper methods *******/
+        // These methods contain some additional logic to avoid boilerplate.
+        // If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods.
+
+        public virtual int Delete(FilterRequest request)
+        {
+            return Delete(request.Type, request.Tag);
+        }
 
         protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null) 
         {
@@ -55,19 +91,6 @@ namespace BH.Adapter
 
                 return ids.Count();
             }
-        }
-
-
-        /***************************************************/
-        /**** Protected CRUD Methods                    ****/
-        /***************************************************/
-
-        // This is the 
-        // It must be implemented at the Toolkit level.
-        // It gets called by the Push, in the context of the CRUD method.
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
-        {
-            return 0;
         }
 
     }

@@ -26,127 +26,75 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
+using BH.oM.Reflection.Attributes;
+using BH.oM.Common;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
-
         /***************************************************/
-        /**** Protected CRUD Methods                    ****/
+        /**** Basic Methods                             ****/
         /***************************************************/
+        // These methods provide the basic functionalities for the CRUD to work.
 
         // This is the most basic Read method that returns objects depending on their Type and Id. 
         // It's needed for the CRUD method to work, and it must be implemented at the Toolkit level.
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids); //CRUD
+        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
 
         // This is the most basic Read method that returns `IResult`s depending on Type, Ids of the objects owning the IResult, Load Cases and Divisions.
         // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
             return new List<BH.oM.Common.IResult>();
-        } // CRUD
-
-        // This method should be used to return a an IEnumerable<IResult>.
-        // The default implementation here will return results only in case the request is a FilterRequest.
-        // It should be implemented (overrided) at the Toolkit level in order for it to work with other implementations of IRequest.
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(IRequest request)
-        {
-            // Check if it is a filterRequest.
-            FilterRequest filterReq = request as FilterRequest;
-            if (filterReq == null)
-                return ReadResults(filterReq);
-
-            return new List<BH.oM.Common.IResult>();
-        } //ADAPTER
-
-        // This is a default implementation that returns an Enumerable<IResults> from a FilterRequest.
-        // It can be overridden at the Toolkit level if needed.
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(FilterRequest filterReq)
-        {
-            if (!typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
-                return new List<BH.oM.Common.IResult>();
-
-            // Extract all needed information from the FilterRequest
-            IList cases, objectIds;
-            int divisions;
-            object caseObject, idObject, divObj;
-
-            if (filterReq.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
-                cases = caseObject as IList;
-            else
-                cases = null;
-
-            if (filterReq.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
-                objectIds = idObject as IList;
-            else
-                objectIds = null;
-
-            if (filterReq.Equalities.TryGetValue("Divisions", out divObj))
-            {
-                if (divObj is int)
-                    divisions = (int)divObj;
-                else if (!int.TryParse(divObj.ToString(), out divisions))
-                    divisions = 5;
-            }
-            else
-                divisions = 5;
-
-            // Call the ReadResults basic method using all the extracted information from the FilterRequest
-            List<BH.oM.Common.IResult> results = ReadResults(filterReq.Type, objectIds, cases, divisions).ToList();
-            results.Sort();
-            return results;
-        } //ADAPTER
-
-        // This method should be used to return a IEnumerable<IResultCollection>.
-        // The default implementation here will return results only in case the request is a FilterRequest.
-        // It should be implemented (overrided) at the Toolkit level in order for it to work with other implementations of IRequest.
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(IRequest request)
-        {
-            // Check if it is a filterRequest.
-            FilterRequest filterReq = request as FilterRequest;
-            if (filterReq == null)
-                return ReadResultCollection(filterReq);
-
-            return new List<BH.oM.Common.IResultCollection>();
-        } //ADAPTER
-
-        // This method should be used to return a IResultCollection.
-        // It must be implemented (overrided) at the Toolkit level.
-        protected virtual IEnumerable<BH.oM.Common.IResultCollection> ReadResultCollection(FilterRequest filterReq) 
-        {
-            if (!typeof(BH.oM.Common.IResultCollection).IsAssignableFrom(filterReq.Type))
-                return new List<BH.oM.Common.IResultCollection>();
-
-            return new List<BH.oM.Common.IResultCollection>();
-        } //ADAPTER
-
-        /***************************************************/
-        /**** BHoM Adapter Methods                      ****/
-        /***************************************************/
-
-        protected IEnumerable<IBHoMObject> Read(Type type, string tag = "")
-        {
-            // Get the objects based on the ids
-            IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
-
-            // Filter by tag if any 
-            if (tag == "")
-                return objects;
-            else
-                return objects.Where(x => x.Tags.Contains(tag));
         }
 
         /***************************************************/
+        /**** Wrapper methods                           ****/
+        /***************************************************/
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
 
-        public virtual IEnumerable<object> Read(IRequest request)
+
+        /******* IRequest Wrapper methods *******/
+        // These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest.
+
+        public virtual IEnumerable<IBHoMObject> Read(IRequest request)
         {
+            // The implementation must:
+            // 1. extract all the needed information from the IRequest
+            // 2. return a call to the basic method with the extracted info.
+
             return new List<IBHoMObject>();
         }
 
-        /***************************************************/
+        protected virtual IEnumerable<IResult> ReadResults(IRequest request)
+        {
+            // The implementation must:
+            // 1. extract all the needed information from the IRequest
+            // 2. return a call to the basic method with the extracted info.
 
-        public virtual IEnumerable<IBHoMObject> Read(FilterRequest request)
+            return new List<BH.oM.Common.IResult>();
+        }
+
+        protected virtual IEnumerable<IResultCollection> ReadResultCollection(IRequest request)
+        {
+            // The implementation must:
+            // 1. extract all the needed information from the IRequest
+            // 2. return a call to the basic method with the extracted info.
+
+            return new List<BH.oM.Common.IResultCollection>();
+        }
+
+
+        /******* Additional Wrapper methods *******/
+        // These methods contain some additional logic to avoid boilerplate.
+        // If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods.
+
+        public virtual IEnumerable<IBHoMObject> Read(FilterRequest request) //Not really used except in Github_Toolkit
         {
             IList objectIds = null;
             object idObject;
@@ -161,6 +109,18 @@ namespace BH.Adapter
                 return objects;
             else
                 return objects.Where(x => x.Tags.Contains(request.Tag));
+        }
+
+        protected IEnumerable<IBHoMObject> Read(Type type, string tag = "")
+        {
+            // Get the objects based on the ids
+            IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
+
+            // Filter by tag if any 
+            if (tag == "")
+                return objects;
+            else
+                return objects.Where(x => x.Tags.Contains(tag));
         }
     }
 }

@@ -30,12 +30,18 @@ using System.Reflection;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Protected CRUD Method                     ****/
+        /**** Basic Methods                             ****/
         /***************************************************/
+        // These methods provide the basic functionalities for the CRUD to work.
 
+        // Unlike the Create, Delete and Read, this Update method already exposes a simple implementation: it calls Delete and then Create.
+        // It can be overridden at the Toolkit level if a more appropriate implementation is required.
         protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T : IObject
         {
             Type objectType = typeof(T);
@@ -48,8 +54,10 @@ namespace BH.Adapter
 
 
         /***************************************************/
-        /**** Protected Methods                         ****/
+        /**** Wrapper methods                           ****/
         /***************************************************/
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
 
         protected bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
