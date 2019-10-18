@@ -41,48 +41,12 @@ namespace BH.Adapter
         /***************************************************/
         // These methods provide the basic functionalities for the CRUD to work.
 
-        // This method is different from the normal Update method as it only updates a property of the object.
+        // This method is different from the normal Update method: it only updates a single property of an object without re-writing the whole object.
+        // Its main usage is to update the Tags of an IBHoMObject in the CRUD method.
         // It needs to be implemented at the Toolkit level for the full CRUD to work.
         public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
         {
             return 0;
         }
-
-
-        /***************************************************/
-        /**** Wrapper methods                           ****/
-        /***************************************************/
-        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
-
-        public int UpdateThroughAPI(FilterRequest filter, string property, object newValue)
-        {
-            IEnumerable<object> ids = Pull(filter).Select(x => ((IBHoMObject)x).CustomData[AdapterId]);
-            return UpdateProperty(filter.Type, ids, property, newValue);
-        }
-
-        public IEnumerable<IBHoMObject> UpdateInMemory(FilterRequest filter, string property, object newValue)
-        {
-            // Pull the objects to update
-            IEnumerable<IBHoMObject> objects = Read(filter.Type);
-
-            // Set the property of the objects matching the filter
-            filter.FilterData(objects).ToList().SetPropertyValue(filter.Type, property, newValue);
-
-            return objects;
-        }
-
-        public int PullUpdatePush(FilterRequest filter, string property, object newValue) 
-        {
-            if (Config.ProcessInMemory)
-            {
-                IEnumerable<IBHoMObject> objects = UpdateInMemory(filter, property, newValue);
-                Create(objects);
-                return objects.Count();
-            }
-            else
-                return UpdateThroughAPI(filter, property, newValue);
-        }
-      
     }
 }
