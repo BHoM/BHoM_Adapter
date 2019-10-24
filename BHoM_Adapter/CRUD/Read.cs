@@ -55,8 +55,8 @@ namespace BH.Adapter
         /***************************************************/
         /**** Wrapper methods                           ****/
         /***************************************************/
-        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
 
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
@@ -64,8 +64,8 @@ namespace BH.Adapter
         public virtual IEnumerable<IBHoMObject> Read(IRequest request)
         {
             // The implementation must:
-            // 1. extract all the needed information from the IRequest
-            // 2. return a call to the basic method with the extracted info.
+            // 1. extract all the needed info from the IRequest
+            // 2. return a call to the Basic Method Read() with the extracted info.
 
             return new List<IBHoMObject>();
         }
@@ -73,25 +73,15 @@ namespace BH.Adapter
         protected virtual IEnumerable<IResult> ReadResults(IRequest request)
         {
             // The implementation must:
-            // 1. extract all the needed information from the IRequest
-            // 2. return a call to the basic method with the extracted info.
+            // 1. extract all the needed info from the IRequest
+            // 2. return a call to the Basic Method ReadResult() with the extracted info.
 
             return new List<BH.oM.Common.IResult>();
         }
-
-        protected virtual IEnumerable<IResultCollection> ReadResultCollection(IRequest request)
-        {
-            // The implementation must:
-            // 1. extract all the needed information from the IRequest
-            // 2. return a call to the basic method with the extracted info.
-
-            return new List<BH.oM.Common.IResultCollection>();
-        }
-
-
+   
         /******* Additional Wrapper methods *******/
         /* These methods contain some additional logic to avoid boilerplate.
-           If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods. */
+           If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
         public virtual IEnumerable<IBHoMObject> Read(FilterRequest request) //Not really used except in Github_Toolkit
         {
@@ -100,7 +90,7 @@ namespace BH.Adapter
             if (request.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
                 objectIds = idObject as IList;
 
-            // Get the objects based on the ids
+            // Call the Basic Method Read() to get the objects based on the ids
             IEnumerable<IBHoMObject> objects = Read(request.Type, objectIds);
 
             // Filter by tag if any 
@@ -112,7 +102,7 @@ namespace BH.Adapter
 
         protected IEnumerable<IBHoMObject> Read(Type type, string tag = "")
         {
-            // Get the objects based on the ids
+            // Call the Basic Method Read() to get the objects based on the ids
             IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
 
             // Filter by tag if any 
