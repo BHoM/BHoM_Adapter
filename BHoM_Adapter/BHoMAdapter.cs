@@ -121,9 +121,6 @@ namespace BH.Adapter
             if (request is IResultRequest)
                 return ReadResults(request);
 
-            if (request is IResultCollectionRequest)
-                return ReadResultCollection(request);
-
             return new List<object>();
         }
 

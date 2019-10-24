@@ -48,10 +48,11 @@ namespace BH.Adapter
             return 0;
         }
 
+        /***************************************************/
         /**** Wrapper methods                           ****/
-        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
-
+        /***************************************************/
+        // These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
+        // They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods.
 
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
@@ -62,8 +63,8 @@ namespace BH.Adapter
         }
 
         /******* Additional Wrapper methods *******/
-        // These methods contain some additional logic to avoid boilerplate.
-        // If needed, they can be overriden at the Toolkit level, but the implementation must retain the call to the basic methods.
+        /* These methods contain some additional logic to avoid boilerplate.
+           If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
         public virtual int Delete(FilterRequest request)
         {
