@@ -49,8 +49,8 @@ namespace BH.Adapter
         /******************************************************/
         /**** Public Adapter Methods "Adapter ACTIONS"    *****/
         /******************************************************/
-        // These methods represent Actions that the Adapter can complete. 
-        // They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab.
+        /* These methods represent Actions that the Adapter can complete. 
+           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
         public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> pushConfig = null)
