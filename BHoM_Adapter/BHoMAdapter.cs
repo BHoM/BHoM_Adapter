@@ -99,27 +99,21 @@ namespace BH.Adapter
         // Calls the appropriate basic CRUD/Read method.
         public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
         {
-            // If the provided request is a FilterRequest, the specific wrapper method for FilterRequest is called.
-            // For all other cases, Toolkits should implement specific IRequests and the related CRUD Wrapper method(s).
-
-            // Check if it is a FilterRequest 
+            // --------------------------------------------------------------------------------- //
+            // *** Temporary retrocompatibility fix ***
+            // If it's a FilterRequest, check if it should read IResults or Objects with that.
+            // This should be replaced by an appropriate IResultRequest.
             FilterRequest filterReq = request as FilterRequest;
             if (filterReq != null)
-            {
-                // If it's a FilterRequest, check if it should read IResults or Objects with that.
                 if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
                     return ReadResults(filterReq);
-                else
-                    return Read(filterReq);
-            }
-
-            // ----------------------------------------------------------- //
-
-            if (request is IRequest)
-                return Read(request);
+            // --------------------------------------------------------------------------------- //
 
             if (request is IResultRequest)
-                return ReadResults(request);
+                return ReadResults(request as dynamic);
+
+            if (request is IRequest)
+                return Read(request as dynamic);
 
             return new List<object>();
         }
