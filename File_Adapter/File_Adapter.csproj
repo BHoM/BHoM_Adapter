@@ -85,11 +85,6 @@
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="FileAdapter.cs" />
-    <Compile Include="Legacy\Delete.cs" />
-    <Compile Include="Legacy\Execute.cs" />
-    <Compile Include="Legacy\Pull.cs" />
-    <Compile Include="Legacy\Push.cs" />
-    <Compile Include="Legacy\Update.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
