@@ -41,8 +41,6 @@ namespace BH.Adapter
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
-        public List<string> ErrorLog { get; set; } = new List<string>();
-
         protected AdapterConfig Config { get; set; } = new AdapterConfig();
 
 
