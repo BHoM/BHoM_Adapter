@@ -79,7 +79,8 @@ namespace BH.Adapter
             // Create objects
             if (!Create(objectsToCreate))
                 return false;
-            else if (Config.UseAdapterId)
+
+            if (Config.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it)
                 IEqualityComparer<T> comparer = Comparer<T>();
@@ -131,7 +132,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag) where T : IBHoMObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, bool mergeWithComparer = false) where T : IBHoMObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -141,7 +142,7 @@ namespace BH.Adapter
             multiTaggedObjects.ForEach(x => x.Tags.Remove(tag));
 
             // Merge objects if required
-            if (Config.MergeWithComparer)
+            if (mergeWithComparer)
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
                 diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));

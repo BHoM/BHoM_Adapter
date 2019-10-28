@@ -24,9 +24,8 @@ namespace BH.Adapter
 {
     public class AdapterConfig
     {
-        public bool ProcessInMemory { get; set; } = true;
-        public bool HandleDependencies { get; set; } = false;
-        public bool MergeWithComparer { get; set; } = false;
+        public bool HandleDependencies { get; set; } = true;
+        public bool ProcessInMemory { get; set; } = false;
         public bool UseAdapterId { get; set; } = true;
         public bool CloneBeforePush { get; set; } = true;
         public bool WrapNonBHoMObjects { get; set; } = false;
