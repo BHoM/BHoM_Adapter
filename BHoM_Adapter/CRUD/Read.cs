@@ -100,7 +100,7 @@ namespace BH.Adapter
                 return objects.Where(x => x.Tags.Contains(request.Tag));
         }
 
-        protected IEnumerable<IBHoMObject> Read(Type type, string tag = "")
+        protected virtual IEnumerable<IBHoMObject> Read(Type type, string tag = "")
         {
             // Call the Basic Method Read() to get the objects based on the ids
             IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
