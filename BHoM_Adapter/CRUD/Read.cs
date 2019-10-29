@@ -83,7 +83,7 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        public virtual IEnumerable<IBHoMObject> Read(FilterRequest request) //Not really used except in Github_Toolkit
+        public virtual IEnumerable<IBHoMObject> Read(FilterRequest request)
         {
             IList objectIds = null;
             object idObject;
