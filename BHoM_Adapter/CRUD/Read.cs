@@ -85,15 +85,16 @@ namespace BH.Adapter
 
         public virtual IEnumerable<IBHoMObject> Read(FilterRequest request)
         {
+            // Extract the Ids from the FilterRequest
             IList objectIds = null;
             object idObject;
             if (request.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
                 objectIds = idObject as IList;
 
-            // Call the Basic Method Read() to get the objects based on the ids
+            // Call the Basic Method Read() to get the objects based on the Ids
             IEnumerable<IBHoMObject> objects = Read(request.Type, objectIds);
 
-            // Filter by tag if any 
+            // If the FilterRequest contains a Tag, use it to further filter the objects
             if (request.Tag == "")
                 return objects;
             else
