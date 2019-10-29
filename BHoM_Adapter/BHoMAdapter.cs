@@ -186,7 +186,7 @@ namespace BH.Adapter
 
         public event EventHandler DataUpdated;
 
-        /***************************************************/
+        /***************************************************/ 
 
         protected virtual void OnDataUpdated()
         {
