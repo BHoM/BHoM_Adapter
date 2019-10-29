@@ -51,20 +51,20 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> pushConfig = null)
         {
             bool success = true;
 
             // Get the Push Type from the pushConfig.
             string pushType;
             object ptObj;
-            if (config != null && config.TryGetValue("PushType", out ptObj))
+            if (pushConfig != null && pushConfig.TryGetValue("PushType", out ptObj))
                 pushType = ptObj.ToString();
             else
                 pushType = "Replace";
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them work as BHoMObjects.
-            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, config).ToList();
+            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, pushConfig).ToList();
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             objectsToPush = Config.CloneBeforePush ? objectsToPush.Select(x => x.DeepClone()).ToList() : objects.ToList();
