@@ -55,7 +55,7 @@ namespace BH.Adapter
         // UpdateProperty should only update a single property of an object without re-writing the whole object.
         // Currently, its main usage is to update the Tags of an IBHoMObject in the CRUD method, and
         // it needs to be implemented at the Toolkit level for the full CRUD to work.
-        public virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
+        protected virtual int UpdateProperty(Type type, IEnumerable<object> ids, string property, object newValue)
         {
             return 0;
         }
