@@ -57,7 +57,7 @@ namespace BH.Adapter
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
 
-        public virtual int Delete(IRequest request)
+        protected virtual int Delete(IRequest request)
         {
             return 0;
         }
@@ -66,7 +66,7 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        public virtual int Delete(FilterRequest request)
+        protected virtual int Delete(FilterRequest request)
         {
             return Delete(request.Type, request.Tag);
         }
