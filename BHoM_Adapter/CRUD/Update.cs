@@ -66,27 +66,7 @@ namespace BH.Adapter
         /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
            They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
 
-        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
-        {
-            List<T> newObjects = objectsToPush.ToList();
-
-            // Make sure objects  are tagged
-            if (tag != "")
-                newObjects.ForEach(x => x.Tags.Add(tag));
-
-            // Merge and push the dependencies
-            if (Config.HandleDependencies)
-            {
-                var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
-
-                foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, tag))
-                        return false;
-            }
-
-            return UpdateObjects(newObjects);
-
-        }
+     
 
         /***************************************************/
     }

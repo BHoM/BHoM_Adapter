@@ -92,6 +92,7 @@
     <Compile Include="CRUD\Update.cs" />
     <Compile Include="HelperMethods\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
+    <Compile Include="HelperMethods\UpdateOnly.cs" />
     <Compile Include="HelperMethods\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
