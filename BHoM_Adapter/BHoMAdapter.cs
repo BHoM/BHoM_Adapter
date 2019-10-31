@@ -138,11 +138,7 @@ namespace BH.Adapter
             // If the provided request is a FilterRequest, the specific wrapper method for FilterRequest is called.
             // For all other cases, Toolkits should implement specific IRequests and the related CRUD Wrapper method(s).
 
-            FilterRequest filterReq = request as FilterRequest;
-            if (filterReq != null)
-                return Delete(filterReq);
-
-            return Delete(request);
+            return Delete(request as dynamic);
         }
 
         /***************************************************/
