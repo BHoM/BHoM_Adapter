@@ -28,13 +28,13 @@ using System.Linq;
 
 namespace BH.Adapter
 {
-    public static partial class Modify
+    public abstract partial class BHoMAdapter
     {
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static IEnumerable<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
+        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
         {
             // To make use of this method, you can either:
             // 1) Set Config.WrapNonBHoMObjects to true in your Toolkit, or 
@@ -47,14 +47,14 @@ namespace BH.Adapter
 
             if (wrapNonBHoMObjects)
             {
-                IEnumerable<IObject> objectsToPush = objects.Select(x => x is BHoMObject ?
+                objects = objects.Select(x => typeof(IBHoMObject).IsAssignableFrom(x.GetType()) ?
                     x : new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } } // Wraps non-BHoMObject in a custom BHoMObject);
-                    ); 
+                    );
 
-                return objectsToPush;
+                return true;
             }
 
-            return objects;
+            return false;
         }
     }
 }
