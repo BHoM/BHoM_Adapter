@@ -99,6 +99,7 @@
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="HelperMethods\UpdateOnly.cs" />
     <Compile Include="HelperMethods\WrapNonBHoMObjects.cs" />
+    <Compile Include="Extra\ExtraCRUD\ReadResults.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

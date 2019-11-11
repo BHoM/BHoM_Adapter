@@ -41,15 +41,11 @@ namespace BH.Adapter
         /***************************************************/
         /* These methods provide the basic functionalities for the CRUD to work. */
 
-        // This is the most basic Read method that returns objects depending on their Type and Id. 
-        // It's needed for the CRUD method to work, and it must be implemented at the Toolkit level.
-        protected abstract IEnumerable<IBHoMObject> Read(Type type, IList ids);
-
-        // This is the most basic Read method that returns `IResult`s depending on Type, Ids of the objects owning the IResult, Load Cases and Divisions.
-        // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        // This is the most basic Read method and it must be implemented at the Toolkit level.
+        // It must implement only logic for reading things (e.g. through API calls), without modifying objects.
+        protected virtual IEnumerable<IBHoMObject> Read(Type type, IList ids)
         {
-            return new List<BH.oM.Common.IResult>();
+            throw new NotImplementedException("Read has not been implemented."); 
         }
 
         /***************************************************/
@@ -70,15 +66,6 @@ namespace BH.Adapter
             return new List<IBHoMObject>();
         }
 
-        protected virtual IEnumerable<IResult> ReadResults(IRequest request)
-        {
-            // The implementation must:
-            // 1. extract all the needed info from the IRequest
-            // 2. return a call to the Basic Method ReadResult() with the extracted info.
-
-            return new List<BH.oM.Common.IResult>();
-        }
-   
         /******* Additional Wrapper methods *******/
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
@@ -101,42 +88,6 @@ namespace BH.Adapter
                 return objects.Where(x => x.Tags.Contains(filterRequest.Tag));
         }
 
-        protected virtual IEnumerable<IResult> ReadResults(FilterRequest filterRequest)
-        {
-            List<IResult> results = new List<IResult>();
-
-            // Read the IResults
-            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterRequest.Type))
-            {
-                IList cases, objectIds;
-                int divisions;
-                object caseObject, idObject, divObj;
-
-                if (filterRequest.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
-                    cases = caseObject as IList;
-                else
-                    cases = null;
-
-                if (filterRequest.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
-                    objectIds = idObject as IList;
-                else
-                    objectIds = null;
-
-                if (filterRequest.Equalities.TryGetValue("Divisions", out divObj))
-                {
-                    if (divObj is int)
-                        divisions = (int)divObj;
-                    else if (!int.TryParse(divObj.ToString(), out divisions))
-                        divisions = 5;
-                }
-                else
-                    divisions = 5;
-
-                results = ReadResults(filterRequest.Type, objectIds, cases, divisions).ToList();
-                results.Sort();
-            }
-            return results;
-        }
 
         protected virtual IEnumerable<IBHoMObject> Read(Type type, string tag = "")
         {
