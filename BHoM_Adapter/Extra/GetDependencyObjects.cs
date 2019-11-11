@@ -20,39 +20,37 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Base;
+using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.Structure.Elements;
+using BH.oM.Data.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
 namespace BH.Adapter
 {
-    public static partial class Modify
+    public abstract partial class BHoMAdapter
     {
-        /***************************************************/
-        /**** Public Methods                            ****/
-        /***************************************************/
-
-        public static IEnumerable<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
+        public Dictionary<Type, IEnumerable> GetDependencyObjects<T>(IEnumerable<T> objects, string tag) where T : IBHoMObject
         {
-            // This method is disabled unless 1) WrapNonBHoMObjects is set to true in the Adapter Config, or 2) if the pushConfig "WrapNonBHoMObjects" is set to true.
+            Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
 
-            // Read pushConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Config.
-            bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
-            object wrapNonBHoMObjValue;
-            if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
-
-            if (wrapNonBHoMObjects)
+            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
+            foreach (Type t in DependencyTypes<T>())
             {
-                IEnumerable<IObject> objectsToPush = objects.Select(x => x is BHoMObject ?
-                    x : new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } } // Wraps non-BHoMObject in a custom BHoMObject);
-                    ); 
 
-                return objectsToPush;
+                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
+
+                var list = miListObject.Invoke(merged, new object[] { merged });
+
+                dict.Add(t, list as IEnumerable);
             }
 
-            return objects;
+            return dict;
         }
     }
 }

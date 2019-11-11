@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -26,6 +26,7 @@ using BH.oM.Data.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -34,9 +35,11 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Protected Methods                         ****/
+        /**** CRUDCallers Methods                       ****/
         /***************************************************/
+        // These methods call the CRUD methods as appropriate.
 
+        [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
         protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
             // Make sure objects are distinct 
@@ -90,45 +93,6 @@ namespace BH.Adapter
 
             return true;
         }
-
-        /***************************************************/
-        /**** Helper Methods                            ****/
-        /***************************************************/
-
-        public Dictionary<Type, IEnumerable> GetDependencyObjects<T>(IEnumerable<T> objects, string tag) where T : IBHoMObject
-        {
-            Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
-
-            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
-            foreach (Type t in DependencyTypes<T>())
-            {
-
-                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
-                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
-
-                var list = miListObject.Invoke(merged, new object[] { merged });
-
-                dict.Add(t, list as IEnumerable);
-            }
-
-            return dict;
-        }
-
-        /***************************************************/
-
-        protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
-        {
-            bool refresh = true;
-            foreach (T item in objects)
-            {
-                if (!item.CustomData.ContainsKey(AdapterId))
-                {
-                    item.CustomData[AdapterId] = NextId(typeof(T), refresh);
-                    refresh = false;
-                }
-            }
-        }
-
 
         /***************************************************/
 

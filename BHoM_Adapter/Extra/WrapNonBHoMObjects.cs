@@ -20,38 +20,41 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
+using BH.Engine.Base;
 using BH.oM.Base;
-using BH.oM.Data.Collections;
-using System;
-using System.Collections;
+using BH.oM.Structure.Elements;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Modify
     {
-        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
+        public static IEnumerable<IObject> WrapNonBHoMObjects(IEnumerable<IObject> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
         {
-            List<T> newObjects = objectsToPush.ToList();
+            // To make use of this method, you can either:
+            // 1) Set Config.WrapNonBHoMObjects to true in your Toolkit, or 
+            // 2) Specify a pushConfig input when Pushing, with a key "WrapNonBHoMObjects" with value set to true.
 
-            // Make sure objects  are tagged
-            if (tag != "")
-                newObjects.ForEach(x => x.Tags.Add(tag));
+            // Read pushConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Config.
+            bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
+            object wrapNonBHoMObjValue;
+            if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
 
-            // Merge and push the dependencies
-            if (Config.HandleDependencies)
+            if (wrapNonBHoMObjects)
             {
-                var dependencyObjects = GetDependencyObjects<T>(newObjects, tag);
+                IEnumerable<IObject> objectsToPush = objects.Select(x => x is BHoMObject ?
+                    x : new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } } // Wraps non-BHoMObject in a custom BHoMObject);
+                    ); 
 
-                foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, tag))
-                        return false;
+                return objectsToPush;
             }
 
-            return UpdateObjects(newObjects);
+            return objects;
         }
     }
 }
