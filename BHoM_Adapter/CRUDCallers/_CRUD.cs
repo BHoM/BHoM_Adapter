@@ -149,7 +149,7 @@ namespace BH.Adapter
 
             // Map properties for the objects that overlap (between existing and pushed) and Update them
             diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
-            UpdateObjects(diagram.Intersection.Select(x => x.Item1));
+            Update(diagram.Intersection.Select(x => x.Item1));
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;

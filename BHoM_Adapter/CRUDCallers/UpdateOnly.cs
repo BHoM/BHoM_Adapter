@@ -58,7 +58,7 @@ namespace BH.Adapter
                         return false;
             }
 
-            return UpdateObjects(newObjects);
+            return Update(newObjects);
         }
 
         protected virtual bool DependenciesUpdateOnly<T>(IEnumerable<T> objectsToUpdate, string tag = "") where T : IBHoMObject
@@ -75,7 +75,7 @@ namespace BH.Adapter
             foreach (var depObj in dependencyObjects)
                 DependenciesUpdateOnly(depObj.Value as dynamic);
 
-            return UpdateObjects(objects);
+            return Update(objects);
         }
     }
 }
