@@ -42,6 +42,9 @@ namespace BH.Adapter
         // The Create must only contain the logic that generates the objects in the external software.
         // It is primarily called by the Push, in the context of the CRUD method, and also by other methods that require it (Update, UpdateProperty).
         // It must be implemented (overrided) at the Toolkit level.
-        protected abstract bool Create<T>(IEnumerable<T> objects) where T : IObject;
+        protected virtual bool Create<T>(IEnumerable<T> objects) where T : IBHoMObject
+        {
+            return Create(objects as dynamic); // Must be implemented at the Toolkit level.
+        }
     }
 }
