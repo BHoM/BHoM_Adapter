@@ -42,7 +42,7 @@ namespace BH.Adapter
 
         // Unlike the Create, Delete and Read, this method already exposes a simple implementation: it calls Delete and then Create.
         // It can be overridden at the Toolkit level if a more appropriate implementation is required.
-        protected virtual bool UpdateObjects<T>(IEnumerable<T> objects) where T : IBHoMObject
+        protected virtual bool Update<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
             Type objectType = typeof(T);
             if (Config.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
