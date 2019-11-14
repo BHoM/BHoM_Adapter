@@ -34,14 +34,14 @@ namespace BH.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterConfig adapterConfig, string tag = "", Dictionary<string, object> pushConfig = null)
+        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterSettings adapterSettings, string tag = "", Dictionary<string, object> pushConfig = null)
         {
             // To make use of this method, you can either:
             // 1) Set Config.WrapNonBHoMObjects to true in your Toolkit, or 
             // 2) Specify a pushConfig input when Pushing, with a key "WrapNonBHoMObjects" with value set to true.
 
             // Read pushConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Config.
-            bool wrapNonBHoMObjects = adapterConfig.WrapNonBHoMObjects;
+            bool wrapNonBHoMObjects = adapterSettings.WrapNonBHoMObjects;
             object wrapNonBHoMObjValue;
             if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
 

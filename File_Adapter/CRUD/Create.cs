@@ -40,7 +40,7 @@ namespace BH.Adapter.FileAdapter
         protected override bool Create<T>(IEnumerable<T> objects)
         {
 
-            bool clearFile = Config.ProcessInMemory;
+            bool clearFile = AdapterSettings.ProcessInMemory;
 
             if (m_isJSON)
                 return CreateJson((IEnumerable<IBHoMObject>)objects, clearFile);

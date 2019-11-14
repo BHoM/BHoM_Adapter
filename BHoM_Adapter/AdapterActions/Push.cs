@@ -41,20 +41,20 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> pushConfig = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> config = null)
         {
             bool success = true;
 
             // Set the Push Option to Adapter's default if unset. Base Adapter default is FullCRUD.
             if (pushOption == PushOption.Unset)
-                pushOption = Config.PushOption;
+                pushOption = AdapterSettings.PushOption;
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
+            List<IObject> objectsToPush = AdapterSettings.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            WrapNonBHoMObjects(objectsToPush, Config, tag, pushConfig);
+            WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
 
             // Perform the actual Push.
             Type iBHoMObjectType = typeof(IBHoMObject);

@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Base.Adapter;
 
 namespace BH.Adapter
 {
@@ -40,7 +41,7 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         // Calls the appropriate basic CRUD/Read method.
-        public virtual IEnumerable<object> Pull(IRequest request, Dictionary<string, object> config = null)
+        public virtual IEnumerable<object> Pull(IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> config = null)
         {
             // --------------------------------------------------------------------------------- //
             // *** Temporary retrocompatibility fix ***
