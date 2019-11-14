@@ -28,7 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Base.Adapter;
 
 namespace BH.Adapter
 {

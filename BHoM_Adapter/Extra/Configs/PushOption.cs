@@ -20,17 +20,19 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Base.Adapter;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace BH.Adapter
 {
-    public class AdapterSettings
+    public enum PushOption
     {
-        public bool HandleDependencies { get; set; } = true;
-        public bool ProcessInMemory { get; set; } = false;
-        public bool UseAdapterId { get; set; } = true;
-        public bool CloneBeforePush { get; set; } = true;
-        public bool WrapNonBHoMObjects { get; set; } = false;
-        public PushOption PushOption = PushOption.FullCRUD;
+        FullCRUD,
+        CreateOnly,
+        UpdateOnly,
+        Unset
     }
 }
-

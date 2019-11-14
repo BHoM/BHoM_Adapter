@@ -22,13 +22,10 @@
 
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Data.Requests;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Base.Adapter;
 
 namespace BH.Adapter
 {
@@ -54,7 +51,7 @@ namespace BH.Adapter
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
+            Modify.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
 
             // Perform the actual Push.
             Type iBHoMObjectType = typeof(IBHoMObject);
