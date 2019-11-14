@@ -41,7 +41,7 @@ namespace BH.Adapter
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
-        protected AdapterConfig Config { get; set; } = new AdapterConfig();
+        protected AdapterSettings AdapterSettings { get; set; } = new AdapterSettings();
 
 
         /***************************************************/

@@ -23,7 +23,7 @@
 using BH.oM.Base.Adapter;
 namespace BH.Adapter
 {
-    public class AdapterConfig
+    public class AdapterSettings
     {
         public bool HandleDependencies { get; set; } = true;
         public bool ProcessInMemory { get; set; } = false;

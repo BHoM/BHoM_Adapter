@@ -58,7 +58,7 @@ namespace BH.Adapter
                 existing = new List<T>();
 
             // Merge and push the dependencies
-            if (Config.HandleDependencies)
+            if (AdapterSettings.HandleDependencies)
             {
                 var dependencyObjects = GetDependencyObjects<T>(objectsToPush, tag);
 
@@ -70,20 +70,20 @@ namespace BH.Adapter
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
 
-            if (Config.ProcessInMemory)
+            if (AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
 
             // Assign Id if needed
-            if (Config.UseAdapterId)
+            if (AdapterSettings.UseAdapterId)
                 AssignId(objectsToCreate);
 
             // Create objects
             if (!Create(objectsToCreate))
                 return false;
 
-            if (Config.UseAdapterId)
+            if (AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 

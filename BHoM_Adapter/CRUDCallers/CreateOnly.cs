@@ -49,7 +49,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (Config.HandleDependencies)
+            if (AdapterSettings.HandleDependencies)
             {
                 var dependencyObjects = GetDependencyObjects<T>(newObjects, tag); //first-level dependencies
 

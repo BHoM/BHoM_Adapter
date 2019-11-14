@@ -54,7 +54,7 @@ namespace BH.Adapter.FileAdapter
             ProcessExtension(ref m_FilePath);
 
             m_isJSON = Path.GetExtension(m_FilePath) == ".json";
-            this.Config.UseAdapterId = false;
+            this.AdapterSettings.UseAdapterId = false;
         }
 
         /***************************************************/
@@ -69,10 +69,10 @@ namespace BH.Adapter.FileAdapter
             CreateFileAndFolder();
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them work as BHoMObjects. 
-            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, Config, tag, config).ToList();
+            List<IObject> objectsToPush = Modify.WrapNonBHoMObjects(objects, AdapterSettings, tag, config).ToList();
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            objectsToPush = Config.CloneBeforePush ? objectsToPush.Select(x => x.DeepClone()).ToList() : objects.ToList();
+            objectsToPush = AdapterSettings.CloneBeforePush ? objectsToPush.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 
