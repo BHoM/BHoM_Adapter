@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Base.Adapter;
 
 namespace BH.Adapter
 {
@@ -40,17 +41,13 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", Dictionary<string, object> pushConfig = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> pushConfig = null)
         {
             bool success = true;
 
-            // Get the Push Type from the pushConfig.
-            string pushType;
-            object ptObj;
-            if (pushConfig != null && pushConfig.TryGetValue("PushType", out ptObj))
-                pushType = ptObj.ToString();
-            else
-                pushType = "Replace";
+            // Set the Push Option to Adapter's default if unset. Base Adapter default is FullCRUD.
+            if (pushOption == PushOption.Unset)
+                pushOption = Config.PushOption;
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             List<IObject> objectsToPush = Config.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
@@ -70,9 +67,13 @@ namespace BH.Adapter
 
                 if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
                 {
-                    if (pushType == "Replace")
+                    if (pushOption == PushOption.FullCRUD)
                         success &= CRUD(list as dynamic, tag);
-                    else if (pushType == "UpdateOnly")
+                    else if (pushOption == PushOption.CreateOnly)
+                    {
+                        success &= CreateOnly(list as dynamic, tag);
+                    }
+                    else if (pushOption == PushOption.UpdateOnly)
                     {
                         success &= UpdateOnly(list as dynamic, tag);
                     }
