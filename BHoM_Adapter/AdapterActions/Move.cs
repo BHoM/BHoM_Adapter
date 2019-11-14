@@ -42,12 +42,18 @@ namespace BH.Adapter
         // Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.
         public virtual bool Move(BHoMAdapter to, IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> pullConfig = null, PushOption pushOption = PushOption.Unset, Dictionary<string, object> pushConfig = null)
         {
+            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            ActionConfig = pullConfig == null ? new Dictionary<string, object>() : pullConfig;
+
             string tag = "";
             if (request is FilterRequest)
                 tag = (request as FilterRequest).Tag;
 
             IEnumerable<object> objects = Pull(request, pullOption, pullConfig);
             int count = objects.Count();
+
+            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            ActionConfig = pushConfig == null ? new Dictionary<string, object>() : pushConfig;
 
             return to.Push(objects.Cast<IObject>(), tag, pushOption, pushConfig).Count() == count;
         }
