@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Base.Adapter;
 namespace BH.Adapter
 {
     public class AdapterConfig
@@ -29,6 +30,7 @@ namespace BH.Adapter
         public bool UseAdapterId { get; set; } = true;
         public bool CloneBeforePush { get; set; } = true;
         public bool WrapNonBHoMObjects { get; set; } = false;
+        public PushOption PushOption = PushOption.FullCRUD;
     }
 }
 
