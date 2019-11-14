@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace BH.Adapter
 {
@@ -37,20 +38,35 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
+        [Description("A name for the Adapter implementation in a Toolkit. E.g. Speckle_Adapter. Defaults to derived class name.")]
         public string AdapterId { get; set; }
+
+        [Description("Different default settings for specific implementations may be set in the constructor.")]
+        protected AdapterSettings AdapterSettings { get; set; } = new AdapterSettings();
+
+        [Description("Can be used to store any kind of additional data to be used in any Adapter method.")]
+        public Dictionary<string, object> ActionConfig { get; set; } = new Dictionary<string, object>();
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
-        protected AdapterSettings AdapterSettings { get; set; } = new AdapterSettings();
 
+        /***************************************************/
+        /**** Constructor                               ****/
+        /***************************************************/
+
+        public BHoMAdapter()
+        {
+            AdapterId = GetType().Name;
+        }
 
         /***************************************************/
         /**** Protected Methods                         ****/
         /***************************************************/
 
-        // This method has to be implemented (overridden) at the Toolkit level for the CRUD method to work.
-        // It tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed.
-        // E.g. A Line has dependency type of Points. See the wiki or look at existing Adapter implementations in the Toolkits for more info.
+        [Description("To be implemented (overrided) at the Toolkit level for the full CRUD to work." +
+            "Tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed." +
+            "E.g. A Line has dependency type of Points. Needed because not all software have the same dependency relationship." +
+            "See the wiki or look at existing Adapter implementations in the Toolkits for more info.")]
         protected virtual List<Type> DependencyTypes<T>()
         {
             return new List<Type>();
@@ -83,6 +99,7 @@ namespace BH.Adapter
             if (DataUpdated != null)
                 DataUpdated.Invoke(this, new EventArgs());
         }
+
 
     }
 }
