@@ -50,7 +50,7 @@ namespace BH.Adapter
 
         // This method has to be implemented (overridden) at the Toolkit level for the CRUD method to work.
         // It tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed.
-        // E.g. A Line has dependency type of Points. See the wiki or look at existing Toolkit implementations for more info.
+        // E.g. A Line has dependency type of Points. See the wiki or look at existing Adapter implementations in the Toolkits for more info.
         protected virtual List<Type> DependencyTypes<T>()
         {
             return new List<Type>();

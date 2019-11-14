@@ -20,37 +20,16 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Base;
-using BH.Engine.Base;
-using BH.oM.Data.Requests;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public enum PullOption
     {
-        /******************************************************/
-        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
-        /******************************************************/
-        /* These methods represent Actions that the Adapter can complete. 
-           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
-
-        // Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.
-        public virtual bool Move(BHoMAdapter to, IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> pullConfig = null, PushOption pushOption = PushOption.Unset, Dictionary<string, object> pushConfig = null)
-        {
-            string tag = "";
-            if (request is FilterRequest)
-                tag = (request as FilterRequest).Tag;
-
-            IEnumerable<object> objects = Pull(request, pullOption, pullConfig);
-            int count = objects.Count();
-            return to.Push(objects.Cast<IObject>(), tag, pushOption, pushConfig).Count() == count;
-        }
-
-
+        Unset
     }
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -22,35 +22,38 @@
 
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Data.Requests;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace BH.Adapter
+namespace BH.Adapter.FileAdapter
 {
-    public abstract partial class BHoMAdapter
+    public partial class FileAdapter : BHoMAdapter
     {
-        /******************************************************/
-        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
-        /******************************************************/
-        /* These methods represent Actions that the Adapter can complete. 
-           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
-
-        // Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.
-        public virtual bool Move(BHoMAdapter to, IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> pullConfig = null, PushOption pushOption = PushOption.Unset, Dictionary<string, object> pushConfig = null)
+        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> config = null)
         {
-            string tag = "";
-            if (request is FilterRequest)
-                tag = (request as FilterRequest).Tag;
+            if (!ProcessExtension(ref m_FilePath))
+                return null;
 
-            IEnumerable<object> objects = Pull(request, pullOption, pullConfig);
-            int count = objects.Count();
-            return to.Push(objects.Cast<IObject>(), tag, pushOption, pushConfig).Count() == count;
+            CreateFileAndFolder();
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
+            List<IObject> objectsToPush = AdapterSettings.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
+
+            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
+            // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
+            Modify.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
+
+            IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
+
+            if (bhomObjects.Count() != objects.Count())
+                Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects." + Environment.NewLine +
+                    "If you want to push non-BHoMobject, specify a push config with the option `WrapNonBHoMObject` set to true.");
+
+            bool success = this.CRUD<IBHoMObject>(bhomObjects, tag);
+
+            return success ? objectsToPush : new List<IObject>();
         }
-
-
     }
 }

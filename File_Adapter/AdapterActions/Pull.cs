@@ -20,41 +20,35 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Base;
 using BH.oM.Base;
-using BH.oM.Structure.Elements;
+using BH.Engine.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using BH.oM.Data.Requests;
+using System.IO;
 
-namespace BH.Adapter
+namespace BH.Adapter.FileAdapter
 {
-    public static partial class Modify
+    public partial class FileAdapter : BHoMAdapter
     {
-        /***************************************************/
-        /**** Public Methods                            ****/
-        /***************************************************/
-
-        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterSettings adapterSettings, string tag = "", Dictionary<string, object> pushConfig = null)
+        public override IEnumerable<object> Pull(IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> config = null)
         {
-            // To make use of this method, you can either:
-            // 1) Set Config.WrapNonBHoMObjects to true in your Toolkit, or 
-            // 2) Specify a pushConfig input when Pushing, with a key "WrapNonBHoMObjects" with value set to true.
-
-            // Read pushConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Config.
-            bool wrapNonBHoMObjects = adapterSettings.WrapNonBHoMObjects;
-            object wrapNonBHoMObjValue;
-            if (pushConfig != null && pushConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjValue)) wrapNonBHoMObjects = (bool)wrapNonBHoMObjValue;
-
-            if (wrapNonBHoMObjects)
+            if (!System.IO.File.Exists(m_FilePath))
             {
-                objects = objects.Select(x => typeof(IBHoMObject).IsAssignableFrom(x.GetType()) ?
-                    x : new CustomObject() { CustomData = new Dictionary<string, object> { { "WrappedObject", x } } } // Wraps non-BHoMObject in a custom BHoMObject);
-                    );
+                Engine.Reflection.Compute.RecordError($"File not found: {m_FilePath} - Cannot pull from this file");
+                return null;
+            }
+            else if (!Path.HasExtension(m_FilePath))
+            {
+                Engine.Reflection.Compute.RecordNote($"No extension specified in the FileName input. Default is .json.");
+                m_FilePath += ".json";
 
-                return true;
+                return null;
             }
 
-            return false;
+            return base.Pull(request, pullOption, config);
         }
     }
 }
