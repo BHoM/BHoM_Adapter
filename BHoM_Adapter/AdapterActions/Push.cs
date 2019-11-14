@@ -40,9 +40,6 @@ namespace BH.Adapter
         // Performs the full CRUD if implemented, or calls the appropriate basic CRUD/Create method.
         public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> config = null)
         {
-            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
-            ActionConfig = config == null ? new Dictionary<string, object>() : config;
-
             bool success = true;
 
             // Set the Push Option to Adapter's default if unset. Base Adapter default is FullCRUD.
