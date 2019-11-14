@@ -42,6 +42,9 @@ namespace BH.Adapter
         // Calls the appropriate basic CRUD/Read method.
         public virtual IEnumerable<object> Pull(IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> config = null)
         {
+            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            ActionConfig = config == null ? new Dictionary<string, object>() : config;
+
             // --------------------------------------------------------------------------------- //
             // *** Temporary retrocompatibility fix ***
             // If it's a FilterRequest, check if it should read IResults or Objects with that.

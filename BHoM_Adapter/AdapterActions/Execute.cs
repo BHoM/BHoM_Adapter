@@ -42,6 +42,9 @@ namespace BH.Adapter
         // Used to send specific commands to the external software, if it supports it. It should be implemented (overridden) at the Toolkit level.
         public virtual bool Execute(string command, Dictionary<string, object> parameters = null, Dictionary<string, object> config = null)
         {
+            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            ActionConfig = config == null ? new Dictionary<string, object>() : config;
+
             return false;
         }
     }

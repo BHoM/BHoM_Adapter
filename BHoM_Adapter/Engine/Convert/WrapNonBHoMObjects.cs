@@ -28,10 +28,10 @@ using System.Linq;
 
 namespace BH.Adapter
 {
-    public static partial class Modify
+    public static partial class Convert
     {
         /***************************************************/
-        /**** Public Methods                            ****/
+        /**** Public Methods                            ****/ // MAKE THIS A CONVERT METHOD
         /***************************************************/
 
         public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterSettings adapterSettings, string tag = "", Dictionary<string, object> pushConfig = null)

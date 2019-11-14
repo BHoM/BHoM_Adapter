@@ -43,7 +43,7 @@ namespace BH.Adapter.FileAdapter
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            Modify.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
+            Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 
