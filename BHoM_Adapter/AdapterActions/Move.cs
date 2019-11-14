@@ -48,6 +48,7 @@ namespace BH.Adapter
 
             IEnumerable<object> objects = Pull(request, pullOption, pullConfig);
             int count = objects.Count();
+
             return to.Push(objects.Cast<IObject>(), tag, pushOption, pushConfig).Count() == count;
         }
 

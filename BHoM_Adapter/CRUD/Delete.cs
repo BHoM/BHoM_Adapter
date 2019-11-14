@@ -71,7 +71,7 @@ namespace BH.Adapter
             return Delete(request.Type, request.Tag);
         }
 
-        protected virtual int Delete(Type type, string tag = "", Dictionary<string, object> config = null)
+        protected virtual int Delete(Type type, string tag = "")
         {
             if (tag == "")
             {

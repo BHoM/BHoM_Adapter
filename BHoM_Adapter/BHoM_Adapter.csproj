@@ -89,23 +89,23 @@
     <Compile Include="AdapterActions\Move.cs" />
     <Compile Include="AdapterActions\Pull.cs" />
     <Compile Include="AdapterActions\Push.cs" />
-    <Compile Include="Extra\Configs\AdapterSettings.cs" />
-    <Compile Include="Extra\Configs\PullOption.cs" />
-    <Compile Include="Extra\Configs\PushOption.cs" />
-    <Compile Include="CRUDCallers\CreateOnly.cs" />
+    <Compile Include="AdapterSettings.cs" />
+    <Compile Include="Engine\_PullMethods\enums\PullOption.cs" />
+    <Compile Include="Engine\_PushMethods\enums\PushOption.cs" />
+    <Compile Include="Engine\_PushMethods\CreateOnly.cs" />
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="CRUD\Delete.cs" />
-    <Compile Include="CRUDCallers\_CRUD.cs" />
-    <Compile Include="Extra\AssignId.cs" />
+    <Compile Include="Engine\_PushMethods\FullCRUD.cs" />
+    <Compile Include="Engine\Modify\AssignId.cs" />
     <Compile Include="CRUD\Read.cs" />
     <Compile Include="CRUD\Update.cs" />
-    <Compile Include="Extra\GetDependencyObjects.cs" />
-    <Compile Include="Extra\MapSpecialProperties.cs" />
+    <Compile Include="Engine\Query\GetDependencyObjects.cs" />
+    <Compile Include="Engine\Modify\MapSpecialProperties.cs" />
     <Compile Include="BHoMAdapter.cs" />
-    <Compile Include="Extra\ExtraCRUD\ReadResults.cs" />
-    <Compile Include="Extra\WrapNonBHoMObjects.cs" />
+    <Compile Include="Engine\_PullMethods\ReadResults.cs" />
+    <Compile Include="Engine\Convert\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CRUDCallers\UpdateOnly.cs" />
+    <Compile Include="Engine\_PushMethods\UpdateOnly.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
