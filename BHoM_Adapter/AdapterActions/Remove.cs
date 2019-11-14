@@ -39,12 +39,12 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        // To be renamed to "Remove" or something different from the CRUD method "Delete".
         // Calls the basic CRUD/Delete method.
-        public virtual int Delete(IRequest request, Dictionary<string, object> config = null)
+        public virtual int Remove(IRequest request, Dictionary<string, object> config = null)
         {
-            // If the provided request is a FilterRequest, the specific wrapper method for FilterRequest is called.
-            // For all other cases, Toolkits should implement specific IRequests and the related CRUD Wrapper method(s).
+            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            ActionConfig = config == null ? new Dictionary<string, object>() : config;
+
             return Delete(request as dynamic);
         }
     }
