@@ -85,7 +85,9 @@ namespace BH.Adapter
 
             if (Config.UseAdapterId)
             {
-                // Map Ids to the original set of objects (before we extracted the distincts elements from it)
+                // Map Ids to the original set of objects (before we extracted the distincts elements from it).
+                // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
+                // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
                 IEqualityComparer<T> comparer = Comparer<T>();
                 foreach (T item in objectsToPush)
                     item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];

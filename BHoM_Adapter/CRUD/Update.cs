@@ -59,15 +59,5 @@ namespace BH.Adapter
         {
             return 0;
         }
-
-        /***************************************************/
-        /**** Wrapper methods                           ****/
-        /***************************************************/
-        /* These methods extend the functionality of the basic methods (they wrap them) to avoid boilerplate code.
-           They get called by the Adapter Actions (Push, Pull, etc.), and they are responsible for calling the basic methods. */
-
-     
-
-        /***************************************************/
     }
 }
