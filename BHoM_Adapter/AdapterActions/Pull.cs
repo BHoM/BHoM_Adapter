@@ -55,11 +55,13 @@ namespace BH.Adapter
                     return ReadResults(filterReq);
             // --------------------------------------------------------------------------------- //
 
+            //Casting the adapter to its instance type (this as dynamic) to make sure all ReadResults methods are captured
             if (request is IResultRequest)
-                return ReadResults(request as dynamic);
+                return (this as dynamic).ReadResults(request as dynamic);
 
+            //Casting the adapter to its instance type (this as dynamic) to make sure all Read methods are captured
             if (request is IRequest)
-                return Read(request as dynamic);
+                return (this as dynamic).Read(request as dynamic);
 
             return new List<object>();
         }
