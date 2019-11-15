@@ -55,11 +55,11 @@ namespace BH.Adapter
                     return ReadResults(filterReq);
             // --------------------------------------------------------------------------------- //
 
-            //Casting the adapter to its instance type (this as dynamic) to make sure all ReadResults methods are captured
+            // `(this as dynamic)` casts the abstract BHoMAdapter to its instance type (e.g. Speckle_Adapter), so all public ReadResults methods are captured
             if (request is IResultRequest)
                 return (this as dynamic).ReadResults(request as dynamic);
 
-            //Casting the adapter to its instance type (this as dynamic) to make sure all Read methods are captured
+            // `(this as dynamic)` casts the abstract BHoMAdapter to its instance type (e.g. Speckle_Adapter), so all public Read methods are captured
             if (request is IRequest)
                 return (this as dynamic).Read(request as dynamic);
 
