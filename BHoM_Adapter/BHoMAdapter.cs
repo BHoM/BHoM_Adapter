@@ -39,14 +39,14 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("A name for the Adapter implementation in a Toolkit. E.g. Speckle_Adapter. Defaults to derived class name.")]
+        [Description("Name of the external software followed by `_id`. E.g. `Speckle` -> `Speckle_id`. Automatically extracted from derived class name (e.g. Speckle_Adapter).")]
         public string AdapterId { get; set; }
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
-        protected AdapterSettings AdapterSettings { get; set; } = new AdapterSettings();
+        protected AdapterSettings AdapterSettings { get; set; } 
 
         [Description("Can be used to store any kind of additional data to be used in any Adapter method.")]
-        public Dictionary<string, object> ActionConfig { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> ActionConfig { get; set; }
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
@@ -57,7 +57,11 @@ namespace BH.Adapter
 
         public BHoMAdapter()
         {
-            AdapterId = GetType().Name;
+            AdapterId = GetType().Name.Split('_')[0] + "_id"; // e.g. Speckle_Adapter -> "Speckle_id"
+
+            AdapterSettings = new AdapterSettings(); // Change the default AdapterSettings values in your Toolkit's Adapter constructor, e.g. AdapterSettings.WrapNonBHoMObjects = true;
+
+            ActionConfig = new Dictionary<string, object>();
         }
 
         /***************************************************/
@@ -73,6 +77,7 @@ namespace BH.Adapter
             return new List<Type>();
         }
 
+        /***************************************************/
 
         protected virtual object NextId(Type objectType, bool refresh = false)
         {
@@ -87,7 +92,6 @@ namespace BH.Adapter
         }
 
         /***************************************************/
-
 
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
