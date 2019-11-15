@@ -23,7 +23,7 @@
 using BH.oM.Base;
 using BH.oM.Structure.Elements;
 
-namespace BH.Adapter
+namespace BH.Engine.Adapter
 {
     public static partial class Modify
     {

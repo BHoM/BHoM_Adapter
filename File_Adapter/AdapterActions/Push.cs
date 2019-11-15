@@ -21,7 +21,9 @@
  */
 
 using BH.oM.Base;
+using BH.oM.Adapter;
 using BH.Engine.Base;
+using BH.Engine.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushOption pushOption = PushOption.Unset, Dictionary<string, object> config = null)
+        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushType pushOption = PushType.AdapterDefault, Dictionary<string, object> config = null)
         {
             if (!ProcessExtension(ref m_FilePath))
                 return null;
@@ -43,7 +45,7 @@ namespace BH.Adapter.FileAdapter
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
+            Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 

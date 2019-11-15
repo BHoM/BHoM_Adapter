@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.oM.Adapter;
 using BH.Engine.Base;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override IEnumerable<object> Pull(IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> config = null)
+        public override IEnumerable<object> Pull(IRequest request, PullType pullOption = PullType.AdapterDefault, Dictionary<string, object> config = null)
         {
             if (!System.IO.File.Exists(m_FilePath))
             {

@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.oM.Adapter;
 using BH.Engine.Base;
 using BH.oM.Data.Requests;
 using System;
@@ -72,6 +73,12 @@ namespace BH.Adapter
             return new List<Type>();
         }
 
+
+        protected virtual object NextId(Type objectType, bool refresh = false)
+        {
+            return null;
+        }
+
         /***************************************************/
 
         protected virtual IEqualityComparer<T> Comparer<T>()
@@ -81,9 +88,18 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected virtual object NextId(Type objectType, bool refresh = false)
+
+        protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            return null;
+            bool refresh = true;
+            foreach (T item in objects)
+            {
+                if (!item.CustomData.ContainsKey(AdapterId))
+                {
+                    item.CustomData[AdapterId] = NextId(typeof(T), refresh);
+                    refresh = false;
+                }
+            }
         }
 
         /***************************************************/

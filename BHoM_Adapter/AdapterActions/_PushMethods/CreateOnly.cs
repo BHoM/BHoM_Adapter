@@ -20,15 +20,17 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.oM.Data.Collections;
+using BH.Engine.Adapter;
+using BH.Engine.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+
 
 namespace BH.Adapter
 {
@@ -51,7 +53,8 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (AdapterSettings.HandleDependencies)
             {
-                var dependencyObjects = GetDependencyObjects<T>(newObjects, tag); //first-level dependencies
+                var dependencyTypes = DependencyTypes<T>();
+                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, tag); //first-level dependencies
 
                 foreach (var depObj in dependencyObjects)
                     if (!DependenciesCreateOnly(depObj.Value as dynamic, tag))
@@ -70,8 +73,9 @@ namespace BH.Adapter
             if (tag != "")
                 objects.ForEach(x => x.Tags.Add(tag));
 
-            // Create any sub-dependency 
-            var dependencyObjects = GetDependencyObjects<T>(objectsToCreate, tag);
+            // Create any sub-dependency
+            var dependencyTypes = DependencyTypes<T>();
+            var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(objectsToCreate, dependencyTypes, tag);
             foreach (var depObj in dependencyObjects)
                 DependenciesCreateOnly(depObj.Value as dynamic);
 
