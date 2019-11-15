@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,31 +20,16 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
-using BH.oM.Base;
-using BH.oM.Data.Collections;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace BH.Adapter
+namespace BH.oM.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public enum PullType
     {
-        protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
-        {
-            bool refresh = true;
-            foreach (T item in objects)
-            {
-                if (!item.CustomData.ContainsKey(AdapterId))
-                {
-                    item.CustomData[AdapterId] = NextId(typeof(T), refresh);
-                    refresh = false;
-                }
-            }
-        }
+        AdapterDefault
     }
 }

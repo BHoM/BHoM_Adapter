@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace BH.Adapter
 {
@@ -39,7 +40,7 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        // Calls the basic CRUD/Delete method.
+        [Description("Calls the basic CRUD/Delete method as appropriate.")]
         public virtual int Remove(IRequest request, Dictionary<string, object> config = null)
         {
             // If specified, set the global ActionConfig value, otherwise make sure to reset it.

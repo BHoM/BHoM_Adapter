@@ -90,6 +90,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Adapter_Engine\Adapter_Engine.csproj">
+      <Project>{78eacce7-71df-4003-bf38-71f80d3f6308}</Project>
+      <Name>Adapter_Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Adapter_oM\Adapter_oM.csproj">
+      <Project>{03CD2C55-F3A7-4C47-B2E8-64909964329D}</Project>
+      <Name>Adapter_oM</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BHoM_Adapter\BHoM_Adapter.csproj">
       <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
       <Name>BHoM_Adapter</Name>

@@ -26,13 +26,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BH.Adapter
+namespace BH.oM.Adapter
 {
-    public enum PushOption
+    public enum PushType
     {
         FullCRUD,
         CreateOnly,
         UpdateOnly,
-        Unset
+        AdapterDefault
     }
 }

@@ -21,13 +21,16 @@
  */
 
 using BH.oM.Base;
-using BH.Engine.Base;
+using BH.oM.Adapter;
 using BH.oM.Data.Requests;
+using BH.Engine.Base;
+using BH.Engine.Adapter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace BH.Adapter
 {
@@ -39,8 +42,8 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        // Calls the appropriate basic CRUD/Read method.
-        public virtual IEnumerable<object> Pull(IRequest request, PullOption pullOption = PullOption.Unset, Dictionary<string, object> config = null)
+        [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate")]
+        public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, Dictionary<string, object> config = null)
         {
             // --------------------------------------------------------------------------------- //
             // *** Temporary retrocompatibility fix ***

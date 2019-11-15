@@ -20,9 +20,10 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.oM.Data.Collections;
+using BH.Engine.Adapter;
+using BH.Engine.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,7 +61,8 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (AdapterSettings.HandleDependencies)
             {
-                var dependencyObjects = GetDependencyObjects<T>(objectsToPush, tag);
+                var dependencyTypes = DependencyTypes<T>();
+                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
 
                 foreach (var depObj in dependencyObjects)
                     if (!CRUD(depObj.Value as dynamic, tag))

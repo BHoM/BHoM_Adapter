@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,16 +20,36 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-namespace BH.Adapter
+using BH.Engine.Reflection;
+using BH.oM.Base;
+using BH.oM.Data.Collections;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+
+namespace BH.Engine.Adapter
 {
-    public class AdapterSettings
+    public static partial class Query
     {
-        public bool HandleDependencies { get; set; } = true;
-        public bool ProcessInMemory { get; set; } = false;
-        public bool UseAdapterId { get; set; } = true;
-        public bool CloneBeforePush { get; set; } = true;
-        public bool WrapNonBHoMObjects { get; set; } = false;
-        public PushOption PushOption = PushOption.FullCRUD;
+        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(IEnumerable<T> objects, List<Type> dependencyTypes, string tag) where T : IBHoMObject
+        {
+            Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
+
+            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
+            foreach (Type t in dependencyTypes)
+            {
+                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
+                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
+
+                var list = miListObject.Invoke(merged, new object[] { merged });
+
+                dict.Add(t, list as IEnumerable);
+            }
+
+            return dict;
+        }
     }
 }
-
