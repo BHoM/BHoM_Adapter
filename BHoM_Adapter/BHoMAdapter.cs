@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.Engine.Adapter;
 using BH.oM.Adapter;
 using BH.Engine.Base;
 using BH.oM.Data.Requests;
@@ -33,7 +34,7 @@ using System.ComponentModel;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public abstract partial class BHoMAdapter : IBHoMAdapter
     {
         /***************************************************/
         /**** Public Properties                         ****/
@@ -113,14 +114,14 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        //public static void AddId(this IBHoMObject obj, object id) //extension method to be defined in non-generic static class
-        //{
-        //    //obj.AddFragment()
-        //}
 
 
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
+            objects.First().AddAdapterId(new TestIdFragment(9));
+            objects.First().AddAdapterId(9);
+
+
             bool refresh = true;
             foreach (T item in objects)
             {

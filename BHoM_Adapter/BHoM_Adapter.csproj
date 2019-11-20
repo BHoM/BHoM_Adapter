@@ -97,6 +97,7 @@
     <Compile Include="CRUD\Update.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="AdapterActions\_PullMethods\ReadResults.cs" />
+    <Compile Include="Extensions\AddId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdapterActions\_PushMethods\UpdateOnly.cs" />
   </ItemGroup>
