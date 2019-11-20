@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BHoM">
+      <HintPath>..\..\BHoM\Build\BHoM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdapterIdFragment.cs" />
     <Compile Include="AdapterSettings.cs" />
     <Compile Include="enums\PullOption.cs" />
     <Compile Include="enums\PushOption.cs" />
