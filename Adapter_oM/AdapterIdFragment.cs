@@ -1,6 +1,6 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -20,17 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Base;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace BH.oM.Adapter
 {
-    public class AdapterSettings
+    public class AdaptersIdFragment : IBHoMFragment
     {
-        public bool HandleDependencies { get; set; } = true;
-        public bool ProcessInMemory { get; set; } = false;
-        public bool UseAdapterId { get; set; } = true;
-        public bool CloneBeforePush { get; set; } = true;
-        public bool WrapNonBHoMObjects { get; set; } = false;
-        public PushType PushOption = PushType.FullCRUD;
-        public bool AutoDefineIds { get; set; } = true;
+        /***************************************************/
+        /**** Properties                                ****/
+        /***************************************************/
+        [Description("The `string` key is the 'Software Name' e.g. Speckle; " +
+            "the `object` value is the id assigned to a specific IBHoMObject." +
+            "We use the general type `object` because ids come in different forms (int, string, GUID, etc.).")]
+        public Dictionary<string, object> AdaptersId { get; set; } = new Dictionary<string, object>();
+        // This can store contemporarily, for a same IBHoMObject: 
+        // the 'SAP' id --> 56 , the 'Unreal' id --> "14", the 'Speckle' id --> {xxxaaaggg}, etc.
     }
 }
-

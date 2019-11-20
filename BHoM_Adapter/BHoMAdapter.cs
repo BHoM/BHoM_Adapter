@@ -39,14 +39,18 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("Name of the external software followed by `_id`. E.g. `Speckle` -> `Speckle_id`. Automatically extracted from derived class name (e.g. Speckle_Adapter).")]
-        public string AdapterId { get; set; }
+        [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
+        public string AdapterName { get; private set; }
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
-        protected AdapterSettings AdapterSettings { get; set; } 
+        protected AdapterSettings AdapterSettings { get; set; }
 
-        [Description("Can be used to store any kind of additional data to be used in any Adapter method.")]
+        [Description("Can be used to store any kind of additional data to be used in any Adapter method." +
+            "Re-initialisation happens in the BHoM_UI every time an Adapter Action (e.g. Push) is activated," +
+            "so the data is not shared between different Actions.")]
         public Dictionary<string, object> ActionConfig { get; set; }
+
+        public static Dictionary<Type, Dictionary<Type, int>> LastId { get; set; }
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
@@ -57,15 +61,28 @@ namespace BH.Adapter
 
         public BHoMAdapter()
         {
-            AdapterId = GetType().Name.Split('_')[0] + "_id"; // e.g. Speckle_Adapter -> "Speckle_id"
+            // Set the adapter name through reflection based on the child class name (e.g. "SpeckleAdapter")
+            AdapterName = GetType().Name;
 
-            AdapterSettings = new AdapterSettings(); // Change the default AdapterSettings values in your Toolkit's Adapter constructor, e.g. AdapterSettings.WrapNonBHoMObjects = true;
+            // Set the AdapterId Key Name (e.g. "Speckle_id") for the CustomData dictionary.
+            // Used only as a Key for the CustomData dictionary; corresponding Value will be the id for the specific Adapter instance.
+            // Might be superseded soon by the ID-as-fragment change.
+            AdapterId = AdapterName.Split(new string[] { "Adapter" }, StringSplitOptions.None)[0]; // e.g. SpeckleAdapter -> "Speckle_id"
 
+            // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
+            // e.g. AdapterSettings.WrapNonBHoMObjects = true;
+            AdapterSettings = new AdapterSettings();
+
+            // First initialisation of the ActionConfig.
+            // Re-initialisation happens in the BHoM_UI every time an Adapter action is activated.
             ActionConfig = new Dictionary<string, object>();
+
+            LastId = new Dictionary<Type, Dictionary<Type, int>>();
+            LastId[this.GetType()] = new Dictionary<Type, int>();
         }
 
         /***************************************************/
-        /**** Protected Methods                         ****/
+        /**** Protected Fields                          ****/
         /***************************************************/
 
         [Description("To be implemented (overrided) at the Toolkit level for the full CRUD to work." +
@@ -81,6 +98,9 @@ namespace BH.Adapter
 
         protected virtual object NextId(Type objectType, bool refresh = false)
         {
+            // refresh: to say if it is the first of many calls during the same pass of the adapter
+            // so you only need to ask the adapter once, then increment
+            // useful for some softwares
             return null;
         }
 
@@ -92,6 +112,12 @@ namespace BH.Adapter
         }
 
         /***************************************************/
+
+        //public static void AddId(this IBHoMObject obj, object id) //extension method to be defined in non-generic static class
+        //{
+        //    //obj.AddFragment()
+        //}
+
 
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
@@ -106,20 +132,21 @@ namespace BH.Adapter
             }
         }
 
+        [Description("Used only as a key for the CustomData dictionary; corresponding value will be the id for the specific Adapter instance.")]
+        protected string AdapterId { get; set; }
+
         /***************************************************/
         /**** Public Events                             ****/
         /***************************************************/
 
         public event EventHandler DataUpdated;
 
-        /***************************************************/ 
+        /***************************************************/
 
         protected virtual void OnDataUpdated()
         {
             if (DataUpdated != null)
                 DataUpdated.Invoke(this, new EventArgs());
         }
-
-
     }
 }
