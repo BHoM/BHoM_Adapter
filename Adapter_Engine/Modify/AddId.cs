@@ -1,6 +1,6 @@
-﻿/*
+/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -20,29 +20,32 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.oM.Structure.Elements;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BH.oM.Adapter
+namespace BH.Engine.Adapter
 {
-    public interface IAdapterIdFragment<T> : IBHoMFragment
+    public static partial class Modify
     {
-        T Id { get; set; }
-    }
-
-    public abstract class AdapterIdFragment<T> : IAdapterIdFragment<T>
-    {
-        public T Id { get; set; }
-
-        public AdapterIdFragment(T id)
+        public static void AddAdapterId<T>(this IBHoMObject obj, IAdapterIdFragment<T> adapterIdFragment)
         {
-            Id = id;
+            obj.Fragments.AddOrReplace(adapterIdFragment);
         }
 
+        public static Type CurrentAdapterIdFragmentType { get; set; } //would need to be always updated before calling the below
+
+        public static void AddAdapterId<T>(this IBHoMObject obj, T id) 
+        {
+            var idFragm = CreateAdapterIdFragment(CurrentAdapterIdFragmentType, id);
+
+            obj.Fragments.AddOrReplace(idFragm);
+        }
+
+        public static IAdapterIdFragment<T> CreateAdapterIdFragment<T>(Type AdapterIdFragmentType, T id)
+        {
+            return (IAdapterIdFragment<T>)Activator.CreateInstance(AdapterIdFragmentType, id);
+        }
     }
 }
