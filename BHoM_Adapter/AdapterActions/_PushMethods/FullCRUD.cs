@@ -36,9 +36,9 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** CRUDCallers Methods                       ****/
+        /**** Push Methods                              ****/
         /***************************************************/
-        // These methods call the CRUD methods as appropriate.
+        // These methods call the CRUD methods as needed from the Push perspective.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
         protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
@@ -53,7 +53,7 @@ namespace BH.Adapter
             //Read all the existing objects of that type
             IEnumerable<T> existing;
 
-            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default)
+            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || AdapterSettings.AutoDefineIds)
                 existing = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
             else
                 existing = new List<T>();
@@ -78,8 +78,14 @@ namespace BH.Adapter
                 objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
 
             // Assign Id if needed
-            if (AdapterSettings.UseAdapterId)
+            if (AdapterSettings.UseAdapterId) // add "&& AdapterSettings.UseOldAssignId" ?
                 AssignId(objectsToCreate);
+            else if (AdapterSettings.AutoDefineIds)
+            {
+                objectsToCreate.Select((o, idx) => o.CustomData[AdapterId] = idx);
+
+                LastId[this.GetType()][typeof(T)] = objectsToCreate.Count();
+            }
 
             // Create objects
             if (!Create(objectsToCreate))

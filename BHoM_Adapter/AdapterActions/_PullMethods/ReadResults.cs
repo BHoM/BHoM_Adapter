@@ -31,12 +31,12 @@ using BH.oM.Common;
 
 namespace BH.Adapter
 {
+
     /***************************************************/
-    /**** EXTRA-CRUD Methods                        ****/
+    /**** Pull Methods                              ****/
     /***************************************************/
-    // These methods are directly called by the AdapterActions and NOT called by the CRUDCallers,
-    // as they don't make use of the CRUD functionality.
-    // Extra-CRUD methods expose some base functionality that is shared by different Toolkits' Adapters.
+    // These methods call the CRUD methods as needed from the Pull perspective.
+
 
     public abstract partial class BHoMAdapter
     {
