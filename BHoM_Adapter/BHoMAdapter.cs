@@ -114,13 +114,10 @@ namespace BH.Adapter
 
         /***************************************************/
 
-
-
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            objects.First().AddAdapterId(new TestIdFragment(9));
-            objects.First().AddAdapterId(9);
-
+            // With new Id fragment, you can do AddAdapterId()
+            // e.g. objects.First().AddAdapterId(new TestIdFragment(9));
 
             bool refresh = true;
             foreach (T item in objects)

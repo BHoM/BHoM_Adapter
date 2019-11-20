@@ -43,6 +43,5 @@ namespace BH.oM.Adapter
         {
             Id = id;
         }
-
     }
 }

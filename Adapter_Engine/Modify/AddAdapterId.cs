@@ -33,19 +33,5 @@ namespace BH.Engine.Adapter
         {
             obj.Fragments.AddOrReplace(adapterIdFragment);
         }
-
-        public static Type CurrentAdapterIdFragmentType { get; set; } //would need to be always updated before calling the below
-
-        public static void AddAdapterId<T>(this IBHoMObject obj, T id) 
-        {
-            var idFragm = CreateAdapterIdFragment(CurrentAdapterIdFragmentType, id);
-
-            obj.Fragments.AddOrReplace(idFragm);
-        }
-
-        public static IAdapterIdFragment<T> CreateAdapterIdFragment<T>(Type AdapterIdFragmentType, T id)
-        {
-            return (IAdapterIdFragment<T>)Activator.CreateInstance(AdapterIdFragmentType, id);
-        }
     }
 }
