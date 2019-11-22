@@ -21,16 +21,12 @@
  */
 
 using BH.oM.Base;
-using BH.Engine.Adapter;
 using BH.oM.Adapter;
-using BH.Engine.Base;
-using BH.oM.Data.Requests;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
+using BH.oM.Structure.Elements;
 
 namespace BH.Adapter
 {
@@ -47,11 +43,14 @@ namespace BH.Adapter
         protected AdapterSettings AdapterSettings { get; set; }
 
         [Description("Can be used to store any kind of additional data to be used in any Adapter method." +
-            "Re-initialisation happens in the BHoM_UI every time an Adapter Action (e.g. Push) is activated," +
+            "Re-initialisation happens every time an Adapter Action (e.g. Push) is activated," +
             "so the data is not shared between different Actions.")]
         public Dictionary<string, object> ActionConfig { get; set; }
 
         public static Dictionary<Type, Dictionary<Type, int>> LastId { get; set; }
+
+        public static Dictionary<Type, List<string>> DominantProperties { get; set; }
+
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
 
@@ -77,6 +76,10 @@ namespace BH.Adapter
             // First initialisation of the ActionConfig.
             // Re-initialisation happens in the BHoM_UI every time an Adapter action is activated.
             ActionConfig = new Dictionary<string, object>();
+
+            DominantProperties = new Dictionary<Type, List<string>> { { typeof(Node), new List<string>() {
+                nameof(BHoMObject.Name), nameof(BHoMObject.Tags), nameof(Node.Support) }
+                } };
 
             LastId = new Dictionary<Type, Dictionary<Type, int>>();
             LastId[this.GetType()] = new Dictionary<Type, int>();

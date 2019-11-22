@@ -30,6 +30,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Reflection;
+using BH.oM.Diffing;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -41,7 +44,7 @@ namespace BH.Adapter
         // These methods call the CRUD methods as needed from the Push perspective.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "", Dictionary<string, object> actionConfig = null) where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -50,13 +53,12 @@ namespace BH.Adapter
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            //Read all the existing objects of that type
-            IEnumerable<T> existing;
-
-            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || AdapterSettings.AutoDefineIds)
-                existing = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
+            //Read all the objects of that type from the external model
+            IEnumerable<T> readObjects;
+            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || (PushType)actionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+                readObjects = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
             else
-                existing = new List<T>();
+                readObjects = new List<T>();
 
             // Merge and push the dependencies
             if (AdapterSettings.HandleDependencies)
@@ -72,10 +74,12 @@ namespace BH.Adapter
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
 
-            if (AdapterSettings.ProcessInMemory)
-                objectsToCreate = ReplaceInMemory(newObjects, existing, tag);
+            if ((PushType)actionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+                objectsToCreate = DeleteAllNotPushed(newObjects, readObjects);
+            else if (AdapterSettings.ProcessInMemory)
+                objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
-                objectsToCreate = ReplaceThroughAPI(newObjects, existing, tag);
+                objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
             if (AdapterSettings.UseAdapterId) // add "&& AdapterSettings.UseOldAssignId" ?
@@ -106,7 +110,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, bool mergeWithComparer = false) where T : IBHoMObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, bool mergeWithComparer = false) where T : class, IBHoMObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -119,7 +123,7 @@ namespace BH.Adapter
             if (mergeWithComparer)
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
-                diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
+                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
                 newObjects = diagram.OnlySet1;
             }
 
@@ -130,39 +134,79 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> existingObjs, string tag) where T : IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag) where T : class, IBHoMObject
         {
             IEqualityComparer<T> comparer = Comparer<T>();
-            VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, existingObjs, comparer);
+            VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
 
-            // Objects to push that do not have any overlap with the existing ones
+            // Objects to push that do not have any overlap with the read ones
             List<T> objsToPush_exclusive = diagram.OnlySet1.ToList();
 
             // Objects existing in the model that do not have any overlap with the objects being pushed
-            List<T> existingObjs_exclusive = diagram.OnlySet2.ToList();
+            List<T> readObjs_exclusive = diagram.OnlySet2.ToList();
 
-            // Do not consider exclusive existing objects that do not contain the currently specified tag. 
+            // Do not consider exclusive read objects that do not contain the currently specified tag. 
             // Those objects do not need any update, so they will be left as they are.
-            existingObjs_exclusive.RemoveAll(x => !x.Tags.Contains(tag));
+            readObjs_exclusive.RemoveAll(x => !x.Tags.Contains(tag));
 
-            // Remove the current tag from exclusive existing objects
-            existingObjs_exclusive.ForEach(x => x.Tags.Remove(tag));
+            // Remove the current tag from exclusive read objects
+            readObjs_exclusive.ForEach(x => x.Tags.Remove(tag));
 
-            // Delete exclusive existing objects that do not have any other tag except the current tag from the model
-            Delete(typeof(T), existingObjs_exclusive.Where(x => x.Tags.Count == 0).Select(x => x.CustomData[AdapterId]));
+            // Objects that do not have any other tag, except the current tag, are to be Deleted from the model.
+            IEnumerable<T> toBeDeleted = readObjs_exclusive.Where(x => x.Tags.Count == 0);
+
+            // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
+            Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
 
             // Update the tags for the rest of the existing objects in the model
-            UpdateProperty(typeof(T),
-                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]),
-                "Tags",
-                existingObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
+            UpdateTag(typeof(T),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
-            // Map properties for the objects that overlap (between existing and pushed) and Update them
-            diagram.Intersection.ForEach(x => x.Item1.MapSpecialProperties(x.Item2, AdapterId));
+            // For the objects that have an overlap between existing and pushed 
+            // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
+            // there might be properties that need to be preserved (e.g. node constraints).
+            // Port (copy over) those properties from the readObjs to the objToPush.
+            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
+
+            // Update the overlapping objects (between read and toPush), with the now ported properties.
             Update(diagram.Intersection.Select(x => x.Item1));
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
+        }
+
+        protected IEnumerable<T> DeleteAllNotPushed<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, DiffConfig diffConfig = null) where T : class, IBHoMObject
+        {
+            // Here we assume that you always push everything (not just a part of the model).
+            // Anything not pushed will get deleted from the model.
+            var diagram = Engine.Diffing.Compute.HashComparing(objsToPush, readObjs);
+
+            // Objects to push that do not have any overlap with the read ones are to be created.
+            var objsToCreate = diagram.OnlySet1;
+
+            // Objects existing in the model that do not have any overlap with the objects being pushed
+            var readObjs_exclusive = diagram.OnlySet2;
+
+            // All objects read from the model that are not currently being pushed are to be deleted.
+            var toBeDeleted = readObjs_exclusive;
+
+            // For the objects that have an overlap between existing and pushed 
+            // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
+            // there might be properties that need to be preserved (e.g. node constraints).
+            // Port (copy over) those properties from the readObjs to the objToPush.
+            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
+
+            // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
+            toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
+
+            Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+
+            // This is to re-create the now deleted overlapping objects.
+            objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));
+
+            // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
+            return objsToCreate.Cast<T>();
         }
 
     }

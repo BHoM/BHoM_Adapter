@@ -40,12 +40,12 @@ namespace BH.Adapter
         /* These methods provide the basic functionalities for the CRUD to work. */
 
 
-        // Basic Delete method that returns objects depending on their Type and Id. 
+        // Basic Delete method that deletes objects depending on their Type and Id. 
         // Its implementation is facultative (not needed for a simple export/import scenario). 
         // Toolkits need to implement (override) this only to get the full CRUD to work.
         protected virtual int Delete(Type type, IEnumerable<object> ids)
         {
-            return 0;
+            throw new NotImplementedException("Delete has not been implemented.");
         }
 
         /***************************************************/
@@ -88,7 +88,7 @@ namespace BH.Adapter
 
                 // Remove tag if other tags as well
                 IEnumerable<IBHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateProperty(type, multiTags.Select(x => x.CustomData[AdapterId]), "Tags", multiTags.Select(x => x.Tags));
+                UpdateTag(type, multiTags.Select(x => x.CustomData[AdapterId]), multiTags.Select(x => x.Tags));
 
                 return ids.Count();
             }
