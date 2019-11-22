@@ -22,6 +22,11 @@
 
 using BH.oM.Base;
 using BH.oM.Structure.Elements;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace BH.Engine.Adapter
 {
@@ -30,25 +35,24 @@ namespace BH.Engine.Adapter
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
-
-        public static bool MapSpecialProperties(this IBHoMObject target, IBHoMObject source, string adapterKey) 
+        [Description("Take properties specified from the source IBHoMObject and assign them to the target IBHoMObject.")]
+        public static void PortProperties<T>(this T target, T source, string adapterIdKeyName) where T : class, IBHoMObject
         {
-            // Add tags from source to target
+            // Port tags from source to target
             foreach (string tag in source.Tags)
                 target.Tags.Add(tag);
 
-            // Map Properties Special Properties
-            _MapSpecialProperties(target as dynamic, source as dynamic);
+            // If target does not have name, port the source name
+            if (string.IsNullOrWhiteSpace(target.Name))
+                target.Name = source.Name;
+
+            // Port any other type-specific properties
+            PortProperties(target as dynamic, source as dynamic);
 
             // Check for id of the source and apply to the target
-            bool found = true;
             object id;
-            if (source.CustomData.TryGetValue(adapterKey, out id))
-            {
-                target.CustomData[adapterKey] = id;
-                found = true;
-            }
-            return found;
+            if (source.CustomData.TryGetValue(adapterIdKeyName, out id))
+                target.CustomData[adapterIdKeyName] = id;
         }
 
 
@@ -56,23 +60,48 @@ namespace BH.Engine.Adapter
         /**** Private Methods                           ****/
         /***************************************************/
 
-        private static void _MapSpecialProperties(IBHoMObject target, IBHoMObject source)
+        private static void PortProperties(Node target, Node source)
         {
-        }
-
-        /***************************************************/
-
-        private static void _MapSpecialProperties(Node target, Node source)
-        {
-            //Check if the source is constraint och taget not, if so add source constraint to target
+            // If source is constrained and target is not, add source constraint to target
             if (source.Support != null && target.Support == null)
                 target.Support = source.Support;
-
-            //If target does not have name, take sources name //TODO: could that be done for all BHoM objects?
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
         }
 
         /***************************************************/
+
+        [Description("Takes the value of a property from the source IBHoMObject and assigns it to the target IBHoMObject.")]
+        public static bool PortProperty<T>(this T target, T source, string propertyName) where T : class, IBHoMObject
+        {
+            // Get the list of properties corresponding to type T
+            Dictionary<string, PropertyInfo> propertyDictionary = typeof(T).GetProperties().ToList().ToDictionary(x => x.Name, x => x);
+
+            if (!propertyDictionary.ContainsKey(propertyName))
+            {
+                BH.Engine.Reflection.Compute.RecordError($"No property {propertyName} found in {nameof(T)}.");
+                return false;
+            }
+
+            var propertyInfo = propertyDictionary[propertyName];
+
+            Func<T, dynamic> getProp = (Func<T, dynamic>)Delegate.CreateDelegate(typeof(Func<T, dynamic>), propertyInfo.GetGetMethod());
+            Action<T, dynamic> setProp = (Action<T, dynamic>)Delegate.CreateDelegate(typeof(Action<T, dynamic>), propertyInfo.GetSetMethod());
+
+
+            dynamic sourcePropValue = getProp(source);
+            dynamic targetPropValue = getProp(target);
+
+            if (targetPropValue != null)
+            {
+                // Assigning a value when the target object has some value assigned to it is dangerous. Better to return an error. 
+                // We then might want to handle these kind of conflicts on property-by-property basis, which would require some specific framework infrastructure.
+                BH.Engine.Reflection.Compute.RecordError($"Cannot port value of overlapping property {propertyName} for an object of type {nameof(T)}." +
+                    $"\nSource object: {source.BHoM_Guid}\nTarget object: {target.BHoM_Guid}");
+                return false;
+            }
+
+            setProp(target, sourcePropValue);
+
+            return true;
+        }
     }
 }

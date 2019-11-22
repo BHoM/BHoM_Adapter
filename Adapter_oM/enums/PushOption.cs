@@ -33,6 +33,7 @@ namespace BH.oM.Adapter
         FullCRUD,
         CreateOnly,
         UpdateOnly,
+        DeleteAllThenCreate,
         AdapterDefault
     }
 }

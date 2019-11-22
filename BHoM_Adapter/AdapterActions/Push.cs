@@ -33,7 +33,7 @@ using System.ComponentModel;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public abstract partial class BHoMAdapter : IBHoMAdapter
     {
         /******************************************************/
         /**** Public Adapter Methods "Adapter ACTIONS"    *****/
@@ -42,20 +42,28 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Pushes the input objects using either the full CRUD, or only Create or Update, depending on the option set in the PushType.")]
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> config = null)
+        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> actionConfig = null)
         {
             bool success = true;
 
-            // Set the Push Option to Adapter's default if unset. Base Adapter default is FullCRUD.
+            // Set the Push Option to Adapter's default if unset (base Adapter default is FullCRUD). Add that to the actionConfig.
             if (pushType == PushType.AdapterDefault)
-                pushType = AdapterSettings.PushOption;
+                pushType = AdapterSettings.PushType;
+
+            actionConfig[nameof(PushType)] = pushType;
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             List<IObject> objectsToPush = AdapterSettings.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
+            // Read actionConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Settings.
+            bool wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
+            object wrapNonBHoMObjs_actionConfig;
+            if (actionConfig != null && actionConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjs_actionConfig))
+                wrapNonBHoMObjects |= (bool)wrapNonBHoMObjs_actionConfig;
+
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
-            // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
+            if (wrapNonBHoMObjects)
+                Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, actionConfig);
 
             // Perform the actual Push.
             Type iBHoMObjectType = typeof(IBHoMObject);

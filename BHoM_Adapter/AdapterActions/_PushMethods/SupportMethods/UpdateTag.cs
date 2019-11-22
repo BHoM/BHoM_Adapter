@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,30 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.Adapter;
+using BH.oM.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
-namespace BH.Engine.Adapter
+namespace BH.Adapter
 {
-    public static partial class Convert
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
+    public abstract partial class BHoMAdapter
     {
-        /***************************************************/
-        /**** Public Methods                            ****/ 
-        /***************************************************/
-
-        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterSettings adapterSettings, string tag = "", Dictionary<string, object> actionConfig = null)
+        // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
+        // It needs to be implemented at the Toolkit level for the full CRUD to work.
+        protected virtual int UpdateTag(Type type, IEnumerable<object> ids, object newTag)
         {
-            // To make use of this method, you can either:
-            // 1) Set AdapterSettings.WrapNonBHoMObjects to true in your Toolkit (so all Push actions will call it), or 
-            // 2) Specify a actionConfig input when Pushing, with a key "WrapNonBHoMObjects" with value set to true.
-
-            objects = objects.Select(x => typeof(IBHoMObject).IsAssignableFrom(x.GetType()) ?
-                x : new CustomObject() { CustomData = new Dictionary<string, object> { { x.GetType().Name + "_IBHoMObjectWrap", x } } } // Wraps non-BHoMObject in a custom BHoMObject
-                );
-
-            return true;
+            return 0;
         }
     }
 }
