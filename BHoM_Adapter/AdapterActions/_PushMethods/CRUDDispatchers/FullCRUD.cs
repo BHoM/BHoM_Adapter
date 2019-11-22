@@ -123,7 +123,7 @@ namespace BH.Adapter
             if (mergeWithComparer)
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
-                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
+                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
                 newObjects = diagram.OnlySet1;
             }
 
@@ -167,7 +167,7 @@ namespace BH.Adapter
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
+            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
             Update(diagram.Intersection.Select(x => x.Item1));
@@ -195,7 +195,7 @@ namespace BH.Adapter
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId));
+            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
 
             // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));

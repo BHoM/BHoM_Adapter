@@ -49,7 +49,8 @@ namespace BH.Adapter
 
         public static Dictionary<Type, Dictionary<Type, int>> LastId { get; set; }
 
-        public static Dictionary<Type, List<string>> DominantProperties { get; set; }
+        [Description("Properties of the objects that, in case of overlap, need to be ported from the ReadObjects to the ObjectsToPush.")]
+        public static Dictionary<Type, List<string>> PropertiesToPort { get; set; }
 
 
         public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
@@ -77,9 +78,10 @@ namespace BH.Adapter
             // Re-initialisation happens in the BHoM_UI every time an Adapter action is activated.
             ActionConfig = new Dictionary<string, object>();
 
-            DominantProperties = new Dictionary<Type, List<string>> { { typeof(Node), new List<string>() {
-                nameof(BHoMObject.Name), nameof(BHoMObject.Tags), nameof(Node.Support) }
-                } };
+            PropertiesToPort = new Dictionary<Type, List<string>>
+            {
+                { typeof(Node), new List<string>(){nameof(Node.Support)} }
+            };
 
             LastId = new Dictionary<Type, Dictionary<Type, int>>();
             LastId[this.GetType()] = new Dictionary<Type, int>();
