@@ -38,6 +38,8 @@ namespace BH.Engine.Adapter
         [Description("Take properties specified from the source IBHoMObject and assign them to the target IBHoMObject.")]
         public static void PortProperties<T>(this T target, T source, string adapterIdKeyName, List<string> additionalPropertiesToPort = null) where T : class, IBHoMObject
         {
+            // To be renamed PortBHoMObjectProperties or something. So the "specific type" portProperties method is properly named. This one does something more.
+
             // Port tags from source to target
             foreach (string tag in source.Tags)
                 target.Tags.Add(tag);
@@ -53,7 +55,7 @@ namespace BH.Engine.Adapter
 
             // Port any other type-specific properties
             bool foundOverload = false;
-            foundOverload = PortProperties(target as dynamic, source as dynamic);
+            foundOverload = PortProperties(target as dynamic, source as dynamic); // for this, this method has to sit in the BHoMAdapter, not the engine! Otherwise we can't get rid of the Structure namespace here.
 
             if (!foundOverload && additionalPropertiesToPort != null)
                 PortProperties(target, source, additionalPropertiesToPort);
