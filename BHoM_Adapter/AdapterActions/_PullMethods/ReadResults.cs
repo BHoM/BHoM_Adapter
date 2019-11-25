@@ -45,6 +45,7 @@ namespace BH.Adapter
         // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
         protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
         {
+            Engine.Reflection.Compute.RecordError($"ReadResults for {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<BH.oM.Common.IResult>();
         }
 
@@ -59,6 +60,7 @@ namespace BH.Adapter
             // The implementation must:
             // 1. extract all the needed info from the IRequest
             // 2. return a call to the Basic Method ReadResult() with the extracted info.
+            Engine.Reflection.Compute.RecordError($"ReadResults for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<BH.oM.Common.IResult>();
         }
    
@@ -100,6 +102,7 @@ namespace BH.Adapter
                 results = ReadResults(filterRequest.Type, objectIds, cases, divisions).ToList();
                 results.Sort();
             }
+
             return results;
         }
     }

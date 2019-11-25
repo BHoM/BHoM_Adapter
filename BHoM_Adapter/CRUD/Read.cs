@@ -45,7 +45,8 @@ namespace BH.Adapter
         // It must implement only logic for reading things (e.g. through API calls), without modifying objects.
         protected virtual IEnumerable<IBHoMObject> Read(Type type, IList ids)
         {
-            throw new NotImplementedException("Read has not been implemented."); 
+            Engine.Reflection.Compute.RecordError($"Read for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            return new List<IBHoMObject>();
         }
 
         /***************************************************/
@@ -63,6 +64,7 @@ namespace BH.Adapter
             // 1. extract all the needed info from the IRequest
             // 2. return a call to the Basic Method Read() with the extracted info.
 
+            Engine.Reflection.Compute.RecordError($"Read for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<IBHoMObject>();
         }
 
