@@ -41,7 +41,7 @@ namespace BH.Adapter
         /***************************************************/
         // These methods call the CRUD methods as needed from the Push perspective.
 
-        [Description("Performs the only the Update for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
+        [Description("Performs the only the Update for the specified objects and, if Config.HandleDependencies is true, does the full CRUD for their dependencies.")]
         protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
         {
             List<T> newObjects = objectsToPush.ToList();
