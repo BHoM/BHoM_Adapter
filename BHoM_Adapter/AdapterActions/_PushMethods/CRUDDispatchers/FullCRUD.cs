@@ -176,6 +176,8 @@ namespace BH.Adapter
             return objsToPush_exclusive;
         }
 
+        /***************************************************/
+
         protected IEnumerable<T> DeleteAllNotPushed<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, DiffConfig diffConfig = null) where T : class, IBHoMObject
         {
             // Here we assume that you always push everything (not just a part of the model).
