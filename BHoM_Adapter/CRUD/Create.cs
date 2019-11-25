@@ -44,7 +44,15 @@ namespace BH.Adapter
         // It must be implemented (overrided) at the Toolkit level.
         protected virtual bool Create<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            return Create(objects as dynamic); // Must be implemented at the Toolkit level.
+            try
+            {
+                return Create(objects as dynamic); // Must be implemented at the Toolkit level.
+            }
+            catch (Exception e)
+            {
+                Engine.Reflection.Compute.RecordError($"Create for objects of type {typeof(T).Name} is not implemented in {(this as dynamic).GetType().Name}.");
+                return false;
+            }
         }
     }
 }
