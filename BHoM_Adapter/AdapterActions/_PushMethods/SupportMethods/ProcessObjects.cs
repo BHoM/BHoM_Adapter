@@ -40,20 +40,35 @@ namespace BH.Adapter
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        protected virtual void PortBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        [Description("Prepares the objects for the Push.")]
+        protected virtual IEnumerable<IBHoMObject> ProcessObjects(IEnumerable<object> objects) 
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
+            // Get the value for WrapNonBHoMObjects.
+            bool wrapNonBHoMObjects = false;
 
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
+            // If ActionConfig has a value for `WrapNonBHoMObjects`, it has precedence over the default value in AdapterSettings.
+            object wrapNonBHoMObjs_actionConfig;
+            if (ActionConfig.TryGetValue(nameof(AdapterSettings.WrapNonBHoMObjects), out wrapNonBHoMObjs_actionConfig))
+                wrapNonBHoMObjects = (bool)wrapNonBHoMObjs_actionConfig;
+            else
+                wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
 
-            // Get id of the source and port it to the target
-            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(AdapterIdFragmentType);
-            target.Fragments.AddOrReplace(source_adapterIdFragment);
+            // Verify that the input objects are IBHoMObjects.
+            var iBHoMObjects = objects.OfType<IBHoMObject>(); //this also filters non-null objs.
+            if (iBHoMObjects.Count() != objects.Count() && !wrapNonBHoMObjects)
+            {
+                Engine.Reflection.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
+                    "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true."); 
+            }
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
+            List<IBHoMObject> objectsToPush = AdapterSettings.CloneBeforePush ? iBHoMObjects.Select(x => x.DeepClone()).ToList() : iBHoMObjects.ToList();
+
+            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
+            if (wrapNonBHoMObjects)
+                Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush);
+
+            return objectsToPush;
         }
     }
 }
