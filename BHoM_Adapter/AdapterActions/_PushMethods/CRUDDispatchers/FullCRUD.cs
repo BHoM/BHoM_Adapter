@@ -44,7 +44,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "", Dictionary<string, object> actionConfig = null) where T : class, IBHoMObject
+        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -55,7 +55,7 @@ namespace BH.Adapter
 
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
-            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || (PushType)actionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || (PushType)ActionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
                 readObjects = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
@@ -74,7 +74,7 @@ namespace BH.Adapter
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
 
-            if ((PushType)actionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+            if ((PushType)ActionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
                 objectsToCreate = DeleteAllNotPushed(newObjects, readObjects);
             else if (AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
@@ -84,10 +84,6 @@ namespace BH.Adapter
             // Assign Id if needed
             if (AdapterSettings.UseAdapterId)
                 AssignId(objectsToCreate);
-            else if (AdapterSettings.AutoDefineIds)
-            {
-                objectsToCreate.Select((o, idx) => o.CustomData[AdapterId] = idx);
-            }
 
             // Create objects
             if (!Create(objectsToCreate))
@@ -100,7 +96,10 @@ namespace BH.Adapter
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
                 IEqualityComparer<T> comparer = Comparer<T>();
                 foreach (T item in objectsToPush)
-                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];
+                {
+                    object id = newObjects.First(x => comparer.Equals(x, item)).GetAdapterId<object>();
+                    item.SetAdapterId<object>(id);
+                }
             }
 
             return true;
@@ -161,11 +160,11 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (toBeDeleted != null && toBeDeleted.Any())
-                Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+                Delete(typeof(T), toBeDeleted.Select(obj => (object)obj.GetAdapterId<int>()));
 
             // Update the tags for the rest of the existing objects in the model
             UpdateTag(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => (object)x.GetAdapterId<int>()),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
             // For the objects that have an overlap between existing and pushed 
@@ -216,7 +215,7 @@ namespace BH.Adapter
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
 
             // Perform the deletion.
-            Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+            Delete(typeof(T), toBeDeleted.Select(obj => obj.GetAdapterId<object>()));
 
             // The now deleted overlapping objects will have to be re-created.
             objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));

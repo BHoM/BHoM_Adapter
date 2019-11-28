@@ -30,7 +30,6 @@ namespace BH.oM.Adapter
         public bool CloneBeforePush { get; set; } = true;
         public bool WrapNonBHoMObjects { get; set; } = false;
         public PushType DefaultPushType = PushType.FullCRUD;
-        public bool AutoDefineIds { get; set; } = true;
     }
 }
 
