@@ -34,6 +34,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
+        protected override Type AdapterIdFragmentType { get; set; } = null;
 
         /***************************************************/
         /**** Constructor                               ****/

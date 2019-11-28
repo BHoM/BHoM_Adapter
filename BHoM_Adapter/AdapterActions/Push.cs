@@ -68,7 +68,7 @@ namespace BH.Adapter
             if (iBHoMObjects.Count() != objects.Count() && !wrapNonBHoMObjects)
             {
                 Engine.Reflection.Compute.RecordError("Only BHoMObjects are supported by the default Push."); // = you can override if needed; 
-                // also, if your adapter supports it, consider setting actionConfig['WrapNonBHoMObjects'] to true.
+                // if the specific adapter supports it, consider setting actionConfig['WrapNonBHoMObjects'] to true.
                 return null;
             }
 

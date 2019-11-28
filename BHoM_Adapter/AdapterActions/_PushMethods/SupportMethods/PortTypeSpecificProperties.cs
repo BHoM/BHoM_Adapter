@@ -20,18 +20,31 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Adapter;
+using BH.Engine.Reflection;
 using BH.oM.Base;
+using BH.oM.Data;
 using BH.oM.Structure.Elements;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
-namespace BH.Engine.Adapter
+namespace BH.Adapter
 {
-    public static partial class Modify
+    public abstract partial class BHoMAdapter
     {
-        public static void AddAdapterId<T>(this IBHoMObject obj, IAdapterIdFragment<T> adapterIdFragment)
+        /***************************************************/
+        /**** Push Support methods                      ****/
+        /***************************************************/
+        // These are support methods required by other methods in the Push process.
+
+        [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
+        protected virtual void PortTypeSpecificProperties(Node target, Node source)
         {
-            obj.Fragments.AddOrReplace(adapterIdFragment);
+            // If source is constrained and target is not, add source constraint to target
+            if (source.Support != null && target.Support == null)
+                target.Support = source.Support;
         }
     }
 }

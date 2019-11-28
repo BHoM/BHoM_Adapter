@@ -22,24 +22,39 @@
 
 using BH.Engine.Reflection;
 using BH.oM.Base;
+using BH.Engine.Base;
 using BH.oM.Data;
+using BH.oM.Structure.Elements;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
-    // NOTE: CRUD folder methods
-    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
-    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
-        // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
-        // It needs to be implemented at the Toolkit level for the full CRUD to work.
-        protected virtual int UpdateTag(Type type, IEnumerable<object> ids, object newTag)
+        /***************************************************/
+        /**** Push Support methods                      ****/
+        /***************************************************/
+        // These are support methods required by other methods in the Push process.
+
+        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
+        protected virtual void PortBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
         {
-            return 0;
+            // Port tags from source to target
+            foreach (string tag in source.Tags)
+                target.Tags.Add(tag);
+
+            // If target does not have name, port the source name
+            if (string.IsNullOrWhiteSpace(target.Name))
+                target.Name = source.Name;
+
+            // Get id of the source and port it to the target
+            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(AdapterIdFragmentType);
+            target.Fragments.AddOrReplace(source_adapterIdFragment);
         }
     }
 }
