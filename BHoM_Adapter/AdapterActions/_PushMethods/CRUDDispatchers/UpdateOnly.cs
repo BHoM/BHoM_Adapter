@@ -37,9 +37,9 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Push Methods                              ****/
+        /**** Push CRUD Dispatchers                     ****/
         /***************************************************/
-        // These methods call the CRUD methods as needed from the Push perspective.
+        // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Update for the specified objects and, if Config.HandleDependencies is true, does the full CRUD for their dependencies.")]
         protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
@@ -64,6 +64,7 @@ namespace BH.Adapter
             return Update(newObjects);
         }
 
+        [Description("Called by UpdateOnly() in order to recursively update the dependencies of the objects.")]
         protected virtual bool DependenciesUpdateOnly<T>(IEnumerable<T> objectsToUpdate, string tag = "") where T : IBHoMObject
         {
             // Make sure objects are distinct 

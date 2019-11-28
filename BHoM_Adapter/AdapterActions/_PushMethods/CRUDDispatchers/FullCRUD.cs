@@ -39,9 +39,9 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Push Methods                              ****/
+        /**** Push CRUD Dispatchers                     ****/
         /***************************************************/
-        // These methods call the CRUD methods as needed from the Push perspective.
+        // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
         protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "", Dictionary<string, object> actionConfig = null) where T : class, IBHoMObject
@@ -82,7 +82,7 @@ namespace BH.Adapter
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
-            if (AdapterSettings.UseAdapterId) // add "&& AdapterSettings.UseOldAssignId" ?
+            if (AdapterSettings.UseAdapterId)
                 AssignId(objectsToCreate);
             else if (AdapterSettings.AutoDefineIds)
             {
@@ -122,10 +122,12 @@ namespace BH.Adapter
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
 
-                List<string> propertiesToPort = null;
-                PropertiesToPort.TryGetValue(typeof(T), out propertiesToPort);
+                diagram.Intersection.ForEach(x =>
+                {
+                    PortBHoMObjectProperties(x.Item1, x.Item2);
+                    PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                });
 
-                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, propertiesToPort));
                 newObjects = diagram.OnlySet1;
             }
 
@@ -170,7 +172,11 @@ namespace BH.Adapter
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
+            diagram.Intersection.ForEach(x =>
+                {
+                    PortBHoMObjectProperties(x.Item1, x.Item2);
+                    PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                });
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
             Update(diagram.Intersection.Select(x => x.Item1));
@@ -200,14 +206,19 @@ namespace BH.Adapter
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
+            diagram.Intersection.ForEach(x =>
+            {
+                PortBHoMObjectProperties(x.Item1, x.Item2);
+                PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+            });
 
             // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
 
+            // Perform the deletion.
             Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
 
-            // This is to re-create the now deleted overlapping objects.
+            // The now deleted overlapping objects will have to be re-created.
             objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created

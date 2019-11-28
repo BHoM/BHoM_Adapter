@@ -51,5 +51,12 @@ namespace BH.Adapter
             }
             return Create(objects);
         }
+
+        // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
+        // It needs to be implemented at the Toolkit level for the full CRUD to work.
+        protected virtual int UpdateTag(Type type, IEnumerable<object> ids, object newTag)
+        {
+            return 0;
+        }
     }
 }

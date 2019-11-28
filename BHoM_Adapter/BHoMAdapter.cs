@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
 using BH.oM.Structure.Elements;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
 {
@@ -36,23 +37,23 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
-        public virtual string AdapterName { get; private set; }
+        [Description("Must contain the type of the AdapterIdFragment used in the adapter implementation.")]
+        protected abstract Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
         protected virtual AdapterSettings AdapterSettings { get; set; }
 
-        [Description("Can be used to store any kind of additional data to be used in any Adapter method." +
-            "Content is erased and repopulated every an Adapter Action (e.g. Push) is activated," +
-            "so the data is not shared between different Actions.")]
+        [Description("Stores any additional config or data to be used in any Adapter method." +
+            "Content is re-set on activation of any Adapter Action (e.g. a Push).")] // so the data is not shared between different Actions.
         public virtual Dictionary<string, object> ActionConfig { get; set; }
 
-        [Description("Properties of the objects that, in case of overlap, need to be ported from the ReadObjects to the ObjectsToPush.")]
-        public virtual Dictionary<Type, List<string>> PropertiesToPort { get; set; }
+        [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
+        public virtual string AdapterName { get; private set; }
 
-        [Description("Push is executed first for any type in this list, in their order. Then all remaining types are pushed in no particular order.")]
-        public virtual OrderedHashSet<Type> PushTypeOrder { get; set; }
+        [Description("Used only as a key for the CustomData dictionary; corresponding value will be the id for the specific Adapter instance.")]
+        protected string AdapterId { get; set; }
 
+        [Description("GUID of the specific Adapter instance.")]
         public virtual Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
 
@@ -62,14 +63,6 @@ namespace BH.Adapter
 
         public BHoMAdapter()
         {
-            // Set the adapter name through reflection based on the child class name (e.g. "SpeckleAdapter")
-            AdapterName = GetType().Name;
-
-            // Set the AdapterId Key Name (e.g. "Speckle_id") for the CustomData dictionary.
-            // Used only as a Key for the CustomData dictionary; corresponding Value will be the id for the specific Adapter instance.
-            // Might be superseded soon by the ID-as-fragment change.
-            AdapterId = AdapterName.Split(new string[] { "Adapter" }, StringSplitOptions.None)[0]; // e.g. SpeckleAdapter -> "Speckle_id"
-
             // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
             // e.g. AdapterSettings.WrapNonBHoMObjects = true;
             AdapterSettings = new AdapterSettings();
@@ -78,12 +71,13 @@ namespace BH.Adapter
             // Re-initialisation happens in the BHoM_UI every time an Adapter action is activated.
             ActionConfig = new Dictionary<string, object>();
 
-            PropertiesToPort = new Dictionary<Type, List<string>>
-            {
-                { typeof(Node), new List<string>(){nameof(Node.Support)} }
-            };
+            // Set the adapter name through reflection based on the child class name (e.g. "SpeckleAdapter")
+            AdapterName = GetType().Name;
 
-            PushTypeOrder = new OrderedHashSet<Type>() { }; // typeof(Node), typeof(Bar), typeof(FEMesh), typeof(BarLoad), etc.
+            // Set the AdapterId Key Name (e.g. "Speckle_id") for the CustomData dictionary.
+            // Used only as a Key for the CustomData dictionary; corresponding Value will be the id for the specific Adapter instance.
+            // To be superseded by the ID-as-fragment change.
+            AdapterId = AdapterName.Split(new string[] { "Adapter" }, StringSplitOptions.None)[0]; // e.g. SpeckleAdapter -> "Speckle_id"
         }
 
         /***************************************************/
@@ -101,11 +95,12 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected virtual object NextId(Type objectType, bool refresh = false)
+        [Description("Returns the adapterIdFragment containing the next available ID for object creation.")]
+        [Input("objectType", "Type of the object whose next available id should be returned.")]
+        [Input("refresh", "To say if it is the first of many calls during the same pass of the adapter " +
+            "so you only need to ask the adapter once, then increment.")]
+        protected virtual IBHoMFragment NextId(Type objectType, bool refresh = false)
         {
-            // refresh: to say if it is the first of many calls during the same pass of the adapter
-            // so you only need to ask the adapter once, then increment
-            // useful for some softwares
             return null;
         }
 
@@ -120,22 +115,21 @@ namespace BH.Adapter
 
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            // With new Id fragment, you can do AddAdapterId()
-            // e.g. objects.First().AddAdapterId(new TestIdFragment(9));
+            // With new Id fragment, you can call AddAdapterId()
+            // e.g. object.AddAdapterId(new TestIdFragment(9));
 
             bool refresh = true;
             foreach (T item in objects)
             {
-                if (!item.CustomData.ContainsKey(AdapterId))
+                if (!item.Fragments.Contains(AdapterIdFragmentType))
                 {
-                    item.CustomData[AdapterId] = NextId(typeof(T), refresh);
+                    item.Fragments.AddOrReplace(NextId(typeof(T), refresh));
                     refresh = false;
                 }
             }
         }
 
-        [Description("Used only as a key for the CustomData dictionary; corresponding value will be the id for the specific Adapter instance.")]
-        protected string AdapterId { get; set; }
+
 
         /***************************************************/
         /**** Public Events                             ****/

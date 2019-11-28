@@ -101,7 +101,8 @@
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\CreateOnly.cs" />
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\FullCRUD.cs" />
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\UpdateOnly.cs" />
-    <Compile Include="AdapterActions\_PushMethods\SupportMethods\UpdateTag.cs" />
+    <Compile Include="AdapterActions\_PushMethods\SupportMethods\PortTypeSpecificProperties.cs" />
+    <Compile Include="AdapterActions\_PushMethods\SupportMethods\PortBHoMObjectProperties.cs" />
     <Compile Include="CRUD\Create.cs" />
     <Compile Include="CRUD\Delete.cs" />
     <Compile Include="CRUD\Read.cs" />
