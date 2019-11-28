@@ -61,6 +61,8 @@ namespace BH.Adapter
             if (pushType == PushType.AdapterDefault)
                 pushType = AdapterSettings.DefaultPushType;
 
+            ActionConfig[nameof(PushType)] = pushType; // saves the pushType in the ActionConfig.
+
             // ------------- ACTUAL PUSH ---------------
 
             // Group the objects by their specific type.

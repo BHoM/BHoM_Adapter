@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace BH.Engine.Adapter
 {
-    public static partial class Convert
+    public static partial class Modify
     {
         /***************************************************/
         /**** Public Methods                            ****/ 

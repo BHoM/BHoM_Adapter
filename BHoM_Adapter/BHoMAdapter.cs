@@ -98,7 +98,7 @@ namespace BH.Adapter
         [Input("objectType", "Type of the object whose next available id should be returned.")]
         [Input("refresh", "To say if it is the first of many calls during the same pass of the adapter " +
             "so you only need to ask the adapter once, then increment.")]
-        protected virtual IBHoMFragment NextId(Type objectType, bool refresh = false)
+        protected virtual AdapterIdFragment<T> NextId<T>(Type objectType, bool refresh = false)
         {
             return null;
         }
@@ -119,7 +119,8 @@ namespace BH.Adapter
             {
                 if (!item.Fragments.Contains(AdapterIdFragmentType))
                 {
-                    item.Fragments.AddOrReplace(NextId(typeof(T), refresh));
+                    var nextIdFragment = NextId<dynamic>(typeof(T), refresh);
+                    item.Fragments.AddOrReplace(nextIdFragment);
                     refresh = false;
                 }
             }

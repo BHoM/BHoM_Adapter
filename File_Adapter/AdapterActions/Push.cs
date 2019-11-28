@@ -50,6 +50,7 @@ namespace BH.Adapter.FileAdapter
             if (pushType == PushType.AdapterDefault)
                 pushType = AdapterSettings.DefaultPushType;
 
+            ActionConfig[nameof(PushType)] = pushType; // saves the pushType in the ActionConfig.
 
             // ------------- ACTUAL PUSH ---------------
 
