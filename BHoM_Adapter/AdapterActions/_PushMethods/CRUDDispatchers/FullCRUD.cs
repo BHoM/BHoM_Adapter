@@ -121,7 +121,11 @@ namespace BH.Adapter
             if (mergeWithComparer)
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), Comparer<T>());
-                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, PropertiesToPort[x.GetType()]));
+
+                List<string> propertiesToPort = null;
+                PropertiesToPort.TryGetValue(typeof(T), out propertiesToPort);
+
+                diagram.Intersection.ForEach(x => x.Item1.PortProperties(x.Item2, AdapterId, propertiesToPort));
                 newObjects = diagram.OnlySet1;
             }
 
