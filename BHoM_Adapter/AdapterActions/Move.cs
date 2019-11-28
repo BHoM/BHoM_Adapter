@@ -43,22 +43,24 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
-        public virtual bool Move(BHoMAdapter to, IRequest request, PullType pullOption = PullType.AdapterDefault, Dictionary<string, object> pullConfig = null, PushType pushOption = PushType.AdapterDefault, Dictionary<string, object> pushConfig = null)
+        public virtual bool Move(BHoMAdapter to, IRequest request, 
+            PullType pullType = PullType.AdapterDefault, Dictionary<string, object> pullConfig = null, 
+            PushType pushType = PushType.AdapterDefault, Dictionary<string, object> pushConfig = null)
         {
-            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            // Always re-set the ActionConfig value before doing the Action.
             ActionConfig = pullConfig == null ? new Dictionary<string, object>() : pullConfig;
 
             string tag = "";
             if (request is FilterRequest)
                 tag = (request as FilterRequest).Tag;
 
-            IEnumerable<object> objects = Pull(request, pullOption, pullConfig);
+            IEnumerable<object> objects = Pull(request, pullType);
             int count = objects.Count();
 
-            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
+            // Always re-set the ActionConfig value before doing the Action.
             ActionConfig = pushConfig == null ? new Dictionary<string, object>() : pushConfig;
 
-            return to.Push(objects.Cast<IObject>(), tag, pushOption, pushConfig).Count() == count;
+            return to.Push(objects.Cast<IObject>(), tag, pushType).Count() == count;
         }
 
 

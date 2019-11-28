@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
-using BH.oM.Structure.Elements;
 using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
@@ -38,10 +37,10 @@ namespace BH.Adapter
         /***************************************************/
 
         [Description("Must contain the type of the AdapterIdFragment used in the adapter implementation.")]
-        protected abstract Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
+        public abstract Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment). Set to null if unused.
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
-        protected virtual AdapterSettings AdapterSettings { get; set; }
+        public virtual AdapterSettings AdapterSettings { get; set; }
 
         [Description("Stores any additional config or data to be used in any Adapter method." +
             "Content is re-set on activation of any Adapter Action (e.g. a Push).")] // so the data is not shared between different Actions.
@@ -51,7 +50,7 @@ namespace BH.Adapter
         public virtual string AdapterName { get; private set; }
 
         [Description("Used only as a key for the CustomData dictionary; corresponding value will be the id for the specific Adapter instance.")]
-        protected string AdapterId { get; set; }
+        public string AdapterId { get; set; }
 
         [Description("GUID of the specific Adapter instance.")]
         public virtual Guid AdapterGuid { get; set; } = Guid.NewGuid();

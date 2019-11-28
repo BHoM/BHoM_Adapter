@@ -22,38 +22,29 @@
 
 using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.Engine.Base;
 using BH.oM.Data;
+using BH.oM.Structure.Elements;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public abstract partial class StructuralAnalysisAdapter
     {
         /***************************************************/
         /**** Push Support methods                      ****/
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        protected virtual void PortBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
+        protected virtual void PortTypeSpecificProperties(Node target, Node source)
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
-
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
-
-            // Get id of the source and port it to the target
-            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(AdapterIdFragmentType);
-            target.Fragments.AddOrReplace(source_adapterIdFragment);
+            // If source is constrained and target is not, add source constraint to target
+            if (source.Support != null && target.Support == null)
+                target.Support = source.Support;
         }
     }
 }

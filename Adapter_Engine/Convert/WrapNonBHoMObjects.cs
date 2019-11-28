@@ -33,11 +33,11 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/ 
         /***************************************************/
 
-        public static bool WrapNonBHoMObjects(IEnumerable<object> objects, AdapterSettings adapterSettings, string tag = "", Dictionary<string, object> actionConfig = null)
+        public static bool WrapNonBHoMObjects(IEnumerable<object> objects)
         {
-            // To make use of this method, you can either:
-            // 1) Set AdapterSettings.WrapNonBHoMObjects to true in your Toolkit (so all Push actions will call it), or 
-            // 2) Specify a actionConfig input when Pushing, with a key "WrapNonBHoMObjects" with value set to true.
+            // This method is triggered when either:
+            // 1) You have set to true `AdapterSettings.WrapNonBHoMObjects` in your Toolkit (-> all Push actions will call this), OR 
+            // 2) When Pushing, you input an ActionConfig dictionary with "WrapNonBHoMObjects" set to true.
 
             objects = objects.Select(x => typeof(IBHoMObject).IsAssignableFrom(x.GetType()) ?
                 x : new CustomObject() { CustomData = new Dictionary<string, object> { { x.GetType().Name + "_IBHoMObjectWrap", x } } } // Wraps non-BHoMObject in a custom BHoMObject

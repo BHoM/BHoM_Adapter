@@ -23,7 +23,6 @@
 using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.oM.Data;
-using BH.oM.Structure.Elements;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,11 +39,9 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
-        protected virtual void PortTypeSpecificProperties(Node target, Node source)
+        protected virtual void PortTypeSpecificProperties<T>(T target, T source)
         {
-            // If source is constrained and target is not, add source constraint to target
-            if (source.Support != null && target.Support == null)
-                target.Support = source.Support;
+            return; //to be implemented in the specific adapter.
         }
     }
 }

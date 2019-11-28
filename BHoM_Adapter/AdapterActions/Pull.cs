@@ -43,7 +43,7 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate")]
-        public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, Dictionary<string, object> config = null)
+        public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault)
         {
             // --------------------------------------------------------------------------------- //
             // *** Temporary retrocompatibility fix ***

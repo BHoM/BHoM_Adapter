@@ -34,7 +34,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override IEnumerable<object> Pull(IRequest request, PullType pullOption = PullType.AdapterDefault, Dictionary<string, object> config = null)
+        public override IEnumerable<object> Pull(IRequest request, PullType pullOption = PullType.AdapterDefault)
         {
             if (!System.IO.File.Exists(m_FilePath))
             {
@@ -49,7 +49,7 @@ namespace BH.Adapter.FileAdapter
                 return null;
             }
 
-            return base.Pull(request, pullOption, config);
+            return base.Pull(request, pullOption);
         }
     }
 }

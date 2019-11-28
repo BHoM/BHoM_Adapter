@@ -33,40 +33,22 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> actionConfig = null)
+        public override List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault)
         {
-            // ---------- READ CONFIGURATIONS ------------
+            // --------------- SET-UP ------------------
 
-            // Set the PushType to Adapter's default if unset (base Adapter default is FullCRUD).
-            if (pushType == PushType.AdapterDefault)
-                pushType = AdapterSettings.DefaultPushType;
+            // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
+            IEnumerable<IBHoMObject> objectsToPush = ProcessObjects(objects); // Note: default Push only supports IBHoMObjects.
 
-            // Add the PushType to the actionConfig dictionary.
-            actionConfig[nameof(PushType)] = pushType;
-
-            // Read actionConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Settings.
-            bool wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
-            object wrapNonBHoMObjs_actionConfig;
-            if (actionConfig != null && actionConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjs_actionConfig))
-                wrapNonBHoMObjects |= (bool)wrapNonBHoMObjs_actionConfig;
-
-            // ------------ OBJECTS SET-UP --------------
-
-            // Verify that the input objects are IBHoMObjects
-            var iBHoMObjects = objects.OfType<IBHoMObject>();
-            if (iBHoMObjects.Count() != objects.Count() && !wrapNonBHoMObjects)
+            if (objectsToPush.Count() == 0)
             {
-                Engine.Reflection.Compute.RecordError("Only BHoMObjects are supported by the default Push."); // = you can override if needed; 
-                // also, if your adapter supports it, consider setting actionConfig['WrapNonBHoMObjects'] to true.
-                return null;
+                Engine.Reflection.Compute.RecordError("Input objects were invalid.");
+                return new List<object>();
             }
 
-            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            List<IBHoMObject> objectsToPush = AdapterSettings.CloneBeforePush ? iBHoMObjects.Select(x => x.DeepClone()).ToList() : iBHoMObjects.ToList();
-
-            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
-            if (wrapNonBHoMObjects)
-                Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, actionConfig);
+            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
+            if (pushType == PushType.AdapterDefault)
+                pushType = AdapterSettings.DefaultPushType;
 
 
             // ------------- ACTUAL PUSH ---------------
@@ -76,13 +58,11 @@ namespace BH.Adapter.FileAdapter
 
             CreateFileAndFolder();
 
-            IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
-
-            if (bhomObjects.Count() != objects.Count())
+            if (objectsToPush.Count() != objects.Count())
                 Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects." + Environment.NewLine +
                     "If you want to push non-BHoMobject, specify a push config with the option `WrapNonBHoMObject` set to true.");
 
-            bool success = this.CRUD<IBHoMObject>(bhomObjects, tag);
+            bool success = this.CRUD<IBHoMObject>(objectsToPush, tag);
 
             return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
         }
