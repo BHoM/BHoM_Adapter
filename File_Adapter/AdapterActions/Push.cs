@@ -33,19 +33,48 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushType pushOption = PushType.AdapterDefault, Dictionary<string, object> config = null)
+        public override List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> actionConfig = null)
         {
+            // ---------- READ CONFIGURATIONS ------------
+
+            // Set the PushType to Adapter's default if unset (base Adapter default is FullCRUD).
+            if (pushType == PushType.AdapterDefault)
+                pushType = AdapterSettings.DefaultPushType;
+
+            // Add the PushType to the actionConfig dictionary.
+            actionConfig[nameof(PushType)] = pushType;
+
+            // Read actionConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Settings.
+            bool wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
+            object wrapNonBHoMObjs_actionConfig;
+            if (actionConfig != null && actionConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjs_actionConfig))
+                wrapNonBHoMObjects |= (bool)wrapNonBHoMObjs_actionConfig;
+
+            // ------------ OBJECTS SET-UP --------------
+
+            // Verify that the input objects are IBHoMObjects
+            var iBHoMObjects = objects.OfType<IBHoMObject>();
+            if (iBHoMObjects.Count() != objects.Count() && !wrapNonBHoMObjects)
+            {
+                Engine.Reflection.Compute.RecordError("Only BHoMObjects are supported by the default Push."); // = you can override if needed; 
+                // also, if your adapter supports it, consider setting actionConfig['WrapNonBHoMObjects'] to true.
+                return null;
+            }
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
+            List<IBHoMObject> objectsToPush = AdapterSettings.CloneBeforePush ? iBHoMObjects.Select(x => x.DeepClone()).ToList() : iBHoMObjects.ToList();
+
+            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
+            if (wrapNonBHoMObjects)
+                Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, actionConfig);
+
+
+            // ------------- ACTUAL PUSH ---------------
+
             if (!ProcessExtension(ref m_FilePath))
                 return null;
 
             CreateFileAndFolder();
-
-            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            List<IObject> objectsToPush = AdapterSettings.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
-
-            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
-            // The boolean Config.WrapNonBHoMObjects regulates this, checked inside the method itself to allow overriding on-the-fly.
-            Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, config);
 
             IEnumerable<IBHoMObject> bhomObjects = objectsToPush.Where(x => x is IBHoMObject).Cast<IBHoMObject>();
 
@@ -55,7 +84,7 @@ namespace BH.Adapter.FileAdapter
 
             bool success = this.CRUD<IBHoMObject>(bhomObjects, tag);
 
-            return success ? objectsToPush : new List<IObject>();
+            return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
         }
     }
 }

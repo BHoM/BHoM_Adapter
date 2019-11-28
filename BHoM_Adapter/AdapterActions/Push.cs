@@ -42,18 +42,18 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Pushes the input objects using either the full CRUD, or only Create or Update, depending on the option set in the PushType.")]
-        public virtual List<IObject> Push(IEnumerable<IObject> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> actionConfig = null)
+        public virtual List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, Dictionary<string, object> actionConfig = null)
         {
             bool success = true;
 
-            // Set the Push Option to Adapter's default if unset (base Adapter default is FullCRUD). Add that to the actionConfig.
+            // ---------- READ CONFIGURATIONS ------------
+
+            // Set the PushType to Adapter's default if unset (base Adapter default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
-                pushType = AdapterSettings.PushType;
+                pushType = AdapterSettings.DefaultPushType;
 
+            // Add the PushType to the actionConfig dictionary.
             actionConfig[nameof(PushType)] = pushType;
-
-            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            List<IObject> objectsToPush = AdapterSettings.CloneBeforePush ? objects.Select(x => x.DeepClone()).ToList() : objects.ToList();
 
             // Read actionConfig `WrapNonBHoMObjects`. If present, that overrides the `WrapNonBHoMObjects` of the Adapter Settings.
             bool wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
@@ -61,35 +61,57 @@ namespace BH.Adapter
             if (actionConfig != null && actionConfig.TryGetValue("WrapNonBHoMObjects", out wrapNonBHoMObjs_actionConfig))
                 wrapNonBHoMObjects |= (bool)wrapNonBHoMObjs_actionConfig;
 
+            // ------------ OBJECTS SET-UP --------------
+
+            // Verify that the input objects are IBHoMObjects
+            var iBHoMObjects = objects.OfType<IBHoMObject>();
+            if (iBHoMObjects.Count() != objects.Count() && !wrapNonBHoMObjects)
+            {
+                Engine.Reflection.Compute.RecordError("Only BHoMObjects are supported by the default Push."); // = you can override if needed; 
+                // also, if your adapter supports it, consider setting actionConfig['WrapNonBHoMObjects'] to true.
+                return null;
+            }
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
+            List<IBHoMObject> objectsToPush = AdapterSettings.CloneBeforePush ? iBHoMObjects.Select(x => x.DeepClone()).ToList() : iBHoMObjects.ToList();
+
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             if (wrapNonBHoMObjects)
                 Engine.Adapter.Convert.WrapNonBHoMObjects(objectsToPush, AdapterSettings, tag, actionConfig);
+         
 
-            // Perform the actual Push.
-            Type iBHoMObjectType = typeof(IBHoMObject);
-            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
-            foreach (var typeGroup in objectsToPush.GroupBy(x => x.GetType()))
+            // ------------- ACTUAL PUSH ---------------
+
+            // Group the objects by their specific type.
+            var typeGroups = objects.GroupBy(x => x.GetType());
+
+            foreach (var typeGroup in typeGroups)
             {
-                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { typeGroup.Key });
+                // Cast the objects to their specific types
+                MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
+                var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
-                var list = miListObject.Invoke(typeGroup, new object[] { typeGroup });
-
-                if (iBHoMObjectType.IsAssignableFrom(typeGroup.Key))
+                if (typeof(IBHoMObject).IsAssignableFrom(typeGroup.Key))
                 {
                     if (pushType == PushType.FullCRUD)
-                        success &= CRUD(list as dynamic, tag);
+                        success &= CRUD(objList_specificType as dynamic, tag);
                     else if (pushType == PushType.CreateOnly)
                     {
-                        success &= CreateOnly(list as dynamic, tag);
+                        success &= CreateOnly(objList_specificType as dynamic, tag);
                     }
                     else if (pushType == PushType.UpdateOnly)
                     {
-                        success &= UpdateOnly(list as dynamic, tag);
+                        success &= UpdateOnly(objList_specificType as dynamic, tag);
                     }
+                }
+                else
+                {
+                    Engine.Reflection.Compute.RecordError("Some objects could not be pushed.");
+                    success = false;
                 }
             }
 
-            return success ? objectsToPush : new List<IObject>();
+            return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
         }
 
     }

@@ -37,23 +37,23 @@ namespace BH.Adapter
         /***************************************************/
 
         [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
-        public string AdapterName { get; private set; }
+        public virtual string AdapterName { get; private set; }
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
-        protected AdapterSettings AdapterSettings { get; set; }
+        protected virtual AdapterSettings AdapterSettings { get; set; }
 
         [Description("Can be used to store any kind of additional data to be used in any Adapter method." +
-            "Re-initialisation happens every time an Adapter Action (e.g. Push) is activated," +
+            "Content is erased and repopulated every an Adapter Action (e.g. Push) is activated," +
             "so the data is not shared between different Actions.")]
-        public Dictionary<string, object> ActionConfig { get; set; }
-
-        public static Dictionary<Type, Dictionary<Type, int>> LastId { get; set; }
+        public virtual Dictionary<string, object> ActionConfig { get; set; }
 
         [Description("Properties of the objects that, in case of overlap, need to be ported from the ReadObjects to the ObjectsToPush.")]
-        public static Dictionary<Type, List<string>> PropertiesToPort { get; set; }
+        public virtual Dictionary<Type, List<string>> PropertiesToPort { get; set; }
 
+        [Description("Push is executed first for any type in this list, in their order. Then all remaining types are pushed in no particular order.")]
+        public virtual OrderedHashSet<Type> PushTypeOrder { get; set; }
 
-        public Guid BHoM_Guid { get; set; } = Guid.NewGuid();
+        public virtual Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
 
         /***************************************************/
@@ -83,8 +83,7 @@ namespace BH.Adapter
                 { typeof(Node), new List<string>(){nameof(Node.Support)} }
             };
 
-            LastId = new Dictionary<Type, Dictionary<Type, int>>();
-            LastId[this.GetType()] = new Dictionary<Type, int>();
+            PushTypeOrder = new OrderedHashSet<Type>() { }; // typeof(Node), typeof(Bar), typeof(FEMesh), typeof(BarLoad), etc.
         }
 
         /***************************************************/
