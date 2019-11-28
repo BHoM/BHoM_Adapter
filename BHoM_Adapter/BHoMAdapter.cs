@@ -37,7 +37,7 @@ namespace BH.Adapter
         /***************************************************/
 
         [Description("Must contain the type of the AdapterIdFragment used in the adapter implementation.")]
-        public abstract Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment). Set to null if unused.
+        public virtual Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
 
         [Description("Different default settings for specific implementations may be set in the constructor.")]
         public virtual AdapterSettings AdapterSettings { get; set; }
@@ -114,9 +114,6 @@ namespace BH.Adapter
 
         protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            // With new Id fragment, you can call AddAdapterId()
-            // e.g. object.AddAdapterId(new TestIdFragment(9));
-
             bool refresh = true;
             foreach (T item in objects)
             {
@@ -127,8 +124,6 @@ namespace BH.Adapter
                 }
             }
         }
-
-
 
         /***************************************************/
         /**** Public Events                             ****/
