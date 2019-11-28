@@ -87,8 +87,6 @@ namespace BH.Adapter
             else if (AdapterSettings.AutoDefineIds)
             {
                 objectsToCreate.Select((o, idx) => o.CustomData[AdapterId] = idx);
-
-                LastId[this.GetType()][typeof(T)] = objectsToCreate.Count();
             }
 
             // Create objects
@@ -156,7 +154,8 @@ namespace BH.Adapter
             IEnumerable<T> toBeDeleted = readObjs_exclusive.Where(x => x.Tags.Count == 0);
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
-            Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+            if (toBeDeleted != null && toBeDeleted.Any())
+                Delete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
 
             // Update the tags for the rest of the existing objects in the model
             UpdateTag(typeof(T),

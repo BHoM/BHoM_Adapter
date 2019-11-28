@@ -28,11 +28,13 @@ using System.Collections.Generic;
 using BH.oM.Base;
 using BH.oM.Data.Requests;
 using BH.Engine.Base;
+using BH.oM.Adapter;
 
 namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
+
         /***************************************************/
         /**** Constructor                               ****/
         /***************************************************/
