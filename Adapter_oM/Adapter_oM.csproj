@@ -45,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IBHoMAdapter.cs" />
-    <Compile Include="AdapterIdFragment.cs" />
+    <Compile Include="ExternalIdFragment.cs" />
     <Compile Include="AdapterSettings.cs" />
     <Compile Include="enums\PullType.cs" />
     <Compile Include="enums\PushType.cs" />
+    <Compile Include="ObjectWrapper.cs" />
     <Compile Include="OrderedHashSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ActionConfig.cs" />
     <Compile Include="TestIdFragment.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

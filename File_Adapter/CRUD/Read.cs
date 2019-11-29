@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Adapter;
 using BH.oM.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -34,7 +35,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override IEnumerable<IBHoMObject> Read(Type type, IList ids)
+        protected override IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
         {
             IEnumerable<BHoMObject> everything = m_isJSON ? ReadJson() : ReadBson();
 

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BH.Engine.Serialiser;
+using BH.oM.Adapter;
 
 namespace BH.Adapter.FileAdapter
 {
@@ -37,10 +38,10 @@ namespace BH.Adapter.FileAdapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        protected override bool Create<T>(IEnumerable<T> objects)
+        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
         {
 
-            bool clearFile = AdapterSettings.ProcessInMemory;
+            bool clearFile = m_AdapterSettings.ProcessInMemory;
 
             if (m_isJSON)
                 return CreateJson((IEnumerable<IBHoMObject>)objects, clearFile);

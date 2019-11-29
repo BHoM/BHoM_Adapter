@@ -36,11 +36,11 @@ namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
-        public static T GetAdapterId<T>(this IBHoMObject obj)
+        public static object GetAdapterId(this IBHoMObject obj)
         {
-            AdapterIdFragment<T> adapterIdFragment = obj.FindFragment<AdapterIdFragment<T>>();
+            ExternalIdFragment externalIdFragment = obj.FindFragment<ExternalIdFragment>();
 
-            return adapterIdFragment != null ? adapterIdFragment.Id : default(T);
+            return externalIdFragment != null ? externalIdFragment.Id : null;
         }
     }
 }

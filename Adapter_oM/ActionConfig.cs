@@ -1,6 +1,6 @@
 ﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -21,21 +21,12 @@
  */
 
 using BH.oM.Base;
-using BH.oM.Adapter;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace BH.Engine.Adapter
+namespace BH.oM.Adapter
 {
-    public static partial class Create
+    public class ActionConfig : BHoMObject
     {
-        /***************************************************/
-        /**** Public Methods                            ****/ 
-        /***************************************************/
-
-        public static AdapterIdFragment<T> AdapterIdFragment<T>(T id)
-        {
-            return null; //too convoluted //new AdapterIdFragment<T>();
-        }
+        public bool WrapNonBHoMObjects { get; set; } = false;
     }
 }

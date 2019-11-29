@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.oM.Data.Requests;
 
@@ -43,7 +44,7 @@ namespace BH.Adapter
         // Basic Delete method that deletes objects depending on their Type and Id. 
         // Its implementation is facultative (not needed for a simple export/import scenario). 
         // Toolkits need to implement (override) this only to get the full CRUD to work.
-        protected virtual int Delete(Type type, IEnumerable<object> ids)
+        protected virtual int IDelete(Type type, IEnumerable<object> ids, ActionConfig actionConfig = null)
         {
             Engine.Reflection.Compute.RecordError($"Delete for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return 0;
@@ -58,7 +59,7 @@ namespace BH.Adapter
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
 
-        protected virtual int Delete(IRequest request)
+        protected virtual int Delete(IRequest request, ActionConfig actionConfig = null)
         {
             Engine.Reflection.Compute.RecordError($"Delete for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return 0;
@@ -68,29 +69,29 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        protected virtual int Delete(FilterRequest request)
+        protected virtual int Delete(FilterRequest request, ActionConfig actionConfig = null)
         {
             return Delete(request.Type, request.Tag);
         }
 
-        protected virtual int Delete(Type type, string tag = "")
+        protected virtual int Delete(Type type, string tag = "", ActionConfig actionConfig = null)
         {
             if (tag == "")
             {
-                return Delete(type, null as List<object>);
+                return IDelete(type, null as List<object>);
             }
             else
             {
                 // Get all with tag
-                IEnumerable<IBHoMObject> withTag = Read(type, tag);
+                IEnumerable<IBHoMObject> withTag = Read(type, tag, actionConfig);
 
                 // Get indices of all with that tag only
                 IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.CustomData[AdapterId]).OrderBy(x => x);
-                Delete(type, ids);
+                IDelete(type, ids);
 
                 // Remove tag if other tags as well
                 IEnumerable<IBHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateTag(type, multiTags.Select(x => x.CustomData[AdapterId]), multiTags.Select(x => x.Tags));
+                UpdateTags(type, multiTags.Select(x => x.CustomData[AdapterId]), multiTags.Select(x => x.Tags), actionConfig);
 
                 return ids.Count();
             }

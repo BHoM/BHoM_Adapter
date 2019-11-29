@@ -35,6 +35,7 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter : IBHoMAdapter
     {
+
         /******************************************************/
         /**** Public Adapter Methods "Adapter ACTIONS"    *****/
         /******************************************************/
@@ -42,26 +43,29 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Pushes input objects using either the 'Full CRUD', 'CreateOnly' or 'UpdateOnly', depending on the PushType.")]
-        public virtual List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault)
+        public virtual List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
             bool success = true;
 
             // --------------- SET-UP ------------------
 
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
-            IEnumerable<IBHoMObject> objectsToPush = ProcessObjects(objects); // Note: default Push only supports IBHoMObjects.
+            IEnumerable<IBHoMObject> objectsToPush = ProcessObjects(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
 
             if (objectsToPush.Count() == 0)
             {
                 Engine.Reflection.Compute.RecordError("Input objects were invalid.");
                 return new List<object>(); 
             }
-           
+
+            // If unset, set the actionConfig to a new ActionConfig.
+            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
-                pushType = AdapterSettings.DefaultPushType;
+                pushType = m_AdapterSettings.DefaultPushType;
 
-            ActionConfig[nameof(PushType)] = pushType; // saves the pushType in the ActionConfig.
+            m_pushType = pushType; // saves the pushType in the Global variable.
 
             // ------------- ACTUAL PUSH ---------------
 
@@ -75,14 +79,14 @@ namespace BH.Adapter
                 var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
                 if (pushType == PushType.FullCRUD)
-                    success &= CRUD(objList_specificType as dynamic, tag);
+                    success &= CRUD(objList_specificType as dynamic, tag, actionConfig);
                 else if (pushType == PushType.CreateOnly)
                 {
-                    success &= CreateOnly(objList_specificType as dynamic, tag);
+                    success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
                 }
                 else if (pushType == PushType.UpdateOnly)
                 {
-                    success &= UpdateOnly(objList_specificType as dynamic, tag);
+                    success &= UpdateOnly(objList_specificType as dynamic, tag, actionConfig);
                 }
             }
 

@@ -22,18 +22,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    public enum PushType
+    public enum PushType //add error message if not picked up --> compliance check for this?
     {
+        [Description("asda")]
         FullCRUD,
+        [Description("asda")]
         CreateOnly,
+        [Description("asda")]
         UpdateOnly,
-        DeleteAllThenCreate,
+        //Replace,
+        [Description("asda")]
+        DeleteAllThenCreate, // delete all --> createOnly
+        [Description("asda")]
+        asd, // read, check if not existing, then delete --> createOnly
+        [Description("asda")]
         AdapterDefault
     }
 }

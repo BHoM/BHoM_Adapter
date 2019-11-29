@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Adapter;
 using BH.oM.Base;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter
     {
-        protected override int Delete(Type type, IEnumerable<object> ids)
+        protected override int IDelete(Type type, IEnumerable<object> ids, ActionConfig actionConfig = null)
         {
             IEnumerable<BHoMObject> everything = m_isJSON ? ReadJson() : ReadBson();
             int initialCount = everything.Count();

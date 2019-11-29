@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -42,16 +42,16 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
-        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            List<T> newObjects = objectsToPush.ToList();
+            List<T> newObjects = objectsToPush.ToList(); //DISTICNT
 
-            // Make sure objects  are tagged
+            // Make sure objects are tagged
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (AdapterSettings.HandleDependencies)
+            if (m_AdapterSettings.HandleDependencies) // MERGE THE TWO METHODS
             {
                 var dependencyTypes = DependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, tag); //first-level dependencies
@@ -61,7 +61,7 @@ namespace BH.Adapter
                         return false;
             }
 
-            return Create(newObjects);
+            return ICreate(newObjects);
         }
 
         [Description("Called by CreateOnly() in order to recursively create the dependencies of the objects.")]
@@ -80,7 +80,7 @@ namespace BH.Adapter
             foreach (var depObj in dependencyObjects)
                 DependenciesCreateOnly(depObj.Value as dynamic);
 
-            return Create(objects);
+            return ICreate(objects);
         }
 
 

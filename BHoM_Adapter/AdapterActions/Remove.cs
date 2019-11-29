@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -41,12 +42,12 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Calls the basic CRUD/Delete method as appropriate.")]
-        public virtual int Remove(IRequest request, Dictionary<string, object> config = null)
+        public virtual int Remove(IRequest request, ActionConfig actionConfig = null)
         {
-            // If specified, set the global ActionConfig value, otherwise make sure to reset it.
-            ActionConfig = config == null ? new Dictionary<string, object>() : config;
+            // If unset, set the actionConfig to a new ActionConfig.
+            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
 
-            return Delete(request as dynamic);
+            return Delete(request as dynamic, actionConfig);
         }
     }
 }
