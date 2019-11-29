@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -42,17 +43,18 @@ namespace BH.Adapter
         // The Create must only contain the logic that generates the objects in the external software.
         // It is primarily called by the Push, in the context of the CRUD method, and also by other methods that require it (Update, UpdateProperty).
         // It must be implemented (overrided) at the Toolkit level.
-        protected virtual bool Create<T>(IEnumerable<T> objects) where T : IBHoMObject
+        protected virtual bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            try
-            {
-                return Create(objects as dynamic); // Must be implemented at the Toolkit level.
-            }
-            catch (Exception e)
-            {
-                Engine.Reflection.Compute.RecordError($"Create for objects of type {typeof(T).Name} is not implemented in {(this as dynamic).GetType().Name}.");
-                return false;
-            }
+            // To be overridden in the specific adapter. 
+            // It must only include a dynamic dispatch to your type-specific Create implementations, in other words:
+            // Create(objects as dynamic);
+            return false;  
         }
+
+        // Write your type-specific implementations of Create in your Toolkit, like
+        // protected bool Create(IEnumerable<Node> node) 
+        // { 
+        //      //code to do the Create of nodes, including any COM-call. 
+        // }
     }
 }

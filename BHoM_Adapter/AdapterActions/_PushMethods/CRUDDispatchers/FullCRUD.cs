@@ -44,7 +44,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "") where T : class, IBHoMObject
+        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Comparer<T>()).ToList();
@@ -55,41 +55,41 @@ namespace BH.Adapter
 
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
-            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || (PushType)ActionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+            if (tag != "" || Comparer<T>() != EqualityComparer<T>.Default || m_pushType == PushType.DeleteAllThenCreate)
                 readObjects = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
 
             // Merge and push the dependencies
-            if (AdapterSettings.HandleDependencies)
+            if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = DependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
 
                 foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, tag))
+                    if (!CRUD(depObj.Value as dynamic, tag, actionConfig))
                         return false;
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
 
-            if ((PushType)ActionConfig[nameof(PushType)] == PushType.DeleteAllThenCreate)
+            if (m_pushType == PushType.DeleteAllThenCreate)
                 objectsToCreate = DeleteAllNotPushed(newObjects, readObjects);
-            else if (AdapterSettings.ProcessInMemory)
+            else if (m_AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
-            if (AdapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
                 AssignId(objectsToCreate);
 
             // Create objects
-            if (!Create(objectsToCreate))
+            if (!ICreate(objectsToCreate))
                 return false;
 
-            if (AdapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
@@ -97,8 +97,10 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = Comparer<T>();
                 foreach (T item in objectsToPush)
                 {
-                    object id = newObjects.First(x => comparer.Equals(x, item)).GetAdapterId<object>();
-                    item.SetAdapterId<object>(id);
+                    object id = newObjects.First(x => comparer.Equals(x, item)).GetAdapterId();
+
+                    var idFragment = Activator.CreateInstance(ExternalIdFragmentType, id);
+                    item.Fragments.AddOrReplace(idFragment as dynamic);
                 }
             }
 
@@ -123,8 +125,8 @@ namespace BH.Adapter
 
                 diagram.Intersection.ForEach(x =>
                 {
-                    PortBHoMObjectProperties(x.Item1, x.Item2);
-                    PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2);
+                    ICopySpecificProperties(x.Item1, x.Item2);
                 });
 
                 newObjects = diagram.OnlySet1;
@@ -160,11 +162,11 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (toBeDeleted != null && toBeDeleted.Any())
-                Delete(typeof(T), toBeDeleted.Select(obj => (object)obj.GetAdapterId<int>()));
+                IDelete(typeof(T), toBeDeleted.Select(obj => obj.GetAdapterId()));
 
             // Update the tags for the rest of the existing objects in the model
-            UpdateTag(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => (object)x.GetAdapterId<int>()),
+            UpdateTags(typeof(T),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.GetAdapterId()),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
             // For the objects that have an overlap between existing and pushed 
@@ -173,12 +175,12 @@ namespace BH.Adapter
             // Port (copy over) those properties from the readObjs to the objToPush.
             diagram.Intersection.ForEach(x =>
                 {
-                    PortBHoMObjectProperties(x.Item1, x.Item2);
-                    PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2);
+                    ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
                 });
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
-            Update(diagram.Intersection.Select(x => x.Item1));
+            IUpdate(diagram.Intersection.Select(x => x.Item1));
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
@@ -188,6 +190,9 @@ namespace BH.Adapter
 
         protected IEnumerable<T> DeleteAllNotPushed<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, DiffConfig diffConfig = null) where T : class, IBHoMObject
         {
+
+            // SIMPLIFY AND CONSIDER ADDING DIFFERENT METHOD TO DO THAT
+
             // Here we assume that you always push everything (not just a part of the model).
             // Anything not pushed will get deleted from the model.
             var diagram = Engine.Diffing.Compute.HashComparing(objsToPush, readObjs);
@@ -207,15 +212,15 @@ namespace BH.Adapter
             // Port (copy over) those properties from the readObjs to the objToPush.
             diagram.Intersection.ForEach(x =>
             {
-                PortBHoMObjectProperties(x.Item1, x.Item2);
-                PortTypeSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                CopyBHoMObjectProperties(x.Item1, x.Item2);
+                ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
             });
 
             // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
 
             // Perform the deletion.
-            Delete(typeof(T), toBeDeleted.Select(obj => obj.GetAdapterId<object>()));
+            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
 
             // The now deleted overlapping objects will have to be re-created.
             objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));

@@ -28,6 +28,7 @@ using System.Linq;
 using BH.oM.Data.Requests;
 using BH.oM.Reflection.Attributes;
 using BH.oM.Common;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -43,7 +44,7 @@ namespace BH.Adapter
 
         // This is the most basic Read method and it must be implemented at the Toolkit level.
         // It must implement only logic for reading things (e.g. through API calls), without modifying objects.
-        protected virtual IEnumerable<IBHoMObject> Read(Type type, IList ids)
+        protected virtual IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
         {
             Engine.Reflection.Compute.RecordError($"Read for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<IBHoMObject>();
@@ -57,8 +58,7 @@ namespace BH.Adapter
 
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
-
-        protected virtual IEnumerable<IBHoMObject> Read(IRequest request)
+        protected virtual IEnumerable<IBHoMObject> Read(IRequest request, ActionConfig actionConfig = null)
         {
             // The implementation must:
             // 1. extract all the needed info from the IRequest
@@ -72,7 +72,7 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        protected virtual IEnumerable<IBHoMObject> Read(FilterRequest filterRequest)
+        protected virtual IEnumerable<IBHoMObject> Read(FilterRequest filterRequest, ActionConfig actionConfig = null)
         {
             // Extract the Ids from the FilterRequest
             IList objectIds = null;
@@ -81,7 +81,7 @@ namespace BH.Adapter
                 objectIds = idObject as IList;
 
             // Call the Basic Method Read() to get the objects based on the Ids
-            IEnumerable<IBHoMObject> objects = Read(filterRequest.Type, objectIds);
+            IEnumerable<IBHoMObject> objects = IRead(filterRequest.Type, objectIds, actionConfig);
 
             // If the FilterRequest contains a Tag, use it to further filter the objects
             if (filterRequest.Tag == "")
@@ -91,10 +91,10 @@ namespace BH.Adapter
         }
 
 
-        protected virtual IEnumerable<IBHoMObject> Read(Type type, string tag = "")
+        protected virtual IEnumerable<IBHoMObject> Read(Type type, string tag = "", ActionConfig actionConfig = null)
         {
             // Call the Basic Method Read() to get the objects based on the ids
-            IEnumerable<IBHoMObject> objects = Read(type, null as List<object>);
+            IEnumerable<IBHoMObject> objects = IRead(type, null as List<object>, actionConfig);
 
             // Filter by tag if any 
             if (tag == "")

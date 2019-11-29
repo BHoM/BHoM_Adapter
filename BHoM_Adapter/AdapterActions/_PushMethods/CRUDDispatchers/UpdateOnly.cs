@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -42,7 +42,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Update for the specified objects and, if Config.HandleDependencies is true, does the full CRUD for their dependencies.")]
-        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "") where T : IBHoMObject
+        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
             List<T> newObjects = objectsToPush.ToList();
 
@@ -51,36 +51,19 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (AdapterSettings.HandleDependencies)
+            if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = DependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(newObjects, dependencyTypes, tag); //first-level dependencies
 
                 foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, tag))
+                    if (!CRUD(depObj.Value as dynamic, tag, actionConfig))
                         return false;
             }
 
-            return Update(newObjects);
+            return IUpdate(newObjects);
         }
 
-        [Description("Called by UpdateOnly() in order to recursively update the dependencies of the objects.")]
-        protected virtual bool DependenciesUpdateOnly<T>(IEnumerable<T> objectsToUpdate, string tag = "") where T : IBHoMObject
-        {
-            // Make sure objects are distinct 
-            List<T> objects = objectsToUpdate.Distinct(Comparer<T>()).ToList();
-
-            // Make sure objects are tagged
-            if (tag != "")
-                objects.ForEach(x => x.Tags.Add(tag));
-
-            // Create any sub-dependency 
-            var dependencyTypes = DependencyTypes<T>();
-            var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(objectsToUpdate, dependencyTypes, tag);
-            foreach (var depObj in dependencyObjects)
-                DependenciesUpdateOnly(depObj.Value as dynamic);
-
-            return Update(objects);
-        }
+        
     }
 }

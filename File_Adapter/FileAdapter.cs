@@ -34,7 +34,7 @@ namespace BH.Adapter.FileAdapter
 {
     public partial class FileAdapter : BHoMAdapter
     {
-        public override Type AdapterIdFragmentType { get; set; } = null; // File Adapter does not use AdapterIdFragment.
+        public override Type ExternalIdFragmentType { get; set; } = null; // File Adapter does not use AdapterIdFragment.
 
         /***************************************************/
         /**** Constructor                               ****/
@@ -57,7 +57,7 @@ namespace BH.Adapter.FileAdapter
             ProcessExtension(ref m_FilePath);
 
             m_isJSON = Path.GetExtension(m_FilePath) == ".json";
-            this.AdapterSettings.UseAdapterId = false;
+            this.m_AdapterSettings.UseAdapterId = false;
         }
 
         /***************************************************/

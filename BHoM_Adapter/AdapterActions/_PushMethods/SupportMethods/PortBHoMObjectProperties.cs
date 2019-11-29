@@ -41,7 +41,7 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        protected virtual void PortBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        protected virtual void CopyBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
         {
             // Port tags from source to target
             foreach (string tag in source.Tags)
@@ -52,7 +52,7 @@ namespace BH.Adapter
                 target.Name = source.Name;
 
             // Get id of the source and port it to the target
-            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(AdapterIdFragmentType);
+            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(ExternalIdFragmentType);
             target.Fragments.AddOrReplace(source_adapterIdFragment);
         }
     }

@@ -37,14 +37,7 @@ namespace BH.Adapter
         /***************************************************/
 
         [Description("Must contain the type of the AdapterIdFragment used in the adapter implementation.")]
-        public virtual Type AdapterIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
-
-        [Description("Different default settings for specific implementations may be set in the constructor.")]
-        public virtual AdapterSettings AdapterSettings { get; set; }
-
-        [Description("Stores any additional config or data to be used in any Adapter method." +
-            "Content is re-set on activation of any Adapter Action (e.g. a Push).")] // so the data is not shared between different Actions.
-        public virtual Dictionary<string, object> ActionConfig { get; set; }
+        public virtual Type ExternalIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
 
         [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
         public virtual string AdapterName { get; private set; }
@@ -64,11 +57,8 @@ namespace BH.Adapter
         {
             // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
             // e.g. AdapterSettings.WrapNonBHoMObjects = true;
-            AdapterSettings = new AdapterSettings();
+            m_AdapterSettings = new AdapterSettings();
 
-            // First initialisation of the ActionConfig.
-            // Re-initialisation happens in the BHoM_UI every time an Adapter action is activated.
-            ActionConfig = new Dictionary<string, object>();
 
             // Set the adapter name through reflection based on the child class name (e.g. "SpeckleAdapter")
             AdapterName = GetType().Name;
@@ -98,7 +88,7 @@ namespace BH.Adapter
         [Input("objectType", "Type of the object whose next available id should be returned.")]
         [Input("refresh", "To say if it is the first of many calls during the same pass of the adapter " +
             "so you only need to ask the adapter once, then increment.")]
-        protected virtual AdapterIdFragment<T> NextId<T>(Type objectType, bool refresh = false)
+        protected virtual object NextId(Type objectType, bool refresh = false)
         {
             return null;
         }
@@ -117,14 +107,26 @@ namespace BH.Adapter
             bool refresh = true;
             foreach (T item in objects)
             {
-                if (!item.Fragments.Contains(AdapterIdFragmentType))
+                if (!item.Fragments.Contains(ExternalIdFragmentType))
                 {
-                    var nextIdFragment = NextId<dynamic>(typeof(T), refresh);
-                    item.Fragments.AddOrReplace(nextIdFragment);
+                    object id = NextId(typeof(T), refresh);
+
+                    var idFragment = Activator.CreateInstance(ExternalIdFragmentType, id);
+                    item.Fragments.AddOrReplace(idFragment as dynamic);
+
                     refresh = false;
                 }
             }
         }
+
+        // Different default settings for specific implementations may be set in the constructor.
+        protected AdapterSettings m_AdapterSettings = new AdapterSettings();
+
+        // Stores the current type of Push.
+        protected PushType m_pushType;
+
+        // Stores the current type of Pull.
+        protected PullType m_pullType;
 
         /***************************************************/
         /**** Public Events                             ****/

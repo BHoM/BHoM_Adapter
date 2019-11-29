@@ -73,8 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Create\AdapterIdFragment.cs" />
-    <Compile Include="Modify\SetAdapterId.cs" />
     <Compile Include="Modify\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\GetAdapterId.cs" />
@@ -86,6 +84,9 @@
       <Name>Adapter_oM</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Create\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

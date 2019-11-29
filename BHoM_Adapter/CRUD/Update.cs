@@ -21,6 +21,7 @@
  */
 
 using BH.Engine.Reflection;
+using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.oM.Data;
 using System;
@@ -42,19 +43,19 @@ namespace BH.Adapter
 
         // Unlike the Create, Delete and Read, this method already exposes a simple implementation: it calls Delete and then Create.
         // It can be overridden at the Toolkit level if a more appropriate implementation is required.
-        protected virtual bool Update<T>(IEnumerable<T> objects) where T : IBHoMObject
+        protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             Type objectType = typeof(T);
-            if (AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
-                Delete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]));
+                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]), actionConfig);
             }
-            return Create(objects);
+            return ICreate(objects, actionConfig);
         }
 
         // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
         // It needs to be implemented at the Toolkit level for the full CRUD to work.
-        protected virtual int UpdateTag(Type type, IEnumerable<object> ids, object newTag)
+        protected virtual int UpdateTags(Type type, IEnumerable<object> ids, IEnumerable<HashSet<string>> newTags, ActionConfig actionConfig = null)
         {
             return 0;
         }

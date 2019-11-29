@@ -31,8 +31,10 @@ using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
-    public class TestIdFragment : AdapterIdFragment<int>
+    public class TestIdFragment : ExternalIdFragment
     {
-        public TestIdFragment(int id) : base(id) { }
+        public TestIdFragment(object id) : base(id)
+        {
+        }
     }
 }

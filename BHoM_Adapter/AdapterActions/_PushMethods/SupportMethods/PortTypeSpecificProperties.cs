@@ -39,9 +39,15 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
-        protected virtual void PortTypeSpecificProperties<T>(T target, T source)
+        protected virtual void ICopySpecificProperties(object target, object source)
         {
-            return; //to be implemented in the specific adapter.
+            // to be overridden in the specific adapter 
+            // and dynamically dispatch to your type-specific implementations, like:
+            // PortSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+            return; 
         }
+
+        // Write your type-specific implementations of PortSpecificProperties in your Toolkit, like
+        // PortSpecificProperties(Node targetNode, Node sourceNode);
     }
 }

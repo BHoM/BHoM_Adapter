@@ -30,18 +30,10 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    public interface IAdapterIdFragment<T> : IBHoMFragment
+    public class ExternalIdFragment : IBHoMFragment
     {
-        T Id { get; set; }
-    }
+        public object Id { get; set; }
 
-    public class AdapterIdFragment<T> : IAdapterIdFragment<T>
-    {
-        public T Id { get; set; }
-
-        public AdapterIdFragment(T id)
-        {
-            Id = id;
-        }
+        public ExternalIdFragment(object id) { Id = id; }
     }
 }

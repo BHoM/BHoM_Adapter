@@ -41,17 +41,10 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Prepares the objects for the Push.")]
-        protected virtual IEnumerable<IBHoMObject> ProcessObjects(IEnumerable<object> objects) 
+        protected virtual IEnumerable<IBHoMObject> ProcessObjects(IEnumerable<object> objects, ActionConfig actionConfig = null) 
         {
-            // Get the value for WrapNonBHoMObjects.
-            bool wrapNonBHoMObjects = false;
-
             // If ActionConfig has a value for `WrapNonBHoMObjects`, it has precedence over the default value in AdapterSettings.
-            object wrapNonBHoMObjs_actionConfig;
-            if (ActionConfig.TryGetValue(nameof(AdapterSettings.WrapNonBHoMObjects), out wrapNonBHoMObjs_actionConfig))
-                wrapNonBHoMObjects = (bool)wrapNonBHoMObjs_actionConfig;
-            else
-                wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
+            bool wrapNonBHoMObjects = actionConfig.WrapNonBHoMObjects || m_AdapterSettings.WrapNonBHoMObjects;
 
             // Verify that the input objects are IBHoMObjects.
             var iBHoMObjects = objects.OfType<IBHoMObject>(); //this also filters non-null objs.
@@ -61,12 +54,15 @@ namespace BH.Adapter
                     "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true."); 
             }
 
-            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            List<IBHoMObject> objectsToPush = AdapterSettings.CloneBeforePush ? iBHoMObjects.Select(x => x.DeepClone()).ToList() : iBHoMObjects.ToList();
-
+            List<IBHoMObject> objectsToPush = new List<IBHoMObject>();
+            
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             if (wrapNonBHoMObjects)
-                Engine.Adapter.Modify.WrapNonBHoMObjects(objectsToPush);
+                objectsToPush = Engine.Adapter.Modify.WrapNonBHoMObjects(objects).ToList();
+
+            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
+            if (m_AdapterSettings.CloneBeforePush)
+                objectsToPush = objectsToPush.Select(x => x.DeepClone()).ToList();
 
             return objectsToPush;
         }
