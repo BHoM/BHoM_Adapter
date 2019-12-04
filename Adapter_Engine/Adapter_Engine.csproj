@@ -73,9 +73,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modify\SetExternalId.cs" />
     <Compile Include="Modify\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query\GetAdapterId.cs" />
+    <Compile Include="Query\GetExternalId.cs" />
     <Compile Include="Query\GetDependencyObjects.cs" />
   </ItemGroup>
   <ItemGroup>

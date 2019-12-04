@@ -21,43 +21,38 @@
  */
 
 using BH.Engine.Reflection;
-using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.Engine.Base;
 using BH.oM.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
-    // NOTE: CRUD folder methods
-    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
-    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Basic Methods                             ****/
+        /**** Push Support methods                      ****/
         /***************************************************/
-        /* These methods provide the basic functionalities for the CRUD to work. */
+        // These are support methods required by other methods in the Push process.
 
-        // Unlike the Create, Delete and Read, this method already exposes a simple implementation: it calls Delete and then Create.
-        // It can be overridden at the Toolkit level if a more appropriate implementation is required.
-        protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
+        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
+        protected virtual void CopyBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
         {
-            Type objectType = typeof(T);
-            if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
-            {
-                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]), actionConfig);
-            }
-            return ICreate(objects, actionConfig);
-        }
+            // Port tags from source to target
+            foreach (string tag in source.Tags)
+                target.Tags.Add(tag);
 
-        // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
-        // It needs to be implemented at the Toolkit level for the full CRUD to work.
-        protected virtual int UpdateTags(Type type, IEnumerable<object> ids, IEnumerable<HashSet<string>> newTags, ActionConfig actionConfig = null)
-        {
-            return 0;
+            // If target does not have name, port the source name
+            if (string.IsNullOrWhiteSpace(target.Name))
+                target.Name = source.Name;
+
+            // Get id of the source and port it to the target
+            target.CustomData[AdapterId] = source.CustomData[AdapterId];
         }
     }
 }

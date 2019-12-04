@@ -55,5 +55,8 @@
     <Compile Include="ActionConfig.cs" />
     <Compile Include="TestIdFragment.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Settings-Config\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -91,7 +91,7 @@ namespace BH.Adapter
 
                 // Remove tag if other tags as well
                 IEnumerable<IBHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                UpdateTags(type, multiTags.Select(x => x.CustomData[AdapterId]), multiTags.Select(x => x.Tags), actionConfig);
+                IUpdateTags(type, multiTags.Select(x => x.CustomData[AdapterId]), multiTags.Select(x => x.Tags), actionConfig);
 
                 return ids.Count();
             }

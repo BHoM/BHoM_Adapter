@@ -36,97 +36,43 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("Must contain the type of the AdapterIdFragment used in the adapter implementation.")]
-        public virtual Type ExternalIdFragmentType { get; set; } // e.g. = typeof(SpeckleIdFragment)
-
-        [Description("Name of the child Adapter targeting an external software e.g. 'SpeckleAdapter'.")]
-        public virtual string AdapterName { get; private set; }
-
-        [Description("Used only as a key for the CustomData dictionary; corresponding value will be the id for the specific Adapter instance.")]
-        public string AdapterId { get; set; }
-
-        [Description("GUID of the specific Adapter instance.")]
-        public virtual Guid AdapterGuid { get; set; } = Guid.NewGuid();
-
-
-        /***************************************************/
-        /**** Constructor                               ****/
-        /***************************************************/
-
-        public BHoMAdapter()
-        {
-            // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
-            // e.g. AdapterSettings.WrapNonBHoMObjects = true;
-            m_AdapterSettings = new AdapterSettings();
-
-
-            // Set the adapter name through reflection based on the child class name (e.g. "SpeckleAdapter")
-            AdapterName = GetType().Name;
-
-            // Set the AdapterId Key Name (e.g. "Speckle_id") for the CustomData dictionary.
-            // Used only as a Key for the CustomData dictionary; corresponding Value will be the id for the specific Adapter instance.
-            // To be superseded by the ID-as-fragment change.
-            AdapterId = AdapterName.Split(new string[] { "Adapter" }, StringSplitOptions.None)[0]; // e.g. SpeckleAdapter -> "Speckle_id"
-        }
+        [Description("Used only as a key for the CustomData dictionary; " +
+            "corresponding value will be the id for the specific Adapter instance. E.g. key = Speckle_Id, value = 123")]
+        public string AdapterId { get; set; } // has to be populated in the specific Adapter constructor, e.g. AdapterId = BH.Engine.GSA.Convert.AdapterId;
 
         /***************************************************/
         /**** Protected Fields                          ****/
         /***************************************************/
 
-        [Description("To be implemented (overrided) at the Toolkit level for the full CRUD to work." +
-            "Tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed." +
-            "E.g. A Line has dependency type of Points. Needed because not all software have the same dependency relationship." +
-            "See the wiki or look at existing Adapter implementations in the Toolkits for more info.")]
-        protected virtual List<Type> DependencyTypes<T>()
-        {
-            return new List<Type>();
-        }
-
-        /***************************************************/
-
-        [Description("Returns the adapterIdFragment containing the next available ID for object creation.")]
-        [Input("objectType", "Type of the object whose next available id should be returned.")]
-        [Input("refresh", "To say if it is the first of many calls during the same pass of the adapter " +
-            "so you only need to ask the adapter once, then increment.")]
-        protected virtual object NextId(Type objectType, bool refresh = false)
-        {
-            return null;
-        }
-
-        /***************************************************/
-
-        protected virtual IEqualityComparer<T> Comparer<T>()
-        {
-            return EqualityComparer<T>.Default;
-        }
-
-        /***************************************************/
-
-        protected void AssignId<T>(IEnumerable<T> objects) where T : IBHoMObject
-        {
-            bool refresh = true;
-            foreach (T item in objects)
-            {
-                if (!item.Fragments.Contains(ExternalIdFragmentType))
-                {
-                    object id = NextId(typeof(T), refresh);
-
-                    var idFragment = Activator.CreateInstance(ExternalIdFragmentType, id);
-                    item.Fragments.AddOrReplace(idFragment as dynamic);
-
-                    refresh = false;
-                }
-            }
-        }
-
-        // Different default settings for specific implementations may be set in the constructor.
+        // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
+        // e.g. AdapterSettings.WrapNonBHoMObjects = true;
         protected AdapterSettings m_AdapterSettings = new AdapterSettings();
 
-        // Stores the current type of Push.
+        // Stores the current type of Push;
+        // it must be populated at the start of the Push using the value specified in the ActionConfig.
         protected PushType m_pushType;
 
-        // Stores the current type of Pull.
+        // Stores the current type of Pull;
+        // it must be populated at the start of the Pull using the value specified in the ActionConfig.
         protected PullType m_pullType;
+
+        // Object comparers to be used within a specific Adapter.
+        // E.g. A Structural Node can be compared only using its geometrical location.
+        // Needed because different software need different rules for comparing objects.
+        protected Dictionary<Type, object> m_adapterComparers = new Dictionary<Type, object>
+        {
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Node), new BH.Engine.Structure.NodeDistanceComparer(3) }
+        };
+
+        // Dependecies between different IBHoMObjects to be considered within a specific Adapter.
+        // E.g. A Line has dependency type of Points. 
+        // Needed because different software have different dependency relationships.
+        protected Dictionary<Type, List<Type>> m_DependencyTypes = new Dictionary<Type, List<Type>>
+        {
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
+        };
 
         /***************************************************/
         /**** Public Events                             ****/

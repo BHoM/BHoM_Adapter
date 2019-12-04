@@ -44,8 +44,7 @@ namespace BH.Adapter
         [Description("Calls the basic CRUD/Delete method as appropriate.")]
         public virtual int Remove(IRequest request, ActionConfig actionConfig = null)
         {
-            // If unset, set the actionConfig to a new ActionConfig.
-            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
 
             return Delete(request as dynamic, actionConfig);
         }

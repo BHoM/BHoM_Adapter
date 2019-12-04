@@ -53,7 +53,7 @@ namespace BH.Adapter
             // Merge and push the dependencies
             if (m_AdapterSettings.HandleDependencies) // MERGE THE TWO METHODS
             {
-                var dependencyTypes = DependencyTypes<T>();
+                var dependencyTypes = GetDependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, tag); //first-level dependencies
 
                 foreach (var depObj in dependencyObjects)
@@ -68,14 +68,14 @@ namespace BH.Adapter
         protected virtual bool DependenciesCreateOnly<T>(IEnumerable<T> objectsToCreate, string tag = "") where T : IBHoMObject
         {
             // Make sure objects are distinct 
-            List<T> objects = objectsToCreate.Distinct(Comparer<T>()).ToList();
+            List<T> objects = objectsToCreate.Distinct(GetComparerForType<T>()).ToList();
 
             // Make sure objects are tagged
             if (tag != "")
                 objects.ForEach(x => x.Tags.Add(tag));
 
             // Create any sub-dependency
-            var dependencyTypes = DependencyTypes<T>();
+            var dependencyTypes = GetDependencyTypes<T>();
             var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(objectsToCreate, dependencyTypes, tag);
             foreach (var depObj in dependencyObjects)
                 DependenciesCreateOnly(depObj.Value as dynamic);

@@ -47,7 +47,9 @@ namespace BH.Adapter
         {
             bool success = true;
 
-            // --------------- SET-UP ------------------
+            // ----------------------------------------//
+            //                 SET-UP                  //
+            // ----------------------------------------//
 
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
             IEnumerable<IBHoMObject> objectsToPush = ProcessObjects(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
@@ -58,16 +60,16 @@ namespace BH.Adapter
                 return new List<object>(); 
             }
 
-            // If unset, set the actionConfig to a new ActionConfig.
-            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
-
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
                 pushType = m_AdapterSettings.DefaultPushType;
 
             m_pushType = pushType; // saves the pushType in the Global variable.
 
-            // ------------- ACTUAL PUSH ---------------
+
+            // ----------------------------------------//
+            //               ACTUAL PUSH               //
+            // ----------------------------------------//
 
             // Group the objects by their specific type.
             var typeGroups = objectsToPush.GroupBy(x => x.GetType());

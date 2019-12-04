@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -20,41 +20,30 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Base;
+using BH.Engine.Reflection;
 using BH.oM.Adapter;
-using BH.oM.Data.Requests;
+using BH.oM.Base;
 using BH.Engine.Base;
-using BH.Engine.Adapter;
+using BH.oM.Data.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
 
-namespace BH.Adapter
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Modify
     {
-        /******************************************************/
-        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
-        /******************************************************/
-        /* These methods represent Actions that the Adapter can complete. 
-           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
-
-        [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
-        public virtual bool Move(BHoMAdapter to, IRequest request, 
-            PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, 
-            PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null)
+        public static bool SetExternalId<T>(this IBHoMObject obj, T id)
         {
-            string tag = "";
-            if (request is FilterRequest)
-                tag = (request as FilterRequest).Tag;
+            ExternalIdFragment<T> externalIdFragment = obj.FindFragment<ExternalIdFragment<T>>();
+            externalIdFragment.Id = id;
 
-            IEnumerable<object> objects = Pull(request, pullType, pullConfig);
-            int count = objects.Count();
+            obj.Fragments.AddOrReplace(externalIdFragment);
 
-            return to.Push(objects.Cast<IObject>(), tag, pushType, pushConfig).Count() == count;
+            return true;
         }
     }
 }

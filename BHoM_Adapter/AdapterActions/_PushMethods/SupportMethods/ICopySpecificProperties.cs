@@ -22,14 +22,12 @@
 
 using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.Engine.Base;
 using BH.oM.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -40,20 +38,21 @@ namespace BH.Adapter
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        protected virtual void CopyBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        [Description("Gets called during the Push. Takes properties specified from the source object and assigns them to the target object.")]
+        protected virtual void ICopySpecificProperties(object target, object source)
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
-
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
-
-            // Get id of the source and port it to the target
-            IBHoMFragment source_adapterIdFragment = source.FindFragment<IBHoMFragment>(ExternalIdFragmentType);
-            target.Fragments.AddOrReplace(source_adapterIdFragment);
+            // To be overridden in the specific adapter.
+            // the override must include only a dynamic dispatch to other type-specific implementations, like:
+            // PortSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+            // Then type-specific implementations must be written as below.
+            return; 
         }
+
+        // Write your type-specific implementations of PortSpecificProperties in your Toolkit, like:
+        // protected void PortSpecificProperties(Node targetNode, Node sourceNode) 
+        // { 
+        //    if (targetNode.Support == null)  
+        //        targetNode.Support = sourceNode.support;
+        // }
     }
 }

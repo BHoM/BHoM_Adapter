@@ -28,5 +28,6 @@ namespace BH.oM.Adapter
     public class ActionConfig : BHoMObject
     {
         public bool WrapNonBHoMObjects { get; set; } = false;
+        public bool UseHashComparerAsDefault { get; set; } = true;
     }
 }

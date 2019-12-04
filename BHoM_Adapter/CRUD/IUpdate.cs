@@ -21,33 +21,43 @@
  */
 
 using BH.Engine.Reflection;
+using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.oM.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
 namespace BH.Adapter
 {
+    // NOTE: CRUD folder methods
+    // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
+    // They are meant to be implemented at the Toolkit level.
     public abstract partial class BHoMAdapter
     {
         /***************************************************/
-        /**** Push Support methods                      ****/
+        /**** Basic Methods                             ****/
         /***************************************************/
-        // These are support methods required by other methods in the Push process.
+        /* These methods provide the basic functionalities for the CRUD to work. */
 
-        [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
-        protected virtual void ICopySpecificProperties(object target, object source)
+        // Unlike the Create, Delete and Read, this method already exposes a simple implementation: it calls Delete and then Create.
+        // It can be overridden at the Toolkit level if a more appropriate implementation is required.
+        protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            // to be overridden in the specific adapter 
-            // and dynamically dispatch to your type-specific implementations, like:
-            // PortSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
-            return; 
+            Type objectType = typeof(T);
+            if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            {
+                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterId]), actionConfig);
+            }
+            return ICreate(objects, actionConfig);
         }
 
-        // Write your type-specific implementations of PortSpecificProperties in your Toolkit, like
-        // PortSpecificProperties(Node targetNode, Node sourceNode);
+        // UpdateTag should be implemented to allow for the update of the objects' tags without re-writing the whole objects.
+        // It needs to be implemented at the Toolkit level for the full CRUD to work.
+        protected virtual int IUpdateTags(Type type, IEnumerable<object> ids, IEnumerable<HashSet<string>> newTags, ActionConfig actionConfig = null)
+        {
+            return 0;
+        }
     }
 }
