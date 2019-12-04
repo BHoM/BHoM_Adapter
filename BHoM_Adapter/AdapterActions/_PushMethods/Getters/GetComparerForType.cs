@@ -43,18 +43,21 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Returns the comparer to be used with a certain object type.")]
-        protected virtual IEqualityComparer<T> GetComparerForType<T>(ActionConfig actionConfig = null)
+        protected virtual IEqualityComparer<T> GetComparerForType<T>(ActionConfig actionConfig = null) where T : IBHoMObject
         {
             Type type = typeof(T);
 
             if (m_adapterComparers.ContainsKey(type))
-            {
                 return m_adapterComparers[type] as IEqualityComparer<T>;
-            }
-            else
+
+            if (actionConfig.AllowHashForComparing)
             {
-                return EqualityComparer<T>.Default;
+                var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
+
+                return new HashFragmComparer<T>(propertiesToIgnore);
             }
+
+            return EqualityComparer<T>.Default;
         }
     }
 }
