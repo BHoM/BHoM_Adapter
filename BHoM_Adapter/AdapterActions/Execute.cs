@@ -44,9 +44,6 @@ namespace BH.Adapter
         [Description("Sends specific commands to the external software, if supported by its API. Has to be implemented (overridden) in the specific Toolkit.")]
         public virtual bool Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null)
         {
-            // If unset, set the actionConfig to a new ActionConfig.
-            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
-
             return false;
         }
     }

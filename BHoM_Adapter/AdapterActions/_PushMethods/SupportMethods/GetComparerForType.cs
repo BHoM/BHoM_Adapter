@@ -20,41 +20,41 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.Adapter;
-using BH.oM.Data.Requests;
 using BH.Engine.Base;
-using BH.Engine.Adapter;
+using BH.oM.Data;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        /******************************************************/
-        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
-        /******************************************************/
-        /* These methods represent Actions that the Adapter can complete. 
-           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
+        /***************************************************/
+        /**** Push Support methods                      ****/
+        /***************************************************/
+        // These are support methods required by other methods in the Push process.
 
-        [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
-        public virtual bool Move(BHoMAdapter to, IRequest request, 
-            PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, 
-            PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null)
+        [Description("Returns the comparer to be used with a certain object type.")]
+        protected virtual IEqualityComparer<T> GetComparerForType<T>(ActionConfig actionConfig = null)
         {
-            string tag = "";
-            if (request is FilterRequest)
-                tag = (request as FilterRequest).Tag;
+            Type type = typeof(T);
 
-            IEnumerable<object> objects = Pull(request, pullType, pullConfig);
-            int count = objects.Count();
-
-            return to.Push(objects.Cast<IObject>(), tag, pushType, pushConfig).Count() == count;
+            if (m_adapterComparers.ContainsKey(type))
+            {
+                return m_adapterComparers[type] as IEqualityComparer<T>;
+            }
+            else
+            {
+                return EqualityComparer<T>.Default;
+            }
         }
+
+
     }
 }

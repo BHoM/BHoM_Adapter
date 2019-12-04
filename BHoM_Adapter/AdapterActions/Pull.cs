@@ -45,8 +45,6 @@ namespace BH.Adapter
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
-            // If unset, set the actionConfig to a new ActionConfig.
-            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
 
             // --------------------------------------------------------------------------------- //
             // *** Temporary retrocompatibility fix ***

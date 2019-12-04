@@ -20,41 +20,51 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.Adapter;
-using BH.oM.Data.Requests;
 using BH.Engine.Base;
-using BH.Engine.Adapter;
+using BH.oM.Data;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        /******************************************************/
-        /**** Public Adapter Methods "Adapter ACTIONS"    *****/
-        /******************************************************/
-        /* These methods represent Actions that the Adapter can complete. 
-           They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
+        /***************************************************/
+        /**** Push Support methods                      ****/
+        /***************************************************/
+        // These are support methods required by other methods in the Push process.
 
-        [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
-        public virtual bool Move(BHoMAdapter to, IRequest request, 
-            PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, 
-            PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null)
+        [Description("Tells the CRUD what kind of relationship (dependency) exists between the Types that must be Pushed." +
+            "E.g. A Line has dependency type of Points. Needed because not all software have the same dependency relationship." +
+            "See the wiki or look at existing Adapter implementations in the Toolkits for more info.")]
+        protected virtual List<Type> GetDependencyTypes<T>()
         {
-            string tag = "";
-            if (request is FilterRequest)
-                tag = (request as FilterRequest).Tag;
+            Type type = typeof(T);
 
-            IEnumerable<object> objects = Pull(request, pullType, pullConfig);
-            int count = objects.Count();
+            if (m_DependencyTypes.ContainsKey(type))
+                return m_DependencyTypes[type];
 
-            return to.Push(objects.Cast<IObject>(), tag, pushType, pushConfig).Count() == count;
+            else if (type.BaseType != null && m_DependencyTypes.ContainsKey(type.BaseType))
+                return m_DependencyTypes[type.BaseType];
+
+            else
+            {
+                foreach (Type interType in type.GetInterfaces())
+                {
+                    if (m_DependencyTypes.ContainsKey(interType))
+                        return m_DependencyTypes[interType];
+                }
+            }
+
+            return new List<Type>();
         }
+
+
     }
 }
