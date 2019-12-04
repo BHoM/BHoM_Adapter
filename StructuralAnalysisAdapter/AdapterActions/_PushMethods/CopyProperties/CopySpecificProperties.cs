@@ -23,6 +23,7 @@
 using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.oM.Data;
+using BH.oM.Structure.Elements;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,7 +32,7 @@ using System.Reflection;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public abstract partial class StructuralAnalysisAdapter
     {
         /***************************************************/
         /**** Push Support methods                      ****/
@@ -39,20 +40,18 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Gets called during the Push. Takes properties specified from the source object and assigns them to the target object.")]
-        protected virtual void ICopySpecificProperties(object target, object source)
+        protected override void ICopySpecificProperties(object target, object source)
         {
-            // To be overridden in the specific adapter.
-            // the override must include only a dynamic dispatch to other type-specific implementations, like:
-            // PortSpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
-            // Then type-specific implementations must be written as below.
-            return; 
+            (this as dynamic).PortTypeSpecificProperties(target as dynamic, source as dynamic);
+            return;
         }
 
-        // Write your type-specific implementations of PortSpecificProperties in your Toolkit, like:
-        // protected void PortSpecificProperties(Node targetNode, Node sourceNode) 
-        // { 
-        //    if (targetNode.Support == null)  
-        //        targetNode.Support = sourceNode.support;
-        // }
+        [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
+        protected virtual void PortTypeSpecificProperties(Node target, Node source)
+        {
+            // If source is constrained and target is not, add source constraint to target
+            if (source.Support != null && target.Support == null)
+                target.Support = source.Support;
+        }
     }
 }

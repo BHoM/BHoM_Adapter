@@ -42,7 +42,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
-        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
             List<T> newObjects = objectsToPush.ToList(); //DISTICNT
 

@@ -52,7 +52,7 @@ namespace BH.Adapter
             // ----------------------------------------//
 
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
-            IEnumerable<IBHoMObject> objectsToPush = ProcessObjects(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
+            IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
 
             if (objectsToPush.Count() == 0)
             {
@@ -63,9 +63,6 @@ namespace BH.Adapter
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
                 pushType = m_AdapterSettings.DefaultPushType;
-
-            m_pushType = pushType; // saves the pushType in the Global variable.
-
 
             // ----------------------------------------//
             //               ACTUAL PUSH               //
@@ -81,14 +78,14 @@ namespace BH.Adapter
                 var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
                 if (pushType == PushType.FullCRUD)
-                    success &= CRUD(objList_specificType as dynamic, tag, actionConfig);
+                    success &= CRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
                 else if (pushType == PushType.CreateOnly)
                 {
-                    success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
+                    success &= CreateOnly(objList_specificType as dynamic, pushType, tag, actionConfig);
                 }
                 else if (pushType == PushType.UpdateOnly)
                 {
-                    success &= UpdateOnly(objList_specificType as dynamic, tag, actionConfig);
+                    success &= UpdateOnly(objList_specificType as dynamic, pushType, tag, actionConfig);
                 }
             }
 

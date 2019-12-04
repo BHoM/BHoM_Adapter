@@ -22,6 +22,7 @@
 
 using BH.oM.Base;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {

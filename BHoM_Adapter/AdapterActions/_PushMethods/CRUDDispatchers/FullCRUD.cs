@@ -45,7 +45,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool CRUD<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
+        protected bool CRUD<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(GetComparerForType<T>()).ToList();
@@ -68,14 +68,14 @@ namespace BH.Adapter
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
 
                 foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, tag, actionConfig))
+                    if (!CRUD(depObj.Value as dynamic, pushType, tag, actionConfig))
                         return false;
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate = newObjects;
 
-            if (m_pushType == PushType.DeleteAllThenCreate)
+            if (pushType == PushType.DeleteAllThenCreate)
                 //objectsToCreate = DeleteAllThenCreate(newObjects, null);
                 return false;
             else if (m_AdapterSettings.ProcessInMemory)
@@ -99,7 +99,7 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = GetComparerForType<T>();
                 foreach (T item in objectsToPush)
                 {
-                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];
+                    item.CustomData[AdapterIdName] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
                 }
             }
 
@@ -161,11 +161,11 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (toBeDeleted != null && toBeDeleted.Any())
-                IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+                IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
 
             // Update the tags for the rest of the existing objects in the model
             IUpdateTags(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterId]),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterIdName]),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
 
             // For the objects that have an overlap between existing and pushed 
@@ -217,7 +217,7 @@ namespace BH.Adapter
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
 
             // Perform the deletion.
-            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
 
             // The now deleted overlapping objects will have to be re-created.
             objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));
@@ -258,7 +258,7 @@ namespace BH.Adapter
             toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
 
             // Perform the deletion.
-            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterId]));
+            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
 
             // The now deleted overlapping objects will have to be re-created.
             objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));

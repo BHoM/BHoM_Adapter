@@ -41,7 +41,7 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Prepares the objects for the Push.")]
-        protected virtual IEnumerable<IBHoMObject> ProcessObjects(IEnumerable<object> objects, ActionConfig actionConfig) 
+        protected virtual IEnumerable<IBHoMObject> ProcessObjectsForPush(IEnumerable<object> objects, ActionConfig actionConfig) 
         {
             // -------------------------------- // 
             //            READ CONFIG           // 

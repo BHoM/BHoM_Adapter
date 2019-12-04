@@ -37,7 +37,7 @@ namespace BH.Adapter.FileAdapter
 
             HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
 
-            everything = everything.Where(x => (type == null || !type.IsAssignableFrom(x.GetType())) && (toDelete.Contains((Guid)x.CustomData[AdapterId])));
+            everything = everything.Where(x => (type == null || !type.IsAssignableFrom(x.GetType())) && (toDelete.Contains((Guid)x.CustomData[AdapterIdName])));
 
             bool ok = true;
             if (m_isJSON)

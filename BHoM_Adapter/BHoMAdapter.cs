@@ -36,9 +36,10 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("Used only as a key for the CustomData dictionary; " +
-            "corresponding value will be the id for the specific Adapter instance. E.g. key = Speckle_Id, value = 123")]
-        public string AdapterId { get; set; } // has to be populated in the specific Adapter constructor, e.g. AdapterId = BH.Engine.GSA.Convert.AdapterId;
+        [Description("Used only as a key for the CustomData dictionary. E.g. key = Speckle_Id, value = 123")]
+        public string AdapterIdName { get; set; } // value to be assigned in the specific Adapter constructor, e.g. = BH.Engine.GSA.Convert.AdapterId;
+
+        public Guid AdapterGuid { get; set; }
 
         /***************************************************/
         /**** Protected Fields                          ****/
@@ -47,14 +48,6 @@ namespace BH.Adapter
         // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
         protected AdapterSettings m_AdapterSettings = new AdapterSettings();
-
-        // Stores the current type of Push;
-        // it must be populated at the start of the Push using the value specified in the ActionConfig.
-        protected PushType m_pushType;
-
-        // Stores the current type of Pull;
-        // it must be populated at the start of the Pull using the value specified in the ActionConfig.
-        protected PullType m_pullType;
 
         // Object comparers to be used within a specific Adapter.
         // E.g. A Structural Node can be compared only using its geometrical location.
