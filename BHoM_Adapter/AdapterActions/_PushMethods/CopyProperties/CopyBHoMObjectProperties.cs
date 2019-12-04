@@ -52,7 +52,7 @@ namespace BH.Adapter
                 target.Name = source.Name;
 
             // Get id of the source and port it to the target
-            target.CustomData[AdapterId] = source.CustomData[AdapterId];
+            target.CustomData[AdapterIdName] = source.CustomData[AdapterIdName];
         }
     }
 }

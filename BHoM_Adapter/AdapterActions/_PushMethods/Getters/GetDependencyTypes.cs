@@ -40,21 +40,27 @@ namespace BH.Adapter
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Returns the comparer to be used with a certain object type.")]
-        protected virtual IEqualityComparer<T> GetComparerForType<T>(ActionConfig actionConfig = null)
+        [Description("Returns the dependency types for a certain object type.")]
+        protected virtual List<Type> GetDependencyTypes<T>()
         {
             Type type = typeof(T);
 
-            if (m_adapterComparers.ContainsKey(type))
-            {
-                return m_adapterComparers[type] as IEqualityComparer<T>;
-            }
+            if (m_dependencyTypes.ContainsKey(type))
+                return m_dependencyTypes[type];
+
+            else if (type.BaseType != null && m_dependencyTypes.ContainsKey(type.BaseType))
+                return m_dependencyTypes[type.BaseType];
+
             else
             {
-                return EqualityComparer<T>.Default;
+                foreach (Type interType in type.GetInterfaces())
+                {
+                    if (m_dependencyTypes.ContainsKey(interType))
+                        return m_dependencyTypes[interType];
+                }
             }
+
+            return new List<Type>();
         }
-
-
     }
 }

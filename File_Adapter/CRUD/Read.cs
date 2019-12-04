@@ -45,7 +45,7 @@ namespace BH.Adapter.FileAdapter
             if (ids != null)
             {
                 HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
-                everything = everything.Where(x => !toDelete.Contains((Guid)x.CustomData[AdapterId]));
+                everything = everything.Where(x => !toDelete.Contains((Guid)x.CustomData[AdapterIdName]));
             }
                 
 

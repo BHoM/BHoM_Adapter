@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdapterActions\_PushMethods\SupportMethods\PortTypeSpecificProperties.cs" />
+    <Compile Include="AdapterActions\_PushMethods\CopyProperties\CopySpecificProperties.cs" />
     <Compile Include="StructuralAnalysisAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
