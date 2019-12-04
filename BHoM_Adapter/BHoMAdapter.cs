@@ -68,7 +68,7 @@ namespace BH.Adapter
         // Dependecies between different IBHoMObjects to be considered within a specific Adapter.
         // E.g. A Line has dependency type of Points. 
         // Needed because different software have different dependency relationships.
-        protected Dictionary<Type, List<Type>> m_DependencyTypes = new Dictionary<Type, List<Type>>
+        protected Dictionary<Type, List<Type>> m_dependencyTypes = new Dictionary<Type, List<Type>>
         {
             // In your adapter constructor, populate this with values like:
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
