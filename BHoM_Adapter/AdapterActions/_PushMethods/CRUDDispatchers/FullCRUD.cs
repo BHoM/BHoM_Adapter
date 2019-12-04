@@ -73,11 +73,16 @@ namespace BH.Adapter
             }
 
             // Replace objects that overlap and define the objects that still have to be pushed
-            IEnumerable<T> objectsToCreate = newObjects;
+            IEnumerable<T> objectsToCreate;
 
-            if (pushType == PushType.DeleteAllThenCreate)
-                //objectsToCreate = DeleteAllThenCreate(newObjects, null);
-                return false;
+            if (pushType == PushType.DeleteThenCreate)
+            {
+                // All objects read from the model are to be deleted. 
+                // Note that this means that only objects of the same type of the objects being pushed will be deleted.
+                IDelete(typeof(T), readObjects.Select(obj => obj.CustomData[AdapterIdName]));
+
+                objectsToCreate = newObjects;
+            }
             else if (m_AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
@@ -184,88 +189,5 @@ namespace BH.Adapter
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
         }
-
-        /***************************************************/
-
-        protected IEnumerable<T> DeleteAllThenCreate<T>(IEnumerable<T> objsToPush, DiffConfig diffConfig = null) where T : class, IBHoMObject
-        {
-
-            // Here we assume that you always push everything (not just a part of the model).
-            // Anything not pushed will get deleted from the model.
-            var diagram = Engine.Diffing.Compute.HashComparing(objsToPush, null);
-
-            // Objects to push that do not have any overlap with the read ones are to be created.
-            var objsToCreate = diagram.OnlySet1;
-
-            // Objects existing in the model that do not have any overlap with the objects being pushed
-            var readObjs_exclusive = diagram.OnlySet2;
-
-            // All objects read from the model that are not currently being pushed are to be deleted.
-            var toBeDeleted = readObjs_exclusive;
-
-            // For the objects that have an overlap between existing and pushed 
-            // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
-            // there might be properties that need to be preserved (e.g. node constraints).
-            // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x =>
-            {
-                CopyBHoMObjectProperties(x.Item1, x.Item2);
-                ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
-            });
-
-            // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
-            toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
-
-            // Perform the deletion.
-            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
-
-            // The now deleted overlapping objects will have to be re-created.
-            objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));
-
-            // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
-            return objsToCreate.Cast<T>();
-        }
-
-        protected IEnumerable<T> DeleteAllNotPushed<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, DiffConfig diffConfig = null) where T : class, IBHoMObject
-        {
-
-            // SIMPLIFY AND CONSIDER ADDING DIFFERENT METHOD TO DO THAT
-
-            // Here we assume that you always push everything (not just a part of the model).
-            // Anything not pushed will get deleted from the model.
-            var diagram = Engine.Diffing.Compute.HashComparing(objsToPush, readObjs);
-
-            // Objects to push that do not have any overlap with the read ones are to be created.
-            var objsToCreate = diagram.OnlySet1;
-
-            // Objects existing in the model that do not have any overlap with the objects being pushed
-            var readObjs_exclusive = diagram.OnlySet2;
-
-            // All objects read from the model that are not currently being pushed are to be deleted.
-            var toBeDeleted = readObjs_exclusive;
-
-            // For the objects that have an overlap between existing and pushed 
-            // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
-            // there might be properties that need to be preserved (e.g. node constraints).
-            // Port (copy over) those properties from the readObjs to the objToPush.
-            diagram.Intersection.ForEach(x =>
-            {
-                CopyBHoMObjectProperties(x.Item1, x.Item2);
-                ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
-            });
-
-            // Delete also the overlapping objects (between read and toPush); they will then get re-created with the ported properties.
-            toBeDeleted.AddRange(diagram.Intersection.Select(x => x.Item1));
-
-            // Perform the deletion.
-            IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
-
-            // The now deleted overlapping objects will have to be re-created.
-            objsToCreate.AddRange(diagram.Intersection.Select(x => x.Item1));
-
-            // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
-            return objsToCreate.Cast<T>();
-        }
-
     }
 }

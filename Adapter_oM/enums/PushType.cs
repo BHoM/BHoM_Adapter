@@ -39,7 +39,7 @@ namespace BH.oM.Adapter
         UpdateOnly,
         //Replace,
         [Description("asda")]
-        DeleteAllThenCreate, // delete all --> createOnly
+        DeleteThenCreate, // delete all --> createOnly
         [Description("asda")]
         asd, // read, check if not existing, then delete --> createOnly
         [Description("asda")]

@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine;
 using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.Engine.Base;
@@ -30,6 +31,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
+
 
 namespace BH.Adapter
 {
@@ -51,15 +53,8 @@ namespace BH.Adapter
             }
             else
             {
-                // IF SOMESETTING ALLOWS THIS
-                // --> return a default comparer (perhaps hashing?)
-
                 return EqualityComparer<T>.Default;
             }
-
-
         }
-
-
     }
 }
