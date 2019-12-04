@@ -99,7 +99,7 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = GetComparerForType<T>();
                 foreach (T item in objectsToPush)
                 {
-                    object id = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];
+                    item.CustomData[AdapterId] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterId];
                 }
             }
 

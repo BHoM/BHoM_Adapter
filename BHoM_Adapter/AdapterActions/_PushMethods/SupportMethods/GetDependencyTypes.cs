@@ -47,18 +47,18 @@ namespace BH.Adapter
         {
             Type type = typeof(T);
 
-            if (m_DependencyTypes.ContainsKey(type))
-                return m_DependencyTypes[type];
+            if (m_dependencyTypes.ContainsKey(type))
+                return m_dependencyTypes[type];
 
-            else if (type.BaseType != null && m_DependencyTypes.ContainsKey(type.BaseType))
-                return m_DependencyTypes[type.BaseType];
+            else if (type.BaseType != null && m_dependencyTypes.ContainsKey(type.BaseType))
+                return m_dependencyTypes[type.BaseType];
 
             else
             {
                 foreach (Type interType in type.GetInterfaces())
                 {
-                    if (m_DependencyTypes.ContainsKey(interType))
-                        return m_DependencyTypes[interType];
+                    if (m_dependencyTypes.ContainsKey(interType))
+                        return m_dependencyTypes[interType];
                 }
             }
 
