@@ -51,6 +51,10 @@ namespace BH.Adapter
             //                 SET-UP                  //
             // ----------------------------------------//
 
+            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
+            if (pushType == PushType.AdapterDefault)
+                pushType = m_AdapterSettings.DefaultPushType;
+
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
             IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
 
@@ -59,10 +63,6 @@ namespace BH.Adapter
                 Engine.Reflection.Compute.RecordError("Input objects were invalid.");
                 return new List<object>(); 
             }
-
-            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
-            if (pushType == PushType.AdapterDefault)
-                pushType = m_AdapterSettings.DefaultPushType;
 
             // ----------------------------------------//
             //               ACTUAL PUSH               //
