@@ -31,18 +31,15 @@ namespace BH.oM.Adapter
 {
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
-        [Description("asda")]
+        [Description("Calls all CRUD methods as appropriate.")]
         FullCRUD,
-        [Description("asda")]
+        [Description("Uses only the Create CRUD method to export the objects.")]
         CreateOnly,
-        [Description("asda")]
+        [Description("Uses only the Update CRUD method to update the objects in the external software.")]
         UpdateOnly,
-        //Replace,
-        [Description("asda")]
-        DeleteThenCreate, // delete all --> createOnly
-        [Description("asda")]
-        asd, // read, check if not existing, then delete --> createOnly
-        [Description("asda")]
+        [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
+        DeleteThenCreate,
+        [Description("If this is chosen, then the m_AdapterSettings.DefaultPushType is picked.")]
         AdapterDefault
     }
 }
