@@ -45,6 +45,10 @@ namespace BH.Adapter
         /**** Protected Fields                          ****/
         /***************************************************/
 
+        // Properties of the objects that, in case of overlap, must be copied from the existing (read) objects to the ObjectsToPush.
+        // E.g. PropertiesToPort = new Dictionary<Type, List<string>>  { { typeof(Node), new List<string>(){nameof(Node.Support)} } };
+        protected Dictionary<Type, List<string>> m_propertiesToPort { get; set; } = new Dictionary<Type, List<string>>();
+
         // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
         protected AdapterSettings m_AdapterSettings = new AdapterSettings();

@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modify\CopySpecificProperties.cs" />
     <Compile Include="Modify\SetExternalId.cs" />
     <Compile Include="Modify\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -130,8 +130,10 @@ namespace BH.Adapter
                 diagram.Intersection.ForEach(x =>
                 {
                     CopyBHoMObjectProperties(x.Item1, x.Item2);
-                    ICopySpecificProperties(x.Item1, x.Item2);
+                    BH.Engine.Adapter.Modify.CopySpecificProperties(x.Item1, x.Item2, m_propertiesToPort[x.GetType()]);
                 });
+
+                
 
                 newObjects = diagram.OnlySet1;
             }
@@ -180,7 +182,7 @@ namespace BH.Adapter
             diagram.Intersection.ForEach(x =>
                 {
                     CopyBHoMObjectProperties(x.Item1, x.Item2);
-                    ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                    BH.Engine.Adapter.Modify.CopySpecificProperties(x.Item1, x.Item2, m_propertiesToPort[x.GetType()]);
                 });
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
