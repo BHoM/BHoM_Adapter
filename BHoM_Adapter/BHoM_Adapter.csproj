@@ -97,7 +97,6 @@
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\FullCRUD.cs" />
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\UpdateOnly.cs" />
     <Compile Include="AdapterActions\_PushMethods\Getters\GetDependencyTypes.cs" />
-    <Compile Include="AdapterActions\_PushMethods\CopyProperties\CopySpecificProperties.cs" />
     <Compile Include="AdapterActions\_PushMethods\Getters\GetComparerForType.cs" />
     <Compile Include="AdapterActions\_PushMethods\ProcessObjectsForPush.cs" />
     <Compile Include="AdapterActions\_PushMethods\CopyProperties\CopyBHoMObjectProperties.cs" />

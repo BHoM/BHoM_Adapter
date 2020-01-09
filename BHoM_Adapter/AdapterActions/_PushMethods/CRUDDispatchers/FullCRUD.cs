@@ -62,7 +62,7 @@ namespace BH.Adapter
                 readObjects = new List<T>();
 
             // Merge and push the dependencies
-            if (m_AdapterSettings.HandleDependencies)
+            if (m_adapterSettings.HandleDependencies)
             {
                 var dependencyTypes = GetDependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
@@ -83,20 +83,20 @@ namespace BH.Adapter
 
                 objectsToCreate = newObjects;
             }
-            else if (m_AdapterSettings.ProcessInMemory)
+            else if (m_adapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
-            if (m_AdapterSettings.UseAdapterId)
+            if (m_adapterSettings.UseAdapterId)
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
             if (!ICreate(objectsToCreate))
                 return false;
 
-            if (m_AdapterSettings.UseAdapterId)
+            if (m_adapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
@@ -127,10 +127,14 @@ namespace BH.Adapter
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), GetComparerForType<T>());
 
+                List<ICopyPropertiesModule<T>> copyPropertiesModules =
+                    this.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
+                    .Cast<ICopyPropertiesModule<T>>().ToList();
+
                 diagram.Intersection.ForEach(x =>
                 {
                     CopyBHoMObjectProperties(x.Item1, x.Item2);
-                    ICopySpecificProperties(x.Item1, x.Item2);
+                    copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1, x.Item2));
                 });
 
                 newObjects = diagram.OnlySet1;
@@ -177,10 +181,15 @@ namespace BH.Adapter
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
+
+            List<ICopyPropertiesModule<T>> copyPropertiesModules =
+                this.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
+                .Cast<ICopyPropertiesModule<T>>().ToList();
+
             diagram.Intersection.ForEach(x =>
                 {
                     CopyBHoMObjectProperties(x.Item1, x.Item2);
-                    ICopySpecificProperties(x.Item1 as dynamic, x.Item2 as dynamic);
+                    copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1 as dynamic, x.Item2 as dynamic));
                 });
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
