@@ -50,7 +50,7 @@ namespace BH.Adapter
             if (m_adapterComparers.ContainsKey(type))
                 return m_adapterComparers[type] as IEqualityComparer<T>;
 
-            if (actionConfig.AllowHashForComparing)
+            if (actionConfig != null && actionConfig.AllowHashForComparing)
             {
                 var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
 
