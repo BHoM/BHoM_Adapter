@@ -39,6 +39,9 @@ namespace BH.Adapter
         [Description("Used only as a key for the CustomData dictionary. E.g. key = Speckle_Id, value = 123")]
         public string AdapterIdName { get; set; } // value to be assigned in the specific Adapter constructor, e.g. = BH.Engine.GSA.Convert.AdapterId;
 
+        [Description("Modules containing adapter functionality")]
+        public List<IAdapterModule> AdapterModules { get; set; } = new List<IAdapterModule>();
+
         public Guid AdapterGuid { get; set; }
 
         /***************************************************/
@@ -47,7 +50,7 @@ namespace BH.Adapter
 
         // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
-        protected AdapterSettings m_AdapterSettings = new AdapterSettings();
+        protected AdapterSettings m_adapterSettings = new AdapterSettings();
 
         // Object comparers to be used within a specific Adapter.
         // E.g. A Structural Node can be compared only using its geometrical location.
@@ -66,6 +69,14 @@ namespace BH.Adapter
             // In your adapter constructor, populate this with values like:
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
+
+
+        /***************************************************/
+        /**** Private Fields                            ****/
+        /***************************************************/
+
+        private Delegate m_copyPropertiesDelegates;
+
 
         /***************************************************/
         /**** Public Events                             ****/

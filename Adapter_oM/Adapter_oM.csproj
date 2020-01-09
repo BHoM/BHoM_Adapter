@@ -44,19 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Module\IAdapterModule.cs" />
     <Compile Include="IBHoMAdapter.cs" />
-    <Compile Include="ExternalIdFragment.cs" />
-    <Compile Include="AdapterSettings.cs" />
-    <Compile Include="enums\PullType.cs" />
-    <Compile Include="enums\PushType.cs" />
+    <Compile Include="Fragment\ExternalIdFragment.cs" />
+    <Compile Include="Settings-Config\AdapterSettings.cs" />
+    <Compile Include="Enums\PullType.cs" />
+    <Compile Include="Enums\PushType.cs" />
+    <Compile Include="Module\ICopyPropertiesModule.cs" />
     <Compile Include="ObjectWrapper.cs" />
     <Compile Include="OrderedHashSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ActionConfig.cs" />
-    <Compile Include="TestIdFragment.cs" />
+    <Compile Include="Settings-Config\ActionConfig.cs" />
+    <Compile Include="Fragment\TestIdFragment.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Settings-Config\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -51,7 +51,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (m_AdapterSettings.HandleDependencies)
+            if (m_adapterSettings.HandleDependencies)
             {
                 var dependencyTypes = GetDependencyTypes<T>();
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(newObjects, dependencyTypes, tag); //first-level dependencies
