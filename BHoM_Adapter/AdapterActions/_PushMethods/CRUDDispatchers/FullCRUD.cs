@@ -128,7 +128,7 @@ namespace BH.Adapter
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), GetComparerForType<T>());
 
                 List<ICopyPropertiesModule<T>> copyPropertiesModules =
-                    this.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
+                    this.AdapterModules.Where(x => x is ICopyPropertiesModule<T>)
                     .Cast<ICopyPropertiesModule<T>>().ToList();
 
                 diagram.Intersection.ForEach(x =>
@@ -183,7 +183,7 @@ namespace BH.Adapter
             // Port (copy over) those properties from the readObjs to the objToPush.
 
             List<ICopyPropertiesModule<T>> copyPropertiesModules =
-                this.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
+                this.AdapterModules.Where(x => x is ICopyPropertiesModule<T>)
                 .Cast<ICopyPropertiesModule<T>>().ToList();
 
             diagram.Intersection.ForEach(x =>
@@ -198,5 +198,7 @@ namespace BH.Adapter
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
         }
+
+
     }
 }

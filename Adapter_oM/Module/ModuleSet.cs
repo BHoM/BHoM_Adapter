@@ -20,20 +20,19 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Base;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using BH.Engine.Base.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    public interface IBHoMAdapter : IObject
+    public class ModuleSet : HashSet<IAdapterModule>
     {
-        string AdapterIdName { get; set; }
-        ModuleSet AdapterModules { get; set; }
-        Guid AdapterGuid { get; set; }
+        public ModuleSet() :
+            base(new TypeComparer())
+        { }
     }
 }
