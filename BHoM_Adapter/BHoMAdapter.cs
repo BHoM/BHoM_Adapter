@@ -40,7 +40,7 @@ namespace BH.Adapter
         public string AdapterIdName { get; set; } // value to be assigned in the specific Adapter constructor, e.g. = BH.Engine.GSA.Convert.AdapterId;
 
         [Description("Modules containing adapter functionality")]
-        public List<IAdapterModule> AdapterModules { get; set; } = new List<IAdapterModule>();
+        public ModuleSet AdapterModules { get; set; } = new ModuleSet();
 
         public Guid AdapterGuid { get; set; }
 

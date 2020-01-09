@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
 using BH.oM.Structure.Elements;
+using BH.oM.Structure.SectionProperties;
 
 namespace BH.Adapter.Modules
 {

@@ -1,6 +1,6 @@
 ﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2019, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -20,20 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
+using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.Engine.Base;
+using BH.oM.Data.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
-namespace BH.oM.Adapter
+namespace BH.Engine.Adapter
 {
-    public interface IBHoMAdapter : IObject
+    public static partial class Query
     {
-        string AdapterIdName { get; set; }
-        ModuleSet AdapterModules { get; set; }
-        Guid AdapterGuid { get; set; }
+        public static List<ICopyPropertiesModule<T>> GetCopyPropertiesModules<T>(this IBHoMAdapter adapter) where T : class, IBHoMObject
+        {
+            return adapter.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
+                .Cast<ICopyPropertiesModule<T>>().ToList();
+        }
     }
 }
