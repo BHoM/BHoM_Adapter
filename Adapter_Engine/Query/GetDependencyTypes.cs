@@ -20,7 +20,6 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine;
 using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.Engine.Base;
@@ -32,32 +31,36 @@ using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
 
-
-namespace BH.Adapter
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Query
     {
         /***************************************************/
         /**** Push Support methods                      ****/
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Returns the comparer to be used with a certain object type.")]
-        protected virtual IEqualityComparer<T> GetComparerForType<T>(ActionConfig actionConfig = null) where T : IBHoMObject
+        [Description("Returns the dependency types for a certain object type.")]
+        public static List<Type> GetDependencyTypes<T>(this IBHoMAdapter bhomAdapter)
         {
             Type type = typeof(T);
 
-            if (m_adapterComparers.ContainsKey(type))
-                return m_adapterComparers[type] as IEqualityComparer<T>;
+            if (bhomAdapter.DependencyTypes.ContainsKey(type))
+                return bhomAdapter.DependencyTypes[type];
 
-            if (actionConfig != null && actionConfig.AllowHashForComparing)
+            else if (type.BaseType != null && bhomAdapter.DependencyTypes.ContainsKey(type.BaseType))
+                return bhomAdapter.DependencyTypes[type.BaseType];
+
+            else
             {
-                var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
-
-                return new HashFragmComparer<T>(propertiesToIgnore);
+                foreach (Type interType in type.GetInterfaces())
+                {
+                    if (bhomAdapter.DependencyTypes.ContainsKey(interType))
+                        return bhomAdapter.DependencyTypes[interType];
+                }
             }
 
-            return EqualityComparer<T>.Default;
+            return new List<Type>();
         }
     }
 }

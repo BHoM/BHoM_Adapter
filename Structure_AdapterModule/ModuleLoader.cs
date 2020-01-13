@@ -30,12 +30,12 @@ using BH.Adapter;
 using BH.oM.Adapter;
 using BH.oM.Base;
 
-namespace BH.Adapter.Modules
+namespace BH.Adapter.Modules.Structure
 {
     public static class ModuleLoader
     {
         [Description("Invoke this method in any Toolkit Adapter constructor to load functionality from the Structural Adapter Module.")]
-        public static void LoadStructuralModules(this BHoMAdapter adapter)
+        public static void LoadModules(this BHoMAdapter adapter)
         {
             adapter.AdapterModules.Add(new CopyNodeProperties());
         }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2018, the respective contributors. All rights reserved.
  *
@@ -21,46 +21,34 @@
  */
 
 using BH.Engine.Reflection;
+using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Data;
+using BH.oM.Data.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Adapter;
 
-namespace BH.Adapter
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Modify
     {
-        /***************************************************/
-        /**** Push Support methods                      ****/
-        /***************************************************/
-        // These are support methods required by other methods in the Push process.
-
-        [Description("Returns the dependency types for a certain object type.")]
-        protected virtual List<Type> GetDependencyTypes<T>()
+        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
+        public static void CopyBHoMObjectProperties<T>(T target, T source, string AdapterIdName) where T : class, IBHoMObject
         {
-            Type type = typeof(T);
+            // Port tags from source to target
+            foreach (string tag in source.Tags)
+                target.Tags.Add(tag);
 
-            if (m_dependencyTypes.ContainsKey(type))
-                return m_dependencyTypes[type];
+            // If target does not have name, port the source name
+            if (string.IsNullOrWhiteSpace(target.Name))
+                target.Name = source.Name;
 
-            else if (type.BaseType != null && m_dependencyTypes.ContainsKey(type.BaseType))
-                return m_dependencyTypes[type.BaseType];
-
-            else
-            {
-                foreach (Type interType in type.GetInterfaces())
-                {
-                    if (m_dependencyTypes.ContainsKey(interType))
-                        return m_dependencyTypes[interType];
-                }
-            }
-
-            return new List<Type>();
+            // Get id of the source and port it to the target
+            target.CustomData[AdapterIdName] = source.CustomData[AdapterIdName];
         }
     }
 }

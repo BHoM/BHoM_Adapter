@@ -33,7 +33,8 @@ namespace BH.Adapter.Modules
 {
     public class CopyNodeProperties : ICopyPropertiesModule<Node>
     {
-        [Description("Gets called during the Push. Takes properties specified from the source Node and assigns them to the target Node.")]
+        [Description("Gets called during the Push, when you have overlapping nodes." +
+            "Takes properties specified from the source Node and assigns them to the target Node.")]
         public void CopyProperties(Node target, Node source)
         {
             // If source is constrained and target is not, add source constraint to target

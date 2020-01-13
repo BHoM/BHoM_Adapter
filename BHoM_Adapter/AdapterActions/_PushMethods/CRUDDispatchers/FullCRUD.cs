@@ -48,7 +48,7 @@ namespace BH.Adapter
         protected bool CRUD<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
-            List<T> newObjects = objectsToPush.Distinct(GetComparerForType<T>()).ToList();
+            List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             // Make sure objects  are tagged
             if (tag != "")
@@ -56,15 +56,15 @@ namespace BH.Adapter
 
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
-            if (tag != "" || GetComparerForType<T>() != EqualityComparer<T>.Default)
+            if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this) != EqualityComparer<T>.Default)
                 readObjects = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
 
             // Merge and push the dependencies
-            if (m_adapterSettings.HandleDependencies)
+            if (m_AdapterSettings.HandleDependencies)
             {
-                var dependencyTypes = GetDependencyTypes<T>();
+                var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
 
                 foreach (var depObj in dependencyObjects)
@@ -83,25 +83,25 @@ namespace BH.Adapter
 
                 objectsToCreate = newObjects;
             }
-            else if (m_adapterSettings.ProcessInMemory)
+            else if (m_AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
-            if (m_adapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
             if (!ICreate(objectsToCreate))
                 return false;
 
-            if (m_adapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = GetComparerForType<T>();
+                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
                 foreach (T item in objectsToPush)
                 {
                     item.CustomData[AdapterIdName] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
@@ -125,7 +125,9 @@ namespace BH.Adapter
             // Merge objects if required
             if (mergeWithComparer)
             {
-                VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(newObjects, multiTaggedObjects.Concat(nonTaggedObjects), GetComparerForType<T>());
+                VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(
+                        newObjects, multiTaggedObjects.Concat(nonTaggedObjects),
+                        Engine.Adapter.Query.GetComparerForType<T>(this));
 
                 List<ICopyPropertiesModule<T>> copyPropertiesModules =
                     this.AdapterModules.Where(x => x is ICopyPropertiesModule<T>)
@@ -133,7 +135,7 @@ namespace BH.Adapter
 
                 diagram.Intersection.ForEach(x =>
                 {
-                    CopyBHoMObjectProperties(x.Item1, x.Item2);
+                    BH.Engine.Adapter.Modify.CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1, x.Item2));
                 });
 
@@ -149,7 +151,7 @@ namespace BH.Adapter
 
         protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag) where T : class, IBHoMObject
         {
-            IEqualityComparer<T> comparer = GetComparerForType<T>();
+            IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
             VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
 
             // Objects to push that do not have any overlap with the read ones
@@ -188,7 +190,7 @@ namespace BH.Adapter
 
             diagram.Intersection.ForEach(x =>
                 {
-                    CopyBHoMObjectProperties(x.Item1, x.Item2);
+                    BH.Engine.Adapter.Modify.CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1 as dynamic, x.Item2 as dynamic));
                 });
 

@@ -30,7 +30,7 @@ using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter : IBHoMAdapter
+    public abstract partial class BHoMAdapter : IBHoMAdapter, IImmutable
     {
         /***************************************************/
         /**** Public Properties                         ****/
@@ -42,6 +42,24 @@ namespace BH.Adapter
         [Description("Modules containing adapter functionality")]
         public ModuleSet AdapterModules { get; set; } = new ModuleSet();
 
+        [Description("Object comparers to be used within a specific Adapter." +
+            "E.g. A Structural Node can be compared only using its geometrical location." +
+            "Needed because different software need different rules for comparing objects.")]
+        public Dictionary<Type, object> AdapterComparers { get; protected set; } =  new Dictionary<Type, object>
+        {
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Node), new BH.Engine.Structure.NodeDistanceComparer(3) }
+        };
+
+        [Description("Dependecies between different IBHoMObjects to be considered within a specific Adapter." +
+            "E.g. A Line has dependency type of Points. " +
+            "Needed because different software have different dependency relationships.")]
+        public Dictionary<Type, List<Type>> DependencyTypes { get; protected set; } = new Dictionary<Type, List<Type>>
+        {
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
+        };
+
         public Guid AdapterGuid { get; set; }
 
         /***************************************************/
@@ -50,33 +68,7 @@ namespace BH.Adapter
 
         // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
-        protected AdapterSettings m_adapterSettings = new AdapterSettings();
-
-        // Object comparers to be used within a specific Adapter.
-        // E.g. A Structural Node can be compared only using its geometrical location.
-        // Needed because different software need different rules for comparing objects.
-        protected Dictionary<Type, object> m_adapterComparers = new Dictionary<Type, object>
-        {
-            // In your adapter constructor, populate this with values like:
-            // {typeof(Node), new BH.Engine.Structure.NodeDistanceComparer(3) }
-        };
-
-        // Dependecies between different IBHoMObjects to be considered within a specific Adapter.
-        // E.g. A Line has dependency type of Points. 
-        // Needed because different software have different dependency relationships.
-        protected Dictionary<Type, List<Type>> m_dependencyTypes = new Dictionary<Type, List<Type>>
-        {
-            // In your adapter constructor, populate this with values like:
-            // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
-        };
-
-
-        /***************************************************/
-        /**** Private Fields                            ****/
-        /***************************************************/
-
-        private Delegate m_copyPropertiesDelegates;
-
+        protected AdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
 
         /***************************************************/
         /**** Public Events                             ****/
