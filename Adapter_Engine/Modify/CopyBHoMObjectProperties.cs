@@ -48,7 +48,8 @@ namespace BH.Engine.Adapter
                 target.Name = source.Name;
 
             // Get id of the source and port it to the target
-            target.CustomData[AdapterIdName] = source.CustomData[AdapterIdName];
+            if (source.CustomData.ContainsKey(AdapterIdName))
+                target.CustomData[AdapterIdName] = source.CustomData[AdapterIdName];
         }
     }
 }
