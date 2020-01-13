@@ -46,7 +46,7 @@ namespace BH.Adapter
         protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             Type objectType = typeof(T);
-            if (m_adapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
+            if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
                 IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterIdName]), actionConfig);
             }

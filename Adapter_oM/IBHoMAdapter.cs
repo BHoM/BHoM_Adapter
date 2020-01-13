@@ -32,8 +32,10 @@ namespace BH.oM.Adapter
 {
     public interface IBHoMAdapter : IObject
     {
-        string AdapterIdName { get; set; }
-        ModuleSet AdapterModules { get; set; }
-        Guid AdapterGuid { get; set; }
+        string AdapterIdName { get; }
+        ModuleSet AdapterModules { get; }
+        Dictionary<Type, object> AdapterComparers { get; }
+        Dictionary<Type, List<Type>> DependencyTypes { get; }
+        Guid AdapterGuid { get; }
     }
 }

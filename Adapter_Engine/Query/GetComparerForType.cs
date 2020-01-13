@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine;
 using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.Engine.Base;
@@ -31,28 +32,32 @@ using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
 
-namespace BH.Adapter
+
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Query
     {
         /***************************************************/
         /**** Push Support methods                      ****/
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        protected virtual void CopyBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        [Description("Returns the comparer to be used with a certain object type.")]
+        public static IEqualityComparer<T> GetComparerForType<T>(this IBHoMAdapter bHoMAdapter, ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
+            Type type = typeof(T);
 
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
+            if (bHoMAdapter.AdapterComparers.ContainsKey(type))
+                return bHoMAdapter.AdapterComparers[type] as IEqualityComparer<T>;
 
-            // Get id of the source and port it to the target
-            target.CustomData[AdapterIdName] = source.CustomData[AdapterIdName];
+            if (actionConfig != null && actionConfig.AllowHashForComparing)
+            {
+                var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
+
+                return new HashFragmComparer<T>(propertiesToIgnore);
+            }
+
+            return EqualityComparer<T>.Default;
         }
     }
 }

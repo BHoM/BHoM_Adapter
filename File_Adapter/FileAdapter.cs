@@ -55,7 +55,7 @@ namespace BH.Adapter.FileAdapter
             ProcessExtension(ref m_FilePath);
 
             m_isJSON = Path.GetExtension(m_FilePath) == ".json";
-            this.m_adapterSettings.UseAdapterId = false;
+            this.m_AdapterSettings.UseAdapterId = false;
         }
 
         /***************************************************/

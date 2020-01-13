@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BH.Adapter.Modules.Structure</RootNamespace>
-    <AssemblyName>Structure_AdapterModule</AssemblyName>
+    <AssemblyName>Structure_AdapterModules</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
