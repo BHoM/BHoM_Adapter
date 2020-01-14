@@ -33,7 +33,7 @@ using System.ComponentModel;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter : IBHoMAdapter
+    public abstract partial class BHoMAdapter
     {
 
         /******************************************************/
