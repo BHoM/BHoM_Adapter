@@ -30,6 +30,7 @@ using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
 using BH.oM.Adapter;
+using BH.oM.Reflection;
 
 namespace BH.Adapter
 {
@@ -42,9 +43,9 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Sends specific commands to the external software, if supported by its API. Has to be implemented (overridden) in the specific Toolkit.")]
-        public virtual bool Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null)
+        public virtual Output<object, bool> Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null)
         {
-            return false;
+            return new Output<object, bool>() { Item1 = null, Item2 = false};
         }
     }
 }
