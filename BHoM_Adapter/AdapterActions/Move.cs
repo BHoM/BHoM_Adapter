@@ -43,7 +43,7 @@ namespace BH.Adapter
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
         [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
-        public virtual bool Move(BHoMAdapter to, IRequest request, 
+        public virtual bool Move(IBHoMAdapter to, IRequest request, 
             PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, 
             PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null)
         {
