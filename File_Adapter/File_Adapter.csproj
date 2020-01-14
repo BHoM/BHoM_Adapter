@@ -37,6 +37,7 @@
     </Reference>
     <Reference Include="BHoM_Engine">
       <HintPath>..\..\BHoM_Engine\Build\BHoM_Engine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Data_oM, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -45,7 +46,7 @@
     </Reference>
     <Reference Include="MongoDB.Bson, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Bson.2.7.2\lib\net45\MongoDB.Bson.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Reflection_Engine, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,10 +94,12 @@
     <ProjectReference Include="..\Adapter_Engine\Adapter_Engine.csproj">
       <Project>{78eacce7-71df-4003-bf38-71f80d3f6308}</Project>
       <Name>Adapter_Engine</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Adapter_oM\Adapter_oM.csproj">
       <Project>{03CD2C55-F3A7-4C47-B2E8-64909964329D}</Project>
       <Name>Adapter_oM</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\BHoM_Adapter\BHoM_Adapter.csproj">
       <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
