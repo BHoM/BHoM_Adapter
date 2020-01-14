@@ -60,9 +60,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdapterActions\ExecuteCommands\AnalyseLoadCases.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\CustomCommand.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\Analyse.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\NewModel.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\Close.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\Open.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\ClearResults.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\SaveAs.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\Save.cs" />
     <Compile Include="Module\ModuleSet.cs" />
     <Compile Include="Module\IAdapterModule.cs" />
     <Compile Include="IBHoMAdapter.cs" />
+    <Compile Include="AdapterActions\ExecuteCommands\_IExecuteCommand.cs" />
     <Compile Include="Settings-Config\AdapterSettings.cs" />
     <Compile Include="Enums\PullType.cs" />
     <Compile Include="Enums\PushType.cs" />
