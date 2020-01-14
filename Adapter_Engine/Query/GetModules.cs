@@ -20,13 +20,9 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
+
 using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.Engine.Base;
-using BH.oM.Data.Collections;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -38,8 +34,7 @@ namespace BH.Engine.Adapter
     {
         public static List<ICopyPropertiesModule<T>> GetCopyPropertiesModules<T>(this IBHoMAdapter adapter) where T : class, IBHoMObject
         {
-            return adapter.AdapterModules.Where(x => typeof(ICopyPropertiesModule<T>).IsAssignableFrom(x.GetType()))
-                .Cast<ICopyPropertiesModule<T>>().ToList();
+            return adapter.AdapterModules.OfType<ICopyPropertiesModule<T>>().ToList();
         }
     }
 }
