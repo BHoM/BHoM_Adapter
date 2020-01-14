@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.oM.Data.Requests;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,12 +31,18 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    public interface IBHoMAdapter : IObject
+    public interface IBHoMAdapter
     {
         string AdapterIdName { get; }
         ModuleSet AdapterModules { get; }
         Dictionary<Type, object> AdapterComparers { get; }
         Dictionary<Type, List<Type>> DependencyTypes { get; }
         Guid AdapterGuid { get; }
+
+        List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null);
+        IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null);
+        bool Move(IBHoMAdapter to, IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null);
+        int Remove(IRequest request, ActionConfig actionConfig = null);
+        bool Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null);
     }
 }
