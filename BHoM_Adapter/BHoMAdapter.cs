@@ -30,7 +30,7 @@ using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
 {
-    public abstract partial class BHoMAdapter : IBHoMAdapter, IImmutable
+    public abstract partial class BHoMAdapter : IBHoMAdapter
     {
         /***************************************************/
         /**** Public Properties                         ****/
