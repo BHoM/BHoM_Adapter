@@ -22,6 +22,7 @@
 
 using BH.oM.Base;
 using BH.oM.Data.Requests;
+using BH.oM.Reflection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,6 +44,6 @@ namespace BH.oM.Adapter
         IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null);
         bool Move(IBHoMAdapter to, IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null);
         int Remove(IRequest request, ActionConfig actionConfig = null);
-        bool Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null);
+        Output<object, bool> Execute(string command, Dictionary<string, object> parameters = null, ActionConfig actionConfig = null);
     }
 }
