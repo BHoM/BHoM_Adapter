@@ -34,31 +34,40 @@
     <Reference Include="Analytical_oM, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\Analytical_oM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BHoM">
       <HintPath>..\..\BHoM\Build\BHoM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BHoM_Engine">
       <HintPath>..\..\BHoM_Engine\Build\BHoM_Engine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Data_oM">
       <HintPath>..\..\BHoM\Build\Data_oM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Diffing_oM">
       <HintPath>..\..\BHoM\Build\Diffing_oM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Geometry_Engine">
       <HintPath>..\..\BHoM_Engine\Build\Geometry_Engine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Geometry_oM, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\Geometry_oM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Reflection_Engine">
       <HintPath>..\..\BHoM_Engine\Build\Reflection_Engine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Structure_oM">
       <HintPath>..\..\BHoM\Build\Structure_oM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,14 +87,17 @@
     <ProjectReference Include="..\Adapter_Engine\Adapter_Engine.csproj">
       <Project>{78eacce7-71df-4003-bf38-71f80d3f6308}</Project>
       <Name>Adapter_Engine</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Adapter_oM\Adapter_oM.csproj">
       <Project>{03cd2c55-f3a7-4c47-b2e8-64909964329d}</Project>
       <Name>Adapter_oM</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\BHoM_Adapter\BHoM_Adapter.csproj">
       <Project>{c99a5ddf-78b1-4224-81ac-c5b90d03e423}</Project>
       <Name>BHoM_Adapter</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
