@@ -129,9 +129,7 @@ namespace BH.Adapter
                         newObjects, multiTaggedObjects.Concat(nonTaggedObjects),
                         Engine.Adapter.Query.GetComparerForType<T>(this));
 
-                List<ICopyPropertiesModule<T>> copyPropertiesModules =
-                    this.AdapterModules.Where(x => x is ICopyPropertiesModule<T>)
-                    .Cast<ICopyPropertiesModule<T>>().ToList();
+                List<ICopyPropertiesModule<T>> copyPropertiesModules = this.GetCopyPropertiesModules<T>();
 
                 diagram.Intersection.ForEach(x =>
                 {
@@ -184,9 +182,7 @@ namespace BH.Adapter
             // there might be properties that need to be preserved (e.g. node constraints).
             // Port (copy over) those properties from the readObjs to the objToPush.
 
-            List<ICopyPropertiesModule<T>> copyPropertiesModules =
-                this.AdapterModules.Where(x => x is ICopyPropertiesModule<T>)
-                .Cast<ICopyPropertiesModule<T>>().ToList();
+            List<ICopyPropertiesModule<T>> copyPropertiesModules = this.GetCopyPropertiesModules<T>();
 
             diagram.Intersection.ForEach(x =>
                 {
