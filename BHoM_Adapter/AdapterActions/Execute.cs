@@ -42,7 +42,8 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Sends specific commands to the external software, if supported by its API. Has to be implemented (overridden) in the specific Toolkit.")]
+        [Description("To be implemented to send specific commands to the external software, through its API or other means." +
+            "To be implemented (overridden) in Toolkits.")]
         public virtual Output<object, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
             return new Output<object, bool>() { Item1 = null, Item2 = false};
