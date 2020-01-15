@@ -31,6 +31,7 @@ using System.Reflection;
 using System.ComponentModel;
 using BH.oM.Adapter;
 using BH.oM.Reflection;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
 {
@@ -44,6 +45,9 @@ namespace BH.Adapter
 
         [Description("To be implemented to send specific commands to the external software, through its API or other means." +
             "To be implemented (overridden) in Toolkits.")]
+        [Output("Output<object, bool>", "Output is a tuple-like class with: " +
+            "Item1 = System.Object containing any desired outcome of the Execute; " +
+            "Item2 = A boolean indicating if the Execute was successful.")]
         public virtual Output<object, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
             return new Output<object, bool>() { Item1 = null, Item2 = false};
