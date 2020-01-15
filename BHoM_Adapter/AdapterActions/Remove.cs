@@ -41,11 +41,10 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Calls the basic CRUD/Delete method as appropriate.")]
+        [Description("Calls the basic CRUD/Delete method as appropriate." +
+            "The base implementation just calls Delete. It can be overridden in Toolkits.")]
         public virtual int Remove(IRequest request, ActionConfig actionConfig = null)
         {
-
-
             return Delete(request as dynamic, actionConfig);
         }
     }
