@@ -68,7 +68,7 @@ namespace BH.Adapter
 
         // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
-        protected IAdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
+        protected AdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
 
         /***************************************************/
         /**** Public Events                             ****/
