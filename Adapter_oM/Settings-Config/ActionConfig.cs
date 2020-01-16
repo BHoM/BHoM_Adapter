@@ -26,6 +26,8 @@ using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
+    [Description("Configurations specific for an Adapter Action (Push, Pull, etc)." +
+        "Implement this class in your Toolkit to make your own ActionConfigs, e.g. SpeckleActionConfig.")]
     public class ActionConfig : BHoMObject
     {
         public bool WrapNonBHoMObjects { get; set; } = false;
