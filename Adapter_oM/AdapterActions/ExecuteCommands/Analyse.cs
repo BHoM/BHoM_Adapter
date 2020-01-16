@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter.Commands
 {
-    [Description("Should be used to instruct the external software to run an Analysis.")]
+    [Description("Used to instruct the external software to run an Analysis.")]
     public class Analyse : IExecuteCommand
     {
     }

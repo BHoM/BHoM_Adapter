@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter.Commands
 {
-    [Description("Should be used to instruct the external software to run a certain command.")]
+    [Description("Used to instruct the external software to run a certain command.")]
     public class CustomCommand : IExecuteCommand
     {
         [Description("Name of the command to be executed by the external software.")]
