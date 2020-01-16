@@ -48,9 +48,9 @@ namespace BH.Adapter
         [Output("Output<object, bool>", "Output is a tuple-like class with: " +
             "Item1 = System.Object containing any desired outcome of the Execute; " +
             "Item2 = A boolean indicating if the Execute was successful.")]
-        public virtual Output<object, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
+        public virtual Output<List<object>, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
-            return new Output<object, bool>() { Item1 = null, Item2 = false};
+            return new Output<List<object>, bool> { Item1 = null, Item2 = false};
         }
     }
 }
