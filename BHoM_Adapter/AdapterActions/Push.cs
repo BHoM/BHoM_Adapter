@@ -53,7 +53,7 @@ namespace BH.Adapter
 
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
-                pushType = m_AdapterSettings.DefaultPushType;
+                pushType = AdapterSettings.DefaultPushType;
 
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
             IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
