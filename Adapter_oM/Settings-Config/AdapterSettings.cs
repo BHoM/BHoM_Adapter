@@ -20,13 +20,14 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
     [Description("General settings for any Adapter, to be specified when instantiating the Adapter." +
         "Implement this class to make your own Toolkit settings, e.g. SpeckleAdapterSettings.")]
-    public class AdapterSettings
+    public class AdapterSettings : IObject
     {
         public bool HandleDependencies { get; set; } = true;
         public bool ProcessInMemory { get; set; } = false;
