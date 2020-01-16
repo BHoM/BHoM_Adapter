@@ -44,14 +44,14 @@ namespace BH.Adapter
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
         protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            List<T> newObjects = objectsToPush.ToList(); //DISTICNT
+            List<T> newObjects = objectsToPush.ToList().Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             // Make sure objects are tagged
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // Merge and push the dependencies
-            if (m_AdapterSettings.HandleDependencies) // MERGE THE TWO METHODS
+            if (AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, tag); //first-level dependencies
