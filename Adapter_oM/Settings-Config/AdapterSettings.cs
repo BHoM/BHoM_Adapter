@@ -20,9 +20,14 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Base;
+using System.ComponentModel;
+
 namespace BH.oM.Adapter
 {
-    public class AdapterSettings
+    [Description("General settings for any Adapter, to be specified when instantiating the Adapter." +
+        "Implement this class to make your own Toolkit settings, e.g. SpeckleAdapterSettings.")]
+    public abstract class IAdapterSettings : IObject
     {
         public bool HandleDependencies { get; set; } = true;
         public bool ProcessInMemory { get; set; } = false;
@@ -31,6 +36,11 @@ namespace BH.oM.Adapter
         public bool WrapNonBHoMObjects { get; set; } = false;
         public bool UseHashComparerAsDefault { get; set; } = false;
         public PushType DefaultPushType = PushType.FullCRUD;
+    }
+
+    [Description("General settings for any Adapter, to be specified when instantiating the Adapter.")]
+    public sealed class AdapterSettings : IAdapterSettings
+    {
     }
 }
 
