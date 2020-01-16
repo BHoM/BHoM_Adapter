@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter.Commands
 {
-    [Description("Should be used to instruct the external software to save a file or model.")]
+    [Description("Used to instruct the external software to save a file or model.")]
     public class Save : IExecuteCommand
     {
     }

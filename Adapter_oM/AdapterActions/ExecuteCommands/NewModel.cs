@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter.Commands
 {
-    [Description("Should be used to instruct the external software to open/create a new model.")]
+    [Description("Used to instruct the external software to open/create a new model.")]
     public class NewModel : IExecuteCommand
     {
     }

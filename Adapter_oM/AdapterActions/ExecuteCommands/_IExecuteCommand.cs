@@ -23,12 +23,14 @@
 using BH.oM.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
+    [Description("Classes implementing IExecuteCommand are commands compatible with the `Execute` Adapter Action.")]
     public interface IExecuteCommand : IObject
     {
     }
