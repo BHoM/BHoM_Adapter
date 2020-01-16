@@ -37,11 +37,10 @@ namespace BH.Adapter
         /***************************************************/
 
         [Description("Used only as a key for the CustomData dictionary. E.g. key = Speckle_Id, value = 123")]
-        public string AdapterIdName { get; protected set; } // value to be assigned in the specific Adapter constructor, 
-                                                            // e.g. = BH.Engine.GSA.Convert.AdapterId;
+        public string AdapterIdName { get; set; } // value to be assigned in the specific Adapter constructor, e.g. = BH.Engine.GSA.Convert.AdapterId;
 
-        [Description("Modules containing adapter functionality.")]
-        public ModuleSet AdapterModules { get; protected set; } = new ModuleSet();
+        [Description("Modules containing adapter functionality")]
+        public ModuleSet AdapterModules { get; set; } = new ModuleSet();
 
         [Description("Object comparers to be used within a specific Adapter." +
             "E.g. A Structural Node can be compared only using its geometrical location." +
@@ -61,13 +60,15 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
-        [Description("Settings for this Adapter.")]
-        public IAdapterSettings AdapterSettings { get; protected set; } 
-            = new AdapterSettings(); // You can override/change the default Settings in your Toolkit's Adapter constructor, 
-                                     // e.g. this.AdapterSettings.WrapNonBHoMObjects = true; or 
-                                     // this.AdapterSettings = new SpeckleAdapterSettings;
-
         public Guid AdapterGuid { get; set; }
+
+        /***************************************************/
+        /**** Protected Fields                          ****/
+        /***************************************************/
+
+        // You can change the default AdapterSettings values in your Toolkit's Adapter constructor 
+        // e.g. AdapterSettings.WrapNonBHoMObjects = true;
+        protected IAdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
 
         /***************************************************/
         /**** Public Events                             ****/

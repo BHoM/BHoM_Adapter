@@ -25,8 +25,7 @@ using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
-    [Description("Parent type for *AdapterSettings." +
-        "*AdapterSettings can be specified only when instantiating the Adapter." +
+    [Description("General settings for any Adapter, to be specified when instantiating the Adapter." +
         "Implement this class to make your own Toolkit settings, e.g. SpeckleAdapterSettings.")]
     public abstract class IAdapterSettings : IObject
     {
@@ -39,7 +38,7 @@ namespace BH.oM.Adapter
         public PushType DefaultPushType = PushType.FullCRUD;
     }
 
-    [Description("General settings for any Adapter. AdapterSettings can be specified only when instantiating the Adapter.")]
+    [Description("General settings for any Adapter, to be specified when instantiating the Adapter.")]
     public sealed class AdapterSettings : IAdapterSettings
     {
     }

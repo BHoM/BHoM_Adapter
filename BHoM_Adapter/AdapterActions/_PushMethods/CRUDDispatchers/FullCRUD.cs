@@ -62,7 +62,7 @@ namespace BH.Adapter
                 readObjects = new List<T>();
 
             // Merge and push the dependencies
-            if (AdapterSettings.HandleDependencies)
+            if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
@@ -83,20 +83,20 @@ namespace BH.Adapter
 
                 objectsToCreate = newObjects;
             }
-            else if (AdapterSettings.ProcessInMemory)
+            else if (m_AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
 
             // Assign Id if needed
-            if (AdapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
             if (!ICreate(objectsToCreate))
                 return false;
 
-            if (AdapterSettings.UseAdapterId)
+            if (m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 

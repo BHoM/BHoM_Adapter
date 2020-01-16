@@ -51,7 +51,7 @@ namespace BH.Adapter.FileAdapter
 
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
             if (pushType == PushType.AdapterDefault)
-                pushType = AdapterSettings.DefaultPushType;
+                pushType = m_AdapterSettings.DefaultPushType;
 
             // ------------- ACTUAL PUSH ---------------
 
