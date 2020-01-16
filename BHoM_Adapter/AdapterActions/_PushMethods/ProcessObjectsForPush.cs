@@ -48,7 +48,7 @@ namespace BH.Adapter
             // -------------------------------- // 
 
             // If ActionConfig has a value for `WrapNonBHoMObjects`, it has precedence over the default value in AdapterSettings.
-            bool wrapNonBHoMObjects = AdapterSettings.WrapNonBHoMObjects;
+            bool wrapNonBHoMObjects = m_AdapterSettings.WrapNonBHoMObjects;
             if (actionConfig != null)
                 wrapNonBHoMObjects = actionConfig.WrapNonBHoMObjects;
 
@@ -77,7 +77,7 @@ namespace BH.Adapter
                 objectsToPush = objects.OfType<IBHoMObject>();
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            if (AdapterSettings.CloneBeforePush)
+            if (m_AdapterSettings.CloneBeforePush)
                 objectsToPush = objectsToPush.Select(x => x.DeepClone()).ToList();
 
             return objectsToPush;
