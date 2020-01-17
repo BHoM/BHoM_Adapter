@@ -33,5 +33,6 @@ namespace BH.oM.Adapter
     {
         [Description("If this is chosen, then the m_AdapterSettings.DefaultPullType is picked.")]
         AdapterDefault
+        // no additional options on this yet.
     }
 }
