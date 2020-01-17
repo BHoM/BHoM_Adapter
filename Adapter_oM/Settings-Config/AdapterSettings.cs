@@ -29,13 +29,36 @@ namespace BH.oM.Adapter
         "Implement this class to make your own Toolkit settings, e.g. SpeckleAdapterSettings.")]
     public class AdapterSettings : IObject
     {
+        /****************************************/
+        /****         Push settings         *****/
+        /****************************************/
+
+        [Description("If your Toolkit needs support for non-BHoM objects, set this to true.")]
+        public bool WrapNonBHoMObjects { get; set; } = false;
+
+        [Description("If your Toolkit does not support the Full CRUD, you can select another behaviour here (e.g. CreateOnly).")]
+        public PushType DefaultPushType = PushType.FullCRUD;
+
+        [Description("Deep clones the objects before Pushing them." +
+            "As the objects get modified during the Push (e.g. their externalId is added to them)," +
+            "this avoids backpropagation in visual programming environments like Grasshopper.")]
+        public bool CloneBeforePush { get; set; } = true;
+
+        /****************************************/
+        /****         Pull settings         *****/
+        /****************************************/
+
+        public PullType DefaultPullType; // no setting on this yet.
+
+        /****************************************/
+        /****         CRUD settings         *****/
+        /****************************************/
+
+        [Description("If your adapter does not define DependencyTypes, this can be set to false for performance.")]
         public bool HandleDependencies { get; set; } = true;
         public bool ProcessInMemory { get; set; } = false;
         public bool UseAdapterId { get; set; } = true;
-        public bool CloneBeforePush { get; set; } = true;
-        public bool WrapNonBHoMObjects { get; set; } = false;
         public bool UseHashComparerAsDefault { get; set; } = false;
-        public PushType DefaultPushType = PushType.FullCRUD;
     }
 }
 
