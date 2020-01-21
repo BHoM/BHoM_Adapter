@@ -45,9 +45,8 @@ namespace BH.Adapter
         // It can be overridden at the Toolkit level if a more appropriate implementation is required.
         protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            BH.Engine.Reflection.Compute.RecordNote($"The default IUpdate method for {typeof(T).Name} has been invoked by the Push.\n" +
-                $"This method calls IDelete and then ICreate for the specified objects.\n" +
-                $"You need to have implemented Delete for {typeof(T).Name} in {(this as dynamic).GetType().Name} for it to work.");
+            Compute.RecordNote($"The default IUpdate method for {typeof(T).Name} has been invoked by the Push.\n" +
+                $"This method calls IDelete and then ICreate for the specified objects.");
 
             Type objectType = typeof(T);
             if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
