@@ -191,7 +191,8 @@ namespace BH.Adapter
                 });
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
-            IUpdate(diagram.Intersection.Select(x => x.Item1));
+            if (diagram.Intersection != null && diagram.Intersection.Any())
+                IUpdate(diagram.Intersection.Select(x => x.Item1));
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
