@@ -61,7 +61,7 @@ namespace BH.Adapter
             else
                 readObjects = new List<T>();
 
-            readObjects = readObjects == null ? new List<T>() : readObjects; // null guard for readObjects
+            readObjects = readObjects ?? new List<T>(); // null guard for readObjects
 
             // Merge and push the dependencies
             if (m_AdapterSettings.HandleDependencies)
