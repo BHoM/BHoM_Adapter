@@ -50,16 +50,18 @@ namespace BH.Adapter
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
-            // Make sure objects  are tagged
+            // Make sure objects are tagged
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this) != EqualityComparer<T>.Default)
-                readObjects = Read(typeof(T)).Where(x => x != null && x is T).Cast<T>();
+                readObjects = Read(typeof(T))?.Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
+
+            readObjects = readObjects == null ? new List<T>() : readObjects; // null guard for readObjects
 
             // Merge and push the dependencies
             if (m_AdapterSettings.HandleDependencies)
@@ -79,7 +81,8 @@ namespace BH.Adapter
             {
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
-                IDelete(typeof(T), readObjects.Select(obj => obj.CustomData[AdapterIdName]));
+                if (readObjects.Any())
+                    IDelete(typeof(T), readObjects.Select(obj => obj.CustomData[AdapterIdName]));
 
                 objectsToCreate = newObjects;
             }

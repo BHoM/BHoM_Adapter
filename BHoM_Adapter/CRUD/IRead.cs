@@ -83,6 +83,9 @@ namespace BH.Adapter
             // Call the Basic Method Read() to get the objects based on the Ids
             IEnumerable<IBHoMObject> objects = IRead(filterRequest.Type, objectIds, actionConfig);
 
+            // Null guard
+            objects = objects == null ? new List<IBHoMObject>() : objects;
+
             // If the FilterRequest contains a Tag, use it to further filter the objects
             if (filterRequest.Tag == "")
                 return objects;
@@ -95,6 +98,9 @@ namespace BH.Adapter
         {
             // Call the Basic Method Read() to get the objects based on the ids
             IEnumerable<IBHoMObject> objects = IRead(type, null as List<object>, actionConfig);
+
+            // Null guard
+            objects = objects == null ? new List<IBHoMObject>() : objects;
 
             // Filter by tag if any 
             if (tag == "")
