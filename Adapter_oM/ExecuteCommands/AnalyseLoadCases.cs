@@ -33,6 +33,6 @@ namespace BH.oM.Adapter.Commands
     [Description("Used to instruct the external software to run an Analysis on certain load cases.")]
     public class AnalyseLoadCases : IExecuteCommand
     {
-        public IList LoadCases { get; set; }
+        public List<object> LoadCases { get; set; }
     }
 }
