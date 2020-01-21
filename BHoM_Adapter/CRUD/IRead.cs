@@ -84,7 +84,7 @@ namespace BH.Adapter
             IEnumerable<IBHoMObject> objects = IRead(filterRequest.Type, objectIds, actionConfig);
 
             // Null guard
-            objects = objects == null ? new List<IBHoMObject>() : objects;
+            objects = objects ?? new List<IBHoMObject>();
 
             // If the FilterRequest contains a Tag, use it to further filter the objects
             if (filterRequest.Tag == "")
@@ -100,7 +100,7 @@ namespace BH.Adapter
             IEnumerable<IBHoMObject> objects = IRead(type, null as List<object>, actionConfig);
 
             // Null guard
-            objects = objects == null ? new List<IBHoMObject>() : objects;
+            objects = objects ?? new List<IBHoMObject>();
 
             // Filter by tag if any 
             if (tag == "")
