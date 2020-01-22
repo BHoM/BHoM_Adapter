@@ -28,6 +28,7 @@ using System.Linq;
 using BH.oM.Data.Requests;
 using BH.oM.Reflection.Attributes;
 using BH.oM.Common;
+using BH.oM.Adapter;
 
 namespace BH.Adapter
 {
@@ -43,7 +44,7 @@ namespace BH.Adapter
         // Called directly by the Pull. Returns structural results. 
         // `Type` and `Ids` are the ones of the objects owning the IResult to be retrieved.
         // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5)
+        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5, ActionConfig actionConfig = null)
         {
             Engine.Reflection.Compute.RecordError($"ReadResults for {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<BH.oM.Common.IResult>();
@@ -55,7 +56,7 @@ namespace BH.Adapter
 
         /******* IRequest Wrapper methods *******/
         /* These methods have to be implemented if the Toolkit needs to support the Read for any generic IRequest. */
-        protected virtual IEnumerable<IResult> ReadResults(IRequest request)
+        protected virtual IEnumerable<IResult> ReadResults(IRequest request, ActionConfig actionConfig = null)
         {
             // The implementation must:
             // 1. extract all the needed info from the IRequest
@@ -68,7 +69,7 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        protected virtual IEnumerable<IResult> ReadResults(FilterRequest filterRequest)
+        protected virtual IEnumerable<IResult> ReadResults(FilterRequest filterRequest, ActionConfig actionConfig = null)
         {
             List<IResult> results = new List<IResult>();
 
@@ -99,7 +100,7 @@ namespace BH.Adapter
                 else
                     divisions = 5;
 
-                results = ReadResults(filterRequest.Type, objectIds, cases, divisions).ToList();
+                results = ReadResults(filterRequest.Type, objectIds, cases, divisions, actionConfig).ToList();
                 results.Sort();
             }
 

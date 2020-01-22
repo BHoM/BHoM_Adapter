@@ -53,7 +53,7 @@ namespace BH.Adapter
             FilterRequest filterReq = request as FilterRequest;
             if (filterReq != null)
                 if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
-                    return ReadResults(filterReq);
+                    return ReadResults(filterReq, actionConfig);
             // --------------------------------------------------------------------------------- //
 
             // `(this as dynamic)` casts the abstract BHoMAdapter to its instance type (e.g. Speckle_Adapter), so all public ReadResults methods are captured
