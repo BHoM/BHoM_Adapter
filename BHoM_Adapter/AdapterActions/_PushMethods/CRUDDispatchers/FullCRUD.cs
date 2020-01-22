@@ -150,7 +150,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag) where T : class, IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
             IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
             VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
@@ -173,12 +173,13 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (toBeDeleted != null && toBeDeleted.Any())
-                IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]));
+                IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]), actionConfig);
 
             // Update the tags for the rest of the existing objects in the model
             IUpdateTags(typeof(T),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.CustomData[AdapterIdName]),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags));
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
+                actionConfig);
 
             // For the objects that have an overlap between existing and pushed 
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
@@ -195,7 +196,7 @@ namespace BH.Adapter
 
             // Update the overlapping objects (between read and toPush), with the now ported properties.
             if (diagram.Intersection != null && diagram.Intersection.Any())
-                IUpdate(diagram.Intersection.Select(x => x.Item1));
+                IUpdate(diagram.Intersection.Select(x => x.Item1), actionConfig);
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
