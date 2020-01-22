@@ -26,10 +26,14 @@ using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
-    [Description("Configurations specific for an Adapter Action (Push, Pull, etc)." +
-        "Implement this class in your Toolkit to make your own ActionConfigs, e.g. SpeckleActionConfig.")]
+    [Description("Configurations specific for an Adapter Action (Push, Pull, etc)."+
+        "\nConsider that your tookit might have a more specific implementation available. Try to look for [your toolkit name]ActionConfig.")]
     public class ActionConfig : IObject
     {
+        // You can make your own ActionConfig for your Toolkit, e.g. SpeckleActionConfig.
+        // To do so, inherit this class. You will so be able to pass it to any method (like the Push) that accepts ActionConfig.
+        // Then to use it, you will need to cast the actionConfig parameter to your own ActionConfig type within each method.
+
         public bool WrapNonBHoMObjects { get; set; } = false;
         public bool AllowHashForComparing { get; set; } = false;
     }
