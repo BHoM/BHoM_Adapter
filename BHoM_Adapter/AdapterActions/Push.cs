@@ -78,14 +78,14 @@ namespace BH.Adapter
                 var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
                 if (pushType == PushType.FullCRUD)
-                    success &= CRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
+                    success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
                 else if (pushType == PushType.CreateOnly)
                 {
-                    success &= CreateOnly(objList_specificType as dynamic, pushType, tag, actionConfig);
+                    success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
                 }
                 else if (pushType == PushType.UpdateOnly)
                 {
-                    success &= UpdateOnly(objList_specificType as dynamic, pushType, tag, actionConfig);
+                    success &= UpdateOnly(objList_specificType as dynamic, tag, actionConfig);
                 }
             }
 

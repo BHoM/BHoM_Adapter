@@ -42,32 +42,41 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
-        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
+            List<T> newObjects = objectsToPush.ToList();//.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
 
-            // Make sure objects are tagged
-            if (tag != "")
+            if (tag != "" && typeof(IBHoMObject).IsAssignableFrom(typeof(T)))
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            // Merge and push the dependencies
+            // We treat dependencies differently: DependenciesCreateOnly *does* call distinct.
             if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, tag); //first-level dependencies
 
-                foreach (var depObj in dependencyObjects)
-                    if (!DependenciesCreateOnly(depObj.Value as dynamic, tag))
+                foreach (var kv in dependencyObjects)
+                {
+                    if (!DependenciesCreateOnly(kv.Value as dynamic, tag))
                         return false;
+                }
             }
 
-            return ICreate(newObjects);
+            // Assign Id if required
+            if (m_AdapterSettings.UseAdapterId)
+                AssignNextFreeId(newObjects);
+
+            // Create objects
+            if (!ICreate(newObjects))
+                return false;
+
+            return true;
         }
 
         [Description("Called by CreateOnly() in order to recursively create the dependencies of the objects.")]
-        protected virtual bool DependenciesCreateOnly<T>(IEnumerable<T> objectsToCreate, string tag = "") where T : IBHoMObject
+        protected virtual bool DependenciesCreateOnly<T>(IEnumerable<T> objectsToCreate, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            // Make sure objects are distinct 
+            // Make sure the dependencies objects are distinct 
             List<T> objects = objectsToCreate.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             // Make sure objects are tagged
@@ -80,7 +89,27 @@ namespace BH.Adapter
             foreach (var depObj in dependencyObjects)
                 DependenciesCreateOnly(depObj.Value as dynamic);
 
-            return ICreate(objects);
+            // Assign Id if required
+            if (m_AdapterSettings.UseAdapterId)
+                AssignNextFreeId(objects);
+
+            // Create objects
+            if (!ICreate(objects))
+                return false;
+
+            if (m_AdapterSettings.UseAdapterId)
+            {
+                // Map Ids to the original set of objects (before we extracted the distincts elements from it).
+                // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
+                // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
+                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
+                foreach (T item in objectsToCreate)
+                {
+                    item.CustomData[AdapterIdName] = objects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
+                }
+            }
+
+            return true;
         }
 
 
