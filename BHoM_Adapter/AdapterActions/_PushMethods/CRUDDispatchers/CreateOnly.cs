@@ -50,7 +50,8 @@ namespace BH.Adapter
 
             List<T> newObjects = !callDistinct ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
-            if (tag != "" && typeof(IBHoMObject).IsAssignableFrom(typeof(T)))
+            // Tag the objects, if tag is given.
+            if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             // We may treat dependencies differently: like calling distinct only for them.
