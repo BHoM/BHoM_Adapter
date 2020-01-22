@@ -59,6 +59,12 @@ namespace BH.oM.Adapter
         public bool ProcessInMemory { get; set; } = false;
         public bool UseAdapterId { get; set; } = true;
         public bool UseHashComparerAsDefault { get; set; } = false;
+
+        /****************************************/
+        /****      CreateOnly settings      *****/
+        /****************************************/
+        public bool CreateOnly_DistinctObjects { get; set; } = false;
+        public bool CreateOnly_DistinctDependencies { get; set; } = true;
     }
 }
 

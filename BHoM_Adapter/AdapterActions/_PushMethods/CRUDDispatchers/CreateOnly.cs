@@ -44,12 +44,12 @@ namespace BH.Adapter
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
         protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            List<T> newObjects = objectsToPush.ToList();//.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
+            List<T> newObjects = !m_AdapterSettings.CreateOnly_DistinctObjects ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
 
             if (tag != "" && typeof(IBHoMObject).IsAssignableFrom(typeof(T)))
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            // We treat dependencies differently: DependenciesCreateOnly *does* call distinct.
+            // We may treat dependencies differently: like calling distinct only for them. Hence another method to Create them.
             if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
@@ -70,6 +70,18 @@ namespace BH.Adapter
             if (!ICreate(newObjects))
                 return false;
 
+            if (m_AdapterSettings.CreateOnly_DistinctObjects && m_AdapterSettings.UseAdapterId)
+            {
+                // Map Ids to the original set of objects (before we extracted the distincts elements from it).
+                // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
+                // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
+                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
+                foreach (T item in objectsToPush)
+                {
+                    item.CustomData[AdapterIdName] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
+                }
+            }
+
             return true;
         }
 
@@ -77,7 +89,7 @@ namespace BH.Adapter
         protected virtual bool DependenciesCreateOnly<T>(IEnumerable<T> objectsToCreate, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
             // Make sure the dependencies objects are distinct 
-            List<T> objects = objectsToCreate.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
+            List<T> objects = !m_AdapterSettings.CreateOnly_DistinctDependencies ? objectsToCreate.ToList() : objectsToCreate.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             // Make sure objects are tagged
             if (tag != "")
@@ -97,7 +109,7 @@ namespace BH.Adapter
             if (!ICreate(objects))
                 return false;
 
-            if (m_AdapterSettings.UseAdapterId)
+            if (m_AdapterSettings.CreateOnly_DistinctDependencies && m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
