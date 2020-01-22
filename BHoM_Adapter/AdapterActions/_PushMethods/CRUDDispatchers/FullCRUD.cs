@@ -57,7 +57,7 @@ namespace BH.Adapter
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this) != EqualityComparer<T>.Default)
-                readObjects = Read(typeof(T))?.Where(x => x != null && x is T).Cast<T>();
+                readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
 
@@ -82,7 +82,7 @@ namespace BH.Adapter
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
                 if (readObjects.Any())
-                    IDelete(typeof(T), readObjects.Select(obj => obj.CustomData[AdapterIdName]));
+                    IDelete(typeof(T), readObjects.Select(obj => obj.CustomData[AdapterIdName]), actionConfig);
 
                 objectsToCreate = newObjects;
             }
@@ -96,7 +96,7 @@ namespace BH.Adapter
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
-            if (!ICreate(objectsToCreate))
+            if (!ICreate(objectsToCreate, actionConfig))
                 return false;
 
             if (m_AdapterSettings.UseAdapterId)

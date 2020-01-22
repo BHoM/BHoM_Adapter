@@ -61,7 +61,7 @@ namespace BH.Adapter
                         return false;
             }
 
-            return IUpdate(newObjects);
+            return IUpdate(newObjects, actionConfig);
         }
 
         
