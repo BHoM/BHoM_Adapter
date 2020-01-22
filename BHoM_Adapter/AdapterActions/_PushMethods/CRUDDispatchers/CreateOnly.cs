@@ -31,6 +31,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Adapter
 {
@@ -42,19 +43,17 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
+        [Input("objectLevel", "Indicates the level of recursion of the algorithm, so first-level objects and their possible dependencies can be treated differently.")]
         protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null, int objectLevel = 0) where T : IBHoMObject
         {
-            List<T> newObjects;
+            bool callDistinct = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
 
-            bool distinctObjects = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
-
-            newObjects = !distinctObjects ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
-
+            List<T> newObjects = !callDistinct ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             if (tag != "" && typeof(IBHoMObject).IsAssignableFrom(typeof(T)))
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            // We may treat dependencies differently: like calling distinct only for them. Hence another method to Create them.
+            // We may treat dependencies differently: like calling distinct only for them.
             if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
@@ -75,7 +74,7 @@ namespace BH.Adapter
             if (!ICreate(newObjects, actionConfig))
                 return false;
 
-            if (distinctObjects && m_AdapterSettings.UseAdapterId)
+            if (callDistinct && m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 

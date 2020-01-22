@@ -44,21 +44,23 @@ namespace BH.oM.Adapter
             "this avoids backpropagation in visual programming environments like Grasshopper.")]
         public bool CloneBeforePush { get; set; } = true;
 
+
         /****************************************/
         /****         Pull settings         *****/
         /****************************************/
 
         public PullType DefaultPullType; // no setting on this yet.
 
+
         /****************************************/
-        /****         CRUD settings         *****/
+        /****     General CRUD settings     *****/
         /****************************************/
 
         [Description("If your adapter does not define DependencyTypes, this can be set to false for performance.")]
         public bool HandleDependencies { get; set; } = true;
-        public bool ProcessInMemory { get; set; } = false;
         public bool UseAdapterId { get; set; } = true;
         public bool UseHashComparerAsDefault { get; set; } = false;
+        public bool ProcessInMemory { get; set; } = false;
 
         /****************************************/
         /****      CreateOnly settings      *****/
