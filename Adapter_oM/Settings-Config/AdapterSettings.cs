@@ -63,7 +63,9 @@ namespace BH.oM.Adapter
         /****************************************/
         /****      CreateOnly settings      *****/
         /****************************************/
+        [Description("If true, CreateOnly method calls Distinct() on the first-level objects.")]
         public bool CreateOnly_DistinctObjects { get; set; } = false;
+        [Description("If true, CreateOnly method calls Distinct() on the dependency objects.")]
         public bool CreateOnly_DistinctDependencies { get; set; } = true;
     }
 }
