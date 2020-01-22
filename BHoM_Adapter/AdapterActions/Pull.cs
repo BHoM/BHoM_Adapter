@@ -64,7 +64,7 @@ namespace BH.Adapter
             if (request is IRequest)
                 return (this as dynamic).Read(request as dynamic, actionConfig);
 
-            return (this as dynamic).IRead(null, null, actionConfig);
+            return IRead(null, null, actionConfig);
         }
 
     }
