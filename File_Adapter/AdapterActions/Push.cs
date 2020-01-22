@@ -64,7 +64,7 @@ namespace BH.Adapter.FileAdapter
                 Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects." + Environment.NewLine +
                     "If you want to push non-BHoMobject, specify a push config with the option `WrapNonBHoMObject` set to true.");
 
-            bool success = this.CRUD(objectsToPush, pushType, tag, actionConfig);
+            bool success = this.FullCRUD(objectsToPush, pushType, tag, actionConfig);
 
             return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
         }

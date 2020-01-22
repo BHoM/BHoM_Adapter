@@ -42,7 +42,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Update for the specified objects and, if Config.HandleDependencies is true, does the full CRUD for their dependencies.")]
-        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "",  ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual bool UpdateOnly<T>(IEnumerable<T> objectsToPush, string tag = "",  ActionConfig actionConfig = null) where T : IBHoMObject
         {
             List<T> newObjects = objectsToPush.ToList();
 
@@ -57,7 +57,7 @@ namespace BH.Adapter
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(newObjects, dependencyTypes, tag); //first-level dependencies
 
                 foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, pushType, tag, actionConfig))
+                    if (!FullCRUD(depObj.Value as dynamic, PushType.FullCRUD, tag, actionConfig))
                         return false;
             }
 

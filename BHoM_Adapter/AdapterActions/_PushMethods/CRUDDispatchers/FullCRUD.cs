@@ -45,7 +45,7 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool CRUD<T>(IEnumerable<T> objectsToPush, PushType pushType, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
+        protected bool FullCRUD<T>(IEnumerable<T> objectsToPush, PushType pushType = PushType.AdapterDefault, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
@@ -70,7 +70,7 @@ namespace BH.Adapter
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, tag);
 
                 foreach (var depObj in dependencyObjects)
-                    if (!CRUD(depObj.Value as dynamic, pushType, tag, actionConfig))
+                    if (!FullCRUD(depObj.Value as dynamic, pushType, tag, actionConfig))
                         return false;
             }
 
