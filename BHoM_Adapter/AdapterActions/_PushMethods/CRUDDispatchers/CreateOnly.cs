@@ -42,9 +42,14 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the only the Create for the specified objects and, if Config.HandleDependencies is true, their dependencies.")]
-        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual bool CreateOnly<T>(IEnumerable<T> objectsToPush, string tag = "", ActionConfig actionConfig = null, int objectLevel = 0) where T : IBHoMObject
         {
-            List<T> newObjects = !m_AdapterSettings.CreateOnly_DistinctObjects ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
+            List<T> newObjects;
+
+            bool distinctObjects = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
+
+            newObjects = !distinctObjects ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList(); // *removed* Distinct() on root objects.
+
 
             if (tag != "" && typeof(IBHoMObject).IsAssignableFrom(typeof(T)))
                 newObjects.ForEach(x => x.Tags.Add(tag));
@@ -57,7 +62,7 @@ namespace BH.Adapter
 
                 foreach (var kv in dependencyObjects)
                 {
-                    if (!DependenciesCreateOnly(kv.Value as dynamic, tag))
+                    if (!CreateOnly(kv.Value as dynamic, tag, actionConfig, objectLevel++))
                         return false;
                 }
             }
@@ -67,10 +72,10 @@ namespace BH.Adapter
                 AssignNextFreeId(newObjects);
 
             // Create objects
-            if (!ICreate(newObjects))
+            if (!ICreate(newObjects, actionConfig))
                 return false;
 
-            if (m_AdapterSettings.CreateOnly_DistinctObjects && m_AdapterSettings.UseAdapterId)
+            if (distinctObjects && m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
@@ -84,46 +89,7 @@ namespace BH.Adapter
 
             return true;
         }
-
-        [Description("Called by CreateOnly() in order to recursively create the dependencies of the objects.")]
-        protected virtual bool DependenciesCreateOnly<T>(IEnumerable<T> objectsToCreate, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
-        {
-            // Make sure the dependencies objects are distinct 
-            List<T> objects = !m_AdapterSettings.CreateOnly_DistinctDependencies ? objectsToCreate.ToList() : objectsToCreate.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
-
-            // Make sure objects are tagged
-            if (tag != "")
-                objects.ForEach(x => x.Tags.Add(tag));
-
-            // Create any sub-dependency
-            var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
-            var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(objectsToCreate, dependencyTypes, tag);
-            foreach (var depObj in dependencyObjects)
-                DependenciesCreateOnly(depObj.Value as dynamic);
-
-            // Assign Id if required
-            if (m_AdapterSettings.UseAdapterId)
-                AssignNextFreeId(objects);
-
-            // Create objects
-            if (!ICreate(objects))
-                return false;
-
-            if (m_AdapterSettings.CreateOnly_DistinctDependencies && m_AdapterSettings.UseAdapterId)
-            {
-                // Map Ids to the original set of objects (before we extracted the distincts elements from it).
-                // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
-                // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
-                foreach (T item in objectsToCreate)
-                {
-                    item.CustomData[AdapterIdName] = objects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
-                }
-            }
-
-            return true;
-        }
-
+        
 
     }
 }
