@@ -28,9 +28,9 @@ using System.Threading.Tasks;
 using BH.oM.Base;
 using System.ComponentModel;
 
-
 namespace BH.oM.Adapter
 {
+    [Description("The fileSettings, file name and directory, to use with a adapter for pull and push")]
     public class FileSettings : BHoMObject
     {
         [Description("The name of the file, including the file extension")]
