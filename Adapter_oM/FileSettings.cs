@@ -30,7 +30,7 @@ using System.ComponentModel;
 
 namespace BH.oM.Adapter
 {
-    [Description("The fileSettings, file name and directory, to use with a adapter for pull and push")]
+    [Description("The fileSettings, file name and directory, to use with an adapter for push and pull")]
     public class FileSettings : BHoMObject
     {
         [Description("The name of the file, including the file extension")]
