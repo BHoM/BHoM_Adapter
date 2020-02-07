@@ -32,9 +32,9 @@ namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
-        [Description("Creates the full file path to where the file is located on your computer, for use with the file settings")]
+        [Description("Queries the full file path to where the file is located on your computer, for use with the file settings")]
         [Input("fileSettings", "The file settings object which contains the file path data")]
-        [Output("fullFilePath","The full file path for the file settings")]
+        [Output("fullFilePath", "The full file path for the file settings")]
         public static string GetFullFileName(this FileSettings fileSettings)
         {
             return System.IO.Path.Combine(fileSettings.Directory, fileSettings.FileName);
