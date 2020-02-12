@@ -41,7 +41,7 @@ namespace BH.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Prepares the objects for the Push.")]
-        protected virtual IEnumerable<IBHoMObject> ProcessObjectsForPush(IEnumerable<object> objects, ActionConfig actionConfig) 
+        protected virtual IEnumerable<IBHoMObject> ProcessObjectsForPush(IEnumerable<object> objects, PushConfig pushConfig = null) 
         {
             // -------------------------------- // 
             //            READ CONFIG           // 
@@ -49,8 +49,8 @@ namespace BH.Adapter
 
             // If ActionConfig has a value for `WrapNonBHoMObjects`, it has precedence over the default value in AdapterSettings.
             bool wrapNonBHoMObjects = m_AdapterSettings.WrapNonBHoMObjects;
-            if (actionConfig != null)
-                wrapNonBHoMObjects = actionConfig.WrapNonBHoMObjects;
+            if (pushConfig != null)
+                wrapNonBHoMObjects = pushConfig.WrapNonBHoMObjects;
 
 
             // -------------------------------- // 

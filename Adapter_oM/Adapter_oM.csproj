@@ -81,6 +81,8 @@
     <Compile Include="ObjectWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings-Config\ActionConfig.cs" />
+    <Compile Include="Settings-Config\PullConfig.cs" />
+    <Compile Include="Settings-Config\PushConfig.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

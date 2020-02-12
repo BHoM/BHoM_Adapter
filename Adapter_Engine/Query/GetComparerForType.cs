@@ -43,19 +43,19 @@ namespace BH.Engine.Adapter
         // These are support methods required by other methods in the Push process.
 
         [Description("Returns the comparer to be used with a certain object type.")]
-        public static IEqualityComparer<T> GetComparerForType<T>(this IBHoMAdapter bHoMAdapter, ActionConfig actionConfig = null) where T : IBHoMObject
+        public static IEqualityComparer<T> GetComparerForType<T>(this IBHoMAdapter bHoMAdapter, PushConfig pushConfig = null) where T : IBHoMObject
         {
             Type type = typeof(T);
 
-            if (bHoMAdapter.AdapterComparers.ContainsKey(type))
-                return bHoMAdapter.AdapterComparers[type] as IEqualityComparer<T>;
-
-            if (actionConfig != null && actionConfig.AllowHashForComparing)
+            if (pushConfig != null && pushConfig.AllowHashForComparing)
             {
                 var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
 
                 return new HashFragmComparer<T>(propertiesToIgnore);
             }
+
+            if (bHoMAdapter.AdapterComparers.ContainsKey(type))
+                return bHoMAdapter.AdapterComparers[type] as IEqualityComparer<T>;
 
             return EqualityComparer<T>.Default;
         }

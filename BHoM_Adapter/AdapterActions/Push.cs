@@ -56,7 +56,7 @@ namespace BH.Adapter
                 pushType = m_AdapterSettings.DefaultPushType;
 
             // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
-            IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
+            IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig as PushConfig); // Note: default Push only supports IBHoMObjects.
 
             if (objectsToPush.Count() == 0)
             {
