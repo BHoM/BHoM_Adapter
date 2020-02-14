@@ -52,6 +52,9 @@
       <HintPath>..\..\BHoM\Build\Diffing_oM.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Dimensional_oM">
+      <HintPath>..\..\BHoM\Build\Dimensional_oM.dll</HintPath>
+    </Reference>
     <Reference Include="Geometry_Engine">
       <HintPath>..\..\BHoM_Engine\Build\Geometry_Engine.dll</HintPath>
       <Private>False</Private>
