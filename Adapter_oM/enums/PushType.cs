@@ -29,6 +29,11 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
+    [Description("FullCRUD - Calls all CRUD methods as appropriate." +
+        "CreateOnly - Uses only the Create CRUD method to export the objects." +
+        "UpdateOnly - Uses only the Update CRUD method to update the objects in the external software." +
+        "DeleteThenCreate - For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them." +
+        "AdapterDefault - Picks the value hard-coded in the Adapter.")]
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
         [Description("Calls all CRUD methods as appropriate.")]
