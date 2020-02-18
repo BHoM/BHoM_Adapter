@@ -39,7 +39,7 @@ namespace BH.Adapter
             bool refresh = true;
             foreach (T item in objects)
             {
-                if (!item.CustomData.ContainsKey(AdapterIdName))
+                if (AdapterIdName != null && !item.CustomData.ContainsKey(AdapterIdName))
                 {
                     item.CustomData[AdapterIdName] = NextFreeId(typeof(T), refresh);
                     refresh = false;
