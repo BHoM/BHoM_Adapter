@@ -105,6 +105,8 @@
     <Compile Include="CRUD\IUpdate.cs" />
     <Compile Include="BHoMAdapter.cs" />
     <Compile Include="AdapterActions\_PullMethods\ReadResults.cs" />
+    <Compile Include="HelperMethods\CopyBHoMObjectProperties.cs" />
+    <Compile Include="HelperMethods\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

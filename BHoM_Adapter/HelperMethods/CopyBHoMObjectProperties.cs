@@ -20,30 +20,39 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Base;
+using BH.Engine.Reflection;
 using BH.oM.Adapter;
+using BH.oM.Base;
+using BH.Engine.Base;
+using BH.oM.Data.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
-namespace BH.Engine.Adapter
+namespace BH.Adapter
 {
-    public static partial class Modify
+    public abstract partial class BHoMAdapter
     {
-        /***************************************************/
-        /**** Public Methods                            ****/ 
-        /***************************************************/
-
-        public static IEnumerable<IBHoMObject> WrapNonBHoMObjects(this IEnumerable<object> objects)
+        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
+        public void CopyBHoMObjectProperties<T>(T target, T source, string adapterIdName) where T : class, IBHoMObject
         {
-            // This method is triggered when either:
-            // 1) You have set to true `AdapterSettings.WrapNonBHoMObjects` in your Toolkit (-> all Push actions will call this), OR 
-            // 2) When Pushing, you input an ActionConfig dictionary with "WrapNonBHoMObjects" set to true.
+            target = target.DeepClone();
 
-            IEnumerable<IBHoMObject> bHoMObjects = objects.Select(x => typeof(IBHoMObject).IsAssignableFrom(x.GetType()) ?
-                x : new ObjectWrapper() { WrappedObject = x } // Wraps non-BHoMObject in a BHoMObject
-                ).OfType<IBHoMObject>();
+            // Port tags from source to target
+            foreach (string tag in source.Tags)
+                target.Tags.Add(tag);
 
-            return bHoMObjects;
+            // If target does not have name, port the source name
+            if (string.IsNullOrWhiteSpace(target.Name))
+                target.Name = source.Name;
+
+            // Get id of the source and port it to the target
+            if (source.CustomData.ContainsKey(adapterIdName))
+                target.CustomData[adapterIdName] = source.CustomData[adapterIdName];
         }
     }
 }
+

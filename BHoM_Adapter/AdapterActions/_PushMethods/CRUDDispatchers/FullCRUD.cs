@@ -136,7 +136,7 @@ namespace BH.Adapter
 
                 diagram.Intersection.ForEach(x =>
                 {
-                    BH.Engine.Adapter.Modify.CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1, x.Item2));
                 });
 
@@ -190,7 +190,7 @@ namespace BH.Adapter
 
             diagram.Intersection.ForEach(x =>
                 {
-                    BH.Engine.Adapter.Modify.CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1 as dynamic, x.Item2 as dynamic));
                 });
 
