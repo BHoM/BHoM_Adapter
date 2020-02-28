@@ -72,7 +72,7 @@ namespace BH.Adapter
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             if (wrapNonBHoMObjects)
-                objectsToPush = Engine.Adapter.Modify.WrapNonBHoMObjects(objects);
+                objectsToPush = WrapNonBHoMObjects(objects);
             else
                 objectsToPush = objects.OfType<IBHoMObject>();
 
