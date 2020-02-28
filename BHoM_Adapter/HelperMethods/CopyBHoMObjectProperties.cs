@@ -39,8 +39,6 @@ namespace BH.Adapter
         [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
         public void CopyBHoMObjectProperties<T>(T target, T source, string adapterIdName) where T : class, IBHoMObject
         {
-            target = target.DeepClone();
-
             // Port tags from source to target
             foreach (string tag in source.Tags)
                 target.Tags.Add(tag);
