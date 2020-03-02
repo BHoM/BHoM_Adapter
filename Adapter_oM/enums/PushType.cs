@@ -33,7 +33,8 @@ namespace BH.oM.Adapter
         "CreateOnly - Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.\n" +
         "UpdateOnly - Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.\n" +
         "DeleteThenCreate - For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.\n" +
-        "AdapterDefault - Picks the value hard-coded in the Adapter.")]
+        "AdapterDefault - Picks the value hard-coded in the Adapter. \n" +
+        "CreateNonExisting - Same as FullCRUD, but does not update existing objects.")]
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
         [Description("Calls all CRUD methods as appropriate.")]
@@ -45,7 +46,8 @@ namespace BH.oM.Adapter
         [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
         DeleteThenCreate,
         [Description("If this is chosen, then the m_AdapterSettings.DefaultPushType is picked.")]
-        AdapterDefault
+        AdapterDefault,
+        CreateNonExisting
     }
 }
 

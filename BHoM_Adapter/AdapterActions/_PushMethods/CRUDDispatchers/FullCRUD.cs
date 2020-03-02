@@ -89,7 +89,7 @@ namespace BH.Adapter
             else if (m_AdapterSettings.ProcessInMemory)
                 objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
             else
-                objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag);
+                objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag, actionConfig, pushType);
 
             // Assign Id if needed
             if (m_AdapterSettings.UseAdapterId)
@@ -150,7 +150,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig = null) where T : class, IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig, PushType pushType) where T : class, IBHoMObject
         {
             IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
             VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
@@ -194,9 +194,23 @@ namespace BH.Adapter
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1 as dynamic, x.Item2 as dynamic));
                 });
 
-            // Update the overlapping objects (between read and toPush), with the now ported properties.
-            if (diagram.Intersection != null && diagram.Intersection.Any())
-                IUpdate(diagram.Intersection.Select(x => x.Item1), actionConfig);
+
+            if (pushType == PushType.FullCRUD)
+            {
+                // Update the overlapping objects (between read and toPush), with the now ported properties.
+                if (diagram.Intersection != null && diagram.Intersection.Any())
+                    IUpdate(diagram.Intersection.Select(x => x.Item1), actionConfig);
+            }
+            else if(pushType == PushType.CreateNonExisting)
+            {
+                //For CreateNonExisting, the overlap objects are just kept, and not updated. To make sure tag functionality works though, 
+                //The obejcts need to get their tags (if any) updated.
+                IUpdateTags(typeof(T),
+                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.CustomData[AdapterIdName]),
+                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.Tags),
+                    actionConfig);
+            }
+
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
