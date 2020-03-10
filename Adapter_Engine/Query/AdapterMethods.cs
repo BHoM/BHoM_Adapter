@@ -82,7 +82,7 @@ namespace BH.Engine.Adapter
     [Description("Returns a collection of all Types that are supported by some CRUD action, grouped per object type.")]
     [Output("Dictionary with string key, one of: `Create`, `Read`, `Update`, `Delete`;\n" +
         "value is a Dictionary with key: BHoM Type of with some CRUD method that supports it; value: list of CRUD methods compatible with that Type.")]
-    public static Dictionary<string, Dictionary<Type, List<MethodInfo>>> AllCRUDcompatibleTypes()
+    public static Dictionary<string, Dictionary<Type, List<MethodInfo>>> CRUDcompatibleTypes()
     {
       Dictionary<string, Dictionary<Type, List<MethodInfo>>> result = new Dictionary<string, Dictionary<Type, List<MethodInfo>>>();
 
