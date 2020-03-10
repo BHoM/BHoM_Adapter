@@ -88,6 +88,7 @@
     <Compile Include="Modify\CopyBHoMObjectProperties.cs" />
     <Compile Include="Modify\WrapNonBHoMObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\AdapterMethods.cs" />
     <Compile Include="Query\GetComparerForType.cs" />
     <Compile Include="Query\GetDependencyTypes.cs" />
     <Compile Include="Query\GetFullFileName.cs" />
