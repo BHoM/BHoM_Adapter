@@ -51,7 +51,7 @@ namespace BH.Adapter
             //                 SET-UP                  //
             // ----------------------------------------//
 
-            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
+            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullPush).
             if (pushType == PushType.AdapterDefault)
                 pushType = m_AdapterSettings.DefaultPushType;
 
@@ -77,7 +77,7 @@ namespace BH.Adapter
                 MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
                 var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
-                if (pushType == PushType.FullCRUD)
+                if (pushType == PushType.FullPush)
                     success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
                 else if (pushType == PushType.CreateOnly)
                 {

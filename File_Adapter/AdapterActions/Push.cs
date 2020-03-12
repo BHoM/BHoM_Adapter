@@ -49,7 +49,7 @@ namespace BH.Adapter.FileAdapter
             // If unset, set the actionConfig to a new ActionConfig.
             actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
 
-            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullCRUD).
+            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullPush).
             if (pushType == PushType.AdapterDefault)
                 pushType = m_AdapterSettings.DefaultPushType;
 

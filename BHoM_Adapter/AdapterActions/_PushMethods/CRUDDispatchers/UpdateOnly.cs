@@ -57,7 +57,7 @@ namespace BH.Adapter
                 var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects<T>(newObjects, dependencyTypes, tag); //first-level dependencies
 
                 foreach (var depObj in dependencyObjects)
-                    if (!FullCRUD(depObj.Value as dynamic, PushType.FullCRUD, tag, actionConfig))
+                    if (!FullCRUD(depObj.Value as dynamic, PushType.FullPush, tag, actionConfig))
                         return false;
             }
 
