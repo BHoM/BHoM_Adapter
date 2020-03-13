@@ -41,13 +41,15 @@ namespace BH.oM.Adapter
         FullCRUD,
         [Description("Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.")]
         CreateOnly,
+        [Description("CreateNonExisting - Same as FullCRUD, but does not update existing objects.")]
+        CreateNonExisting,
         [Description("Uses only the Update CRUD method to update the objects in the external software.")]
         UpdateOnly,
         [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
         DeleteThenCreate,
         [Description("If this is chosen, then the m_AdapterSettings.DefaultPushType is picked.")]
-        AdapterDefault,
-        CreateNonExisting
+        AdapterDefault
+
     }
 }
 
