@@ -29,19 +29,14 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    [Description("FullCRUD - Calls all CRUD methods as appropriate.\n" +
-        "CreateOnly - Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.\n" +
-        "UpdateOnly - Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.\n" +
-        "DeleteThenCreate - For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.\n" +
-        "AdapterDefault - Picks the value hard-coded in the Adapter. \n" +
-        "CreateNonExisting - Same as FullCRUD, but does not update existing objects.")]
+    [Description("Controls which of the push methods that should be used by the Adapter.")]
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
         [Description("Calls all CRUD methods as appropriate.")]
         FullCRUD,
         [Description("Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.")]
         CreateOnly,
-        [Description("CreateNonExisting - Same as FullCRUD, but does not update existing objects.")]
+        [Description("Same as FullCRUD, but does not update pre-existing objects.")]
         CreateNonExisting,
         [Description("Uses only the Update CRUD method to update the objects in the external software.")]
         UpdateOnly,
