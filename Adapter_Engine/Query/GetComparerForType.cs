@@ -31,7 +31,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
-
+using BH.Engine.Diffing;
 
 namespace BH.Engine.Adapter
 {
@@ -51,11 +51,7 @@ namespace BH.Engine.Adapter
                 return bHoMAdapter.AdapterComparers[type] as IEqualityComparer<T>;
 
             if (actionConfig != null && actionConfig.AllowHashForComparing)
-            {
-                var propertiesToIgnore = new List<string>() { "BHoM_Guid", "CustomData" };
-
-                return new HashFragmComparer<T>(propertiesToIgnore);
-            }
+                return new DiffingHashComparer<T>(actionConfig.DiffConfig); // by default the hash doesn't consider GUIDs, Fragments and CustomData. You can set different exceptions in the ActionConfig's DiffConfig.
 
             return EqualityComparer<T>.Default;
         }
