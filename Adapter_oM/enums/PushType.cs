@@ -36,7 +36,7 @@ namespace BH.oM.Adapter
         FullPush,
         [Description("Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.")]
         CreateOnly,
-        [Description("Same as FullCRUD, but does not update pre-existing objects.")]
+        [Description("Same as FullPush, but does not update pre-existing objects.")]
         CreateNonExisting,
         [Description("Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.")]
         UpdateOnly,
