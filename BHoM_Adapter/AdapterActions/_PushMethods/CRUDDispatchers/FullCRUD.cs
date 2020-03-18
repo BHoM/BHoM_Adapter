@@ -195,7 +195,7 @@ namespace BH.Adapter
                 });
 
 
-            if (pushType == PushType.FullCRUD)
+            if (pushType == PushType.FullPush)
             {
                 // Update the overlapping objects (between read and toPush), with the now ported properties.
                 if (diagram.Intersection != null && diagram.Intersection.Any())

@@ -33,7 +33,7 @@ namespace BH.oM.Adapter
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
         [Description("Calls all CRUD methods as appropriate.")]
-        FullCRUD,
+        FullPush,
         [Description("Uses only the Create CRUD method to export the objects. This may create duplicates if the object already exists.")]
         CreateOnly,
         [Description("Same as FullCRUD, but does not update pre-existing objects.")]
