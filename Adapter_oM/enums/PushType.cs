@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter
 {
-    [Description("Controls which of the push methods that should be used by the Adapter.")]
+    [Description("Controls which type of export should be done by the Adapter `Push` action.")]
     public enum PushType //add error message if not picked up --> compliance check for this?
     {
         [Description("Calls all CRUD methods as appropriate.")]
@@ -38,13 +38,12 @@ namespace BH.oM.Adapter
         CreateOnly,
         [Description("Same as FullCRUD, but does not update pre-existing objects.")]
         CreateNonExisting,
-        [Description("Uses only the Update CRUD method to update the objects in the external software.")]
+        [Description(" Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.")]
         UpdateOnly,
         [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
         DeleteThenCreate,
-        [Description("If this is chosen, then the m_AdapterSettings.DefaultPushType is picked.")]
+        [Description("AdapterDefault - Picks the value hard-coded in the specific Adapter.")] // If this is chosen, then the m_AdapterSettings.DefaultPushType is picked
         AdapterDefault
 
     }
 }
-
