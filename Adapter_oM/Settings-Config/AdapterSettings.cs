@@ -37,7 +37,7 @@ namespace BH.oM.Adapter
         public bool WrapNonBHoMObjects { get; set; } = false;
 
         [Description("If your Toolkit does not support the Full CRUD, you can select another behaviour here (e.g. CreateOnly).")]
-        public PushType DefaultPushType = PushType.FullCRUD;
+        public PushType DefaultPushType = PushType.FullPush;
 
         [Description("Deep clones the objects before Pushing them." +
             "As the objects get modified during the Push (e.g. their externalId is added to them)," +
