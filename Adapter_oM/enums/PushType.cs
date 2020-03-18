@@ -38,7 +38,7 @@ namespace BH.oM.Adapter
         CreateOnly,
         [Description("Same as FullCRUD, but does not update pre-existing objects.")]
         CreateNonExisting,
-        [Description(" Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.")]
+        [Description("Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.")]
         UpdateOnly,
         [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
         DeleteThenCreate,
