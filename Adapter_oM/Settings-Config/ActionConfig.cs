@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.oM.Diffing;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -36,6 +37,7 @@ namespace BH.oM.Adapter
 
         public bool WrapNonBHoMObjects { get; set; } = false;
         public bool AllowHashForComparing { get; set; } = false;
+        public DiffConfig DiffConfig { get; set; } = new DiffConfig();
     }
 }
 
