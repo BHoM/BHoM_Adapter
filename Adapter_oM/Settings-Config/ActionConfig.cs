@@ -35,8 +35,14 @@ namespace BH.oM.Adapter
         // To do so, inherit this class. You will so be able to pass it to any method (like the Push) that accepts ActionConfig.
         // Then to use it, you will need to cast the actionConfig parameter to your own ActionConfig type within each method.
 
+        [Description("If true, the Push action wraps any non-BHoM type into a BH.oM.Adapter.ObjectWrapper, " +
+           "allowing them to make use of the full Adapter workflow.")]
         public bool WrapNonBHoMObjects { get; set; } = false;
+
+        [Description("If true and if no specific EqualityComparer is found for the type, Diffing hashes are computed and used to compare the objects.")]
         public bool AllowHashForComparing { get; set; } = false;
+
+        [Description("Configurations for the Diffing hashing. Requires `AllowHashForComparing` to be set to true.")]
         public DiffConfig DiffConfig { get; set; } = new DiffConfig();
     }
 }
