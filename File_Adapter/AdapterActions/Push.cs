@@ -58,7 +58,7 @@ namespace BH.Adapter.FileAdapter
             if (!ProcessExtension(ref m_FilePath))
                 return null;
 
-            CreateFileAndFolder();
+            CreateFileAndFolder(pushType);
 
             if (objectsToPush.Count() != objects.Count())
                 Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects." + Environment.NewLine +

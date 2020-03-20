@@ -86,14 +86,13 @@ namespace BH.Adapter.FileAdapter
             return true;
         }
 
-        private void CreateFileAndFolder()
+        private void CreateFileAndFolder(PushType pushType)
         {
             string directoryPath = Path.GetDirectoryName(m_FilePath);
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-
-            if (!File.Exists(m_FilePath))
+            if (!File.Exists(m_FilePath) || pushType == PushType.DeleteThenCreate)
             {
                 FileStream stream = File.Create(m_FilePath);
                 stream.Dispose();
