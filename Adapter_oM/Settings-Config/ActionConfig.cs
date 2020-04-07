@@ -37,13 +37,13 @@ namespace BH.oM.Adapter
 
         [Description("If true, the Push action wraps any non-BHoM type into a BH.oM.Adapter.ObjectWrapper, " +
            "allowing them to make use of the full Adapter workflow.")]
-        public bool WrapNonBHoMObjects { get; set; } = false;
+        public virtual bool WrapNonBHoMObjects { get; set; } = false;
 
         [Description("If true and if no specific EqualityComparer is found for the type, Diffing hashes are computed and used to compare the objects.")]
-        public bool AllowHashForComparing { get; set; } = false;
+        public virtual bool AllowHashForComparing { get; set; } = false;
 
         [Description("Configurations for the Diffing hashing. Requires `AllowHashForComparing` to be set to true.")]
-        public DiffConfig DiffConfig { get; set; } = new DiffConfig();
+        public virtual DiffConfig DiffConfig { get; set; } = new DiffConfig();
     }
 }
 

@@ -34,7 +34,7 @@ namespace BH.oM.Adapter
         /****************************************/
 
         [Description("If your Toolkit needs support for non-BHoM objects, set this to true.")]
-        public bool WrapNonBHoMObjects { get; set; } = false;
+        public virtual bool WrapNonBHoMObjects { get; set; } = false;
 
         [Description("If your Toolkit does not support the Full Push (FullCRUD method), you can select another behaviour here (e.g. CreateOnly).")]
         public PushType DefaultPushType = PushType.FullPush;
@@ -42,7 +42,7 @@ namespace BH.oM.Adapter
         [Description("Deep clones the objects before Pushing them." +
             "As the objects get modified during the Push (e.g. their externalId is added to them)," +
             "this avoids backpropagation in visual programming environments like Grasshopper.")]
-        public bool CloneBeforePush { get; set; } = true;
+        public virtual bool CloneBeforePush { get; set; } = true;
 
 
         /****************************************/
@@ -57,18 +57,18 @@ namespace BH.oM.Adapter
         /****************************************/
 
         [Description("If your adapter does not define DependencyTypes, this can be set to false for performance.")]
-        public bool HandleDependencies { get; set; } = true;
-        public bool UseAdapterId { get; set; } = true;
-        public bool UseHashComparerAsDefault { get; set; } = false;
-        public bool ProcessInMemory { get; set; } = false;
+        public virtual bool HandleDependencies { get; set; } = true;
+        public virtual bool UseAdapterId { get; set; } = true;
+        public virtual bool UseHashComparerAsDefault { get; set; } = false;
+        public virtual bool ProcessInMemory { get; set; } = false;
 
         /****************************************/
         /****      CreateOnly settings      *****/
         /****************************************/
         [Description("If true, CreateOnly method calls Distinct() on the first-level objects.")]
-        public bool CreateOnly_DistinctObjects { get; set; } = false;
+        public virtual bool CreateOnly_DistinctObjects { get; set; } = false;
         [Description("If true, CreateOnly method calls Distinct() on the dependency objects.")]
-        public bool CreateOnly_DistinctDependencies { get; set; } = true;
+        public virtual bool CreateOnly_DistinctDependencies { get; set; } = true;
     }
 }
 

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2020, the respective contributors. All rights reserved.
  *
@@ -34,9 +34,9 @@ namespace BH.oM.Adapter
     public class FileSettings : BHoMObject
     {
         [Description("The name of the file, including the file extension")]
-        public string FileName { get; set; } = "";
+        public virtual string FileName { get; set; } = "";
 
         [Description("The folder directory on your computer where the file is to be located. Directory should not include the name of the file.")]
-        public string Directory { get; set; } = "";
+        public virtual string Directory { get; set; } = "";
     }
 }

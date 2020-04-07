@@ -33,7 +33,7 @@ namespace BH.oM.Adapter.Commands
     public class CustomCommand : IExecuteCommand
     {
         [Description("Name of the command to be executed by the external software.")]
-        public string Command { get; set; }
+        public virtual string Command { get; set; }
         [Description("Parameters needed by the external software to execute the command.")]
         public Dictionary<string, object> Parameters;
     }

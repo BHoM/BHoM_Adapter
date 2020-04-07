@@ -34,7 +34,7 @@ namespace BH.oM.Adapter.Commands
     public class AnalyseLoadCases : IExecuteCommand
     {
         [Description("This should contain Loadcases, Loadcombinations or identifiers of a type compatible with the specific Toolkit in use.")]
-        public IEnumerable<object> LoadCases { get; set; }
+        public virtual IEnumerable<object> LoadCases { get; set; }
     }
 }
 

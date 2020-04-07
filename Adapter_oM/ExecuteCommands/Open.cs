@@ -32,7 +32,7 @@ namespace BH.oM.Adapter.Commands
     [Description("Used to instruct the external software to open a file.")]
     public class Open : IExecuteCommand
     {
-        public string FileName { get; set; }
+        public virtual string FileName { get; set; }
     }
 }
 

@@ -32,7 +32,7 @@ namespace BH.oM.Adapter.Commands
     [Description("Used to instruct the external software to `save as...` a file or model.")]
     public class SaveAs : IExecuteCommand
     {
-        public string FileName { get; set; }
+        public virtual string FileName { get; set; }
     }
 }
 

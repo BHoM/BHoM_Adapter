@@ -31,7 +31,7 @@ namespace BH.oM.Adapter
 {
     public class ObjectWrapper : BHoMObject
     {
-        public object WrappedObject { get; set; }
+        public virtual object WrappedObject { get; set; }
     }
 }
 
