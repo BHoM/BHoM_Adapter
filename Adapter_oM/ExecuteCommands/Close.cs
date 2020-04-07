@@ -32,7 +32,7 @@ namespace BH.oM.Adapter.Commands
     [Description("Used to instruct the external software to close a file.")]
     public class Close : IExecuteCommand
     {
-        public bool SaveBeforeClose { get; set; } = true;
+        public virtual bool SaveBeforeClose { get; set; } = true;
     }
 }
 
