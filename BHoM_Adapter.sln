@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter_Engine", "Adapter_E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter_oM", "Adapter_oM\Adapter_oM.csproj", "{03CD2C55-F3A7-4C47-B2E8-64909964329D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structure_AdapterModules", "Structure_AdapterModule\Structure_AdapterModules.csproj", "{41A21E37-829A-4B8A-A29A-F48787E2B68E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structure_AdapterModules", "Structure_AdapterModules\Structure_AdapterModules.csproj", "{41A21E37-829A-4B8A-A29A-F48787E2B68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
