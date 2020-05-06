@@ -34,6 +34,9 @@ namespace BH.oM.Adapter
         public ModuleSet() :
             base(new TypeComparer())
         { }
+
+        public ModuleSet(List<IAdapterModule> modules) : base(modules, new TypeComparer())
+        { }
     }
 }
 
