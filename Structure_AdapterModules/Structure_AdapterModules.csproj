@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Analytical_oM, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Analytical_oM">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\Analytical_oM.dll</HintPath>
       <Private>False</Private>
@@ -60,7 +60,7 @@
       <HintPath>..\..\BHoM_Engine\Build\Geometry_Engine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Geometry_oM, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Geometry_oM">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\BHoM\Build\Geometry_oM.dll</HintPath>
       <Private>False</Private>
