@@ -48,7 +48,7 @@ namespace BH.Adapter.FileAdapter
                 fileName = "objects.json";
 
             if (folder.Count() > 2 && folder.ElementAt(1) != ':')
-                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BHoM", "DataSets", folder);
+                folder = Path.Combine(@"C:\ProgramData\BHoM\DataSets", folder);
 
             m_FilePath = Path.Combine(folder, fileName);
 
