@@ -52,7 +52,7 @@ namespace BH.Adapter
             // This should be replaced by an appropriate IResultRequest.
             FilterRequest filterReq = request as FilterRequest;
             if (filterReq != null)
-                if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterReq.Type))
+                if (typeof(BH.oM.Analytical.Results.IResult).IsAssignableFrom(filterReq.Type))
                     return ReadResults(filterReq, actionConfig);
             // --------------------------------------------------------------------------------- //
 

@@ -27,7 +27,7 @@ using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
 using BH.oM.Reflection.Attributes;
-using BH.oM.Common;
+using BH.oM.Analytical.Results;
 using BH.oM.Adapter;
 
 namespace BH.Adapter
@@ -44,10 +44,10 @@ namespace BH.Adapter
         // Called directly by the Pull. Returns structural results. 
         // `Type` and `Ids` are the ones of the objects owning the IResult to be retrieved.
         // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
-        protected virtual IEnumerable<BH.oM.Common.IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5, ActionConfig actionConfig = null)
+        protected virtual IEnumerable<IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5, ActionConfig actionConfig = null)
         {
             Engine.Reflection.Compute.RecordError($"ReadResults for {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
-            return new List<BH.oM.Common.IResult>();
+            return new List<IResult>();
         }
 
         /***************************************************/
@@ -62,7 +62,7 @@ namespace BH.Adapter
             // 1. extract all the needed info from the IRequest
             // 2. return a call to the Basic Method ReadResult() with the extracted info.
             Engine.Reflection.Compute.RecordError($"ReadResults for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
-            return new List<BH.oM.Common.IResult>();
+            return new List<IResult>();
         }
    
         /******* Additional Wrapper methods *******/
@@ -74,7 +74,7 @@ namespace BH.Adapter
             List<IResult> results = new List<IResult>();
 
             // Read the IResults
-            if (typeof(BH.oM.Common.IResult).IsAssignableFrom(filterRequest.Type))
+            if (typeof(IResult).IsAssignableFrom(filterRequest.Type))
             {
                 IList cases, objectIds;
                 int divisions;
