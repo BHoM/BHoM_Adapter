@@ -27,7 +27,7 @@ using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
 using BH.oM.Reflection.Attributes;
-using BH.oM.Common;
+using BH.oM.Analytical.Results;
 using BH.oM.Adapter;
 
 namespace BH.Adapter
