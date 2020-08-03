@@ -77,7 +77,7 @@ namespace BH.Adapter
                 MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
                 var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
-                if (pushType == PushType.FullPush || pushType == PushType.CreateNonExisting)
+                if (pushType == PushType.FullPush || pushType == PushType.CreateNonExisting || pushType == PushType.UpdateOrCreate)
                     success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
                 else if (pushType == PushType.CreateOnly)
                 {
