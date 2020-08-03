@@ -40,7 +40,7 @@ namespace BH.oM.Adapter
         CreateNonExisting,
         [Description("Uses only the Update CRUD method to update the objects in the external software. All other objects in the model are left untouched.")]
         UpdateOnly,
-        [Description("Attempt to Update the objects if possible, otherwise Create them.")] // Deletion is not included in this type.
+        [Description("Attempt to Update the objects if possible, otherwise Create them. Deletion is not included in this type.")]
         UpdateOrCreate,
         [Description("For all objects being Pushed, identifies their type, calls Delete to remove all of those types, then it Creates them.")]
         DeleteThenCreate,
