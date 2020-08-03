@@ -172,7 +172,7 @@ namespace BH.Adapter
             IEnumerable<T> toBeDeleted = readObjs_exclusive.Where(x => x.Tags.Count == 0);
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
-            if (pushType != PushType.UpdateOrCreate && toBeDeleted != null && toBeDeleted.Any())
+            if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
                 IDelete(typeof(T), toBeDeleted.Select(obj => obj.CustomData[AdapterIdName]), actionConfig);
 
             // Update the tags for the rest of the existing objects in the model
@@ -195,7 +195,7 @@ namespace BH.Adapter
                 });
 
 
-            if (pushType == PushType.FullPush || pushType == PushType.UpdateOrCreate)
+            if (pushType == PushType.FullPush || pushType == PushType.UpdateOrCreateOnly)
             {
                 // Update the overlapping objects (between read and toPush), with the now ported properties.
                 if (diagram.Intersection != null && diagram.Intersection.Any())
