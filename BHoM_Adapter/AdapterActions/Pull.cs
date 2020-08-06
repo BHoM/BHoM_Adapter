@@ -45,17 +45,6 @@ namespace BH.Adapter
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
-
-            // --------------------------------------------------------------------------------- //
-            // *** Temporary retrocompatibility fix ***
-            // If it's a FilterRequest, check if it should read IResults or Objects with that.
-            // This should be replaced by an appropriate IResultRequest.
-            FilterRequest filterReq = request as FilterRequest;
-            if (filterReq != null)
-                if (typeof(BH.oM.Analytical.Results.IResult).IsAssignableFrom(filterReq.Type))
-                    return ReadResults(filterReq, actionConfig);
-            // --------------------------------------------------------------------------------- //
-
             // `(this as dynamic)` casts the abstract BHoMAdapter to its instance type (e.g. Speckle_Adapter), so all public ReadResults methods are captured
             if (request is IResultRequest)
                 return (this as dynamic).ReadResults(request as dynamic, actionConfig);

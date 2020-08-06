@@ -41,14 +41,6 @@ namespace BH.Adapter
 
     public abstract partial class BHoMAdapter
     {
-        // Called directly by the Pull. Returns structural results. 
-        // `Type` and `Ids` are the ones of the objects owning the IResult to be retrieved.
-        // If needed, it has to be implemented at the Toolkit level. Its implementation is facultative.
-        protected virtual IEnumerable<IResult> ReadResults(Type type, IList ids = null, IList cases = null, int divisions = 5, ActionConfig actionConfig = null)
-        {
-            Engine.Reflection.Compute.RecordError($"ReadResults for {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
-            return new List<IResult>();
-        }
 
         /***************************************************/
         /**** Wrapper methods                           ****/
@@ -69,43 +61,7 @@ namespace BH.Adapter
         /* These methods contain some additional logic to avoid boilerplate.
            If needed, they can be overriden at the Toolkit level, but the new implementation must always call the appropriate Basic Method. */
 
-        protected virtual IEnumerable<IResult> ReadResults(FilterRequest filterRequest, ActionConfig actionConfig = null)
-        {
-            List<IResult> results = new List<IResult>();
-
-            // Read the IResults
-            if (typeof(IResult).IsAssignableFrom(filterRequest.Type))
-            {
-                IList cases, objectIds;
-                int divisions;
-                object caseObject, idObject, divObj;
-
-                if (filterRequest.Equalities.TryGetValue("Cases", out caseObject) && caseObject is IList)
-                    cases = caseObject as IList;
-                else
-                    cases = null;
-
-                if (filterRequest.Equalities.TryGetValue("ObjectIds", out idObject) && idObject is IList)
-                    objectIds = idObject as IList;
-                else
-                    objectIds = null;
-
-                if (filterRequest.Equalities.TryGetValue("Divisions", out divObj))
-                {
-                    if (divObj is int)
-                        divisions = (int)divObj;
-                    else if (!int.TryParse(divObj.ToString(), out divisions))
-                        divisions = 5;
-                }
-                else
-                    divisions = 5;
-
-                results = ReadResults(filterRequest.Type, objectIds, cases, divisions, actionConfig).ToList();
-                results.Sort();
-            }
-
-            return results;
-        }
+     
     }
 }
 
