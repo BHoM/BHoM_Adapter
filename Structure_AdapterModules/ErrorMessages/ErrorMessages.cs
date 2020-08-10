@@ -36,19 +36,26 @@ namespace BH.Adapter.Modules.Structure
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static void ReadResultsError(Type type)
+        public static void ReadResultsError(Type resultType)
         {
             Type requestType = null;
-            if (typeof(BarResult).IsAssignableFrom(type))
+            if (typeof(BarResult).IsAssignableFrom(resultType))
                 requestType = typeof(BarResultRequest);
-            else if (typeof(MeshResult).IsAssignableFrom(type) || typeof(MeshElementResult).IsAssignableFrom(type))
+            else if (typeof(MeshResult).IsAssignableFrom(resultType) || typeof(MeshElementResult).IsAssignableFrom(resultType))
                 requestType = typeof(MeshResultRequest);
-            else if (typeof(StructuralGlobalResult).IsAssignableFrom(type))
+            else if (typeof(StructuralGlobalResult).IsAssignableFrom(resultType))
                 requestType = typeof(GlobalResultRequest);
-            else if (typeof(NodeResult).IsAssignableFrom(type))
+            else if (typeof(NodeResult).IsAssignableFrom(resultType))
                 requestType = typeof(NodeResultRequest);
 
-            string message = type.Name + " cannot be extracted using a FilterRequest.";
+            ReadResultsError(resultType, requestType);
+        }
+
+        /***************************************************/
+
+        public static void ReadResultsError(Type resultType, Type requestType)
+        {
+            string message = resultType.Name + " cannot be extracted using a FilterRequest.";
 
             if (requestType != null)
                 message += " Please instead make use of the " + requestType.Name + " that gives more options for the result extraction.";
