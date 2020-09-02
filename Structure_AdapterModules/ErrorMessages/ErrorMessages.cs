@@ -23,6 +23,7 @@
 using System;
 using BH.oM.Structure.Requests;
 using BH.oM.Structure.Results;
+using BH.oM.Structure.Loads;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,6 +64,23 @@ namespace BH.Adapter.Modules.Structure
                 message += " Please instead make use of the appropriate ResultRequest that gives more options for the result extraction.";
 
             Engine.Reflection.Compute.RecordError(message);
+        }
+
+        /***************************************************/
+
+        public static void LoadsWithoutObejctIdsAssignedError(Type loadType = null, Type objectType = null)
+        {
+            string loadDesc = loadType == null ? "load" : loadType.Name;
+            string objDesc = objectType == null ? "objects" : objectType.Name + "s";
+
+            Engine.Reflection.Compute.RecordError("The " + objDesc + " assigned to a " + loadDesc + " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure the " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.");
+        }
+
+        /***************************************************/
+
+        public static void LoadsWithoutObejctIdsAssignedError<T>(IElementLoad<T> load) where T : IBHoMObject
+        {
+            LoadsWithoutObejctIdsAssignedError(load.GetType(), typeof(T));
         }
 
         /***************************************************/
