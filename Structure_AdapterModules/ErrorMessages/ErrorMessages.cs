@@ -72,8 +72,15 @@ namespace BH.Adapter.Modules.Structure
         {
             string loadDesc = loadType == null ? "load" : loadType.Name;
             string objDesc = objectType == null ? "objects" : objectType.Name + "s";
+            char[] vowels = { 'a', 'e', 'i', 'o', 'u', 'y' };
+            string anOrA;
+            if (vowels.Contains(loadDesc.ToLower().ToCharArray().First()))
+                anOrA = "an";
+            else
+                anOrA = "a";
 
-            Engine.Reflection.Compute.RecordError("The " + objDesc + " assigned to a " + loadDesc + " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure the " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.");
+
+            Engine.Reflection.Compute.RecordError("The " + objDesc + " assigned to " + anOrA + " " + loadDesc + " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.");
         }
 
         /***************************************************/
