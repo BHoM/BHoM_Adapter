@@ -68,7 +68,7 @@ namespace BH.Adapter.Modules.Structure
 
         /***************************************************/
 
-        public static void LoadsWithoutObejctIdsAssignedError(Type loadType = null, Type objectType = null)
+        public static void LoadsWithoutObejctIdsAssignedError(string loadName = "", Type loadType = null, Type objectType = null)
         {
             string loadDesc = loadType == null ? "load" : loadType.Name;
             string objDesc = objectType == null ? "objects" : objectType.Name + "s";
@@ -79,15 +79,23 @@ namespace BH.Adapter.Modules.Structure
             else
                 anOrA = "a";
 
+            string message;
 
-            Engine.Reflection.Compute.RecordError("The " + objDesc + " assigned to " + anOrA + " " + loadDesc + " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.");
+            if (string.IsNullOrWhiteSpace(loadName))
+                message = "The " + objDesc + " assigned to " + anOrA + " " + loadDesc;
+            else
+                message = "The " + objDesc + " assigned to the " + loadDesc + " named " + loadName;
+
+            message += " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.";
+
+            Engine.Reflection.Compute.RecordError(message);
         }
 
         /***************************************************/
 
         public static void LoadsWithoutObejctIdsAssignedError<T>(IElementLoad<T> load) where T : IBHoMObject
         {
-            LoadsWithoutObejctIdsAssignedError(load.GetType(), typeof(T));
+            LoadsWithoutObejctIdsAssignedError(load.Name, load.GetType(), typeof(T));
         }
 
         /***************************************************/
