@@ -82,11 +82,11 @@ namespace BH.Adapter.Modules.Structure
             string message;
 
             if (string.IsNullOrWhiteSpace(loadName))
-                message = "The " + objDesc + " assigned to " + anOrA + " " + loadDesc;
+                message = $"The {objDesc} assigned to {anOrA} {loadDesc}";
             else
-                message = "The " + objDesc + " assigned to the " + loadDesc + " named " + loadName;
+                message = $"The {objDesc} assigned to the {loadDesc} named {loadName}";
 
-            message += " being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all " + objDesc + " assigned to the " + loadDesc + " have been pulled from the package to ensure they contain the necessary information.";
+            message += $" being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all {objDesc} assigned to the {loadDesc} have been pulled from the package to ensure they contain the necessary information.";
 
             Engine.Reflection.Compute.RecordError(message);
         }
