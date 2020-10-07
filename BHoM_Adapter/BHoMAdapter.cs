@@ -60,7 +60,7 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
-        public Guid AdapterGuid { get; set; }
+        public Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
         /***************************************************/
         /**** Protected Fields                          ****/
