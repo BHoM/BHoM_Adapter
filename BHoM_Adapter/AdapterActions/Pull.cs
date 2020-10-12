@@ -42,7 +42,7 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        public virtual IEnumerable<object> SetupThenPush(object request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
+        public virtual IEnumerable<object> SetupThenPull(object request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
             // ---------------------------------------------//
             // Mandatory Adapter Action set-up              //
@@ -64,9 +64,7 @@ namespace BH.Adapter
             else if (typeof(IRequest).IsAssignableFrom(request.GetType()))
                 actualRequest = request as IRequest;
 
-            return Pull(request, pullType, actionConfig);
-
-            //----------------------------------------------//
+            return Pull(actualRequest, pullType, actionConfig);
         }
 
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
@@ -82,7 +80,6 @@ namespace BH.Adapter
 
             return IRead(null, null, actionConfig);
         }
-
     }
 }
 
