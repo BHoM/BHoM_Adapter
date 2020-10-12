@@ -42,6 +42,33 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
+        public virtual IEnumerable<object> SetupThenPush(object request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
+        {
+            // ---------------------------------------------//
+            // Mandatory Adapter Action set-up              //
+            //----------------------------------------------//
+            // The following are mandatory set-ups to be ALWAYS performed 
+            // before the Adapter Action is called,
+            // whether the Action is overrided at the Toolkit level or not.
+
+            // If unset, set the actionConfig to a new ActionConfig.
+            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
+            // Always assure there is a Request. Allow to input a Type to generate a FilterRequest.
+            IRequest actualRequest = null;
+
+            if (request == null)
+                actualRequest = new FilterRequest();
+            else if (request is Type)
+                actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
+            else if (typeof(IRequest).IsAssignableFrom(request.GetType()))
+                actualRequest = request as IRequest;
+
+            return Pull(request, pullType, actionConfig);
+
+            //----------------------------------------------//
+        }
+
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
