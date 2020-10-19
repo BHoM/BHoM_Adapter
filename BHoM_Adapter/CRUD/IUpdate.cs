@@ -52,7 +52,7 @@ namespace BH.Adapter
             Type objectType = typeof(T);
             if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
-                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).AdapterId()), actionConfig);
+                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).AdapterId(AdapterIdFragmentType)), actionConfig);
             }
             return ICreate(objects, actionConfig);
         }

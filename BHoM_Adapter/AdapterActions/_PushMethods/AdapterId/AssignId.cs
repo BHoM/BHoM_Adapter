@@ -22,6 +22,7 @@
 
 using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.Engine.Adapter;
 using BH.Engine.Base;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace BH.Adapter
             {
                 if (AdapterIdName != null)
                 {
-                    item.Fragments.AddOrReplace(new AdapterIdFragment() { Id = NextFreeId(typeof(T), refresh) });
+                    item.SetAdapterId(AdapterIdFragmentType, NextFreeId(typeof(T), refresh));
                     refresh = false;
                 }
             }

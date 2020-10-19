@@ -84,7 +84,7 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
                 foreach (T item in objectsToPush)
                 {
-                    item.AdapterId(newObjects.First(x => comparer.Equals(x, item)).AdapterId());
+                    item.SetAdapterId(AdapterIdFragmentType, newObjects.First(x => comparer.Equals(x, item)).AdapterId(AdapterIdFragmentType));
                 }
             }
 
