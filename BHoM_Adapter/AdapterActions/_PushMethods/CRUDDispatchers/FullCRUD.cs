@@ -82,7 +82,7 @@ namespace BH.Adapter
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
                 if (readObjects.Any())
-                    IDelete(typeof(T), readObjects.Select(obj => obj.AdapterId()), actionConfig);
+                    IDelete(typeof(T), readObjects.Select(obj => obj.AdapterId(AdapterIdFragmentType)), actionConfig);
 
                 objectsToCreate = newObjects;
             }
@@ -107,7 +107,7 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
                 foreach (T item in objectsToPush)
                 {
-                    item.AdapterId(newObjects.First(x => comparer.Equals(x, item)).AdapterId());
+                    item.SetAdapterId(AdapterIdFragmentType, newObjects.First(x => comparer.Equals(x, item)).AdapterId(AdapterIdFragmentType));
                 }
             }
 
@@ -136,7 +136,7 @@ namespace BH.Adapter
 
                 diagram.Intersection.ForEach(x =>
                 {
-                    CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1, x.Item2));
                 });
 
@@ -173,11 +173,11 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
-                IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterId()), actionConfig);
+                IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterId(AdapterIdFragmentType)), actionConfig);
 
             // Update the tags for the rest of the existing objects in the model
             IUpdateTags(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterId()),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterId(AdapterIdFragmentType)),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
                 actionConfig);
 
@@ -190,7 +190,7 @@ namespace BH.Adapter
 
             diagram.Intersection.ForEach(x =>
                 {
-                    CopyBHoMObjectProperties(x.Item1, x.Item2, AdapterIdName);
+                    CopyBHoMObjectProperties(x.Item1, x.Item2);
                     copyPropertiesModules.ForEach(m => m.CopyProperties(x.Item1 as dynamic, x.Item2 as dynamic));
                 });
 
@@ -206,7 +206,7 @@ namespace BH.Adapter
                 //For CreateNonExisting, the overlap objects are just kept, and not updated. To make sure tag functionality works though, 
                 //The obejcts need to get their tags (if any) updated.
                 IUpdateTags(typeof(T),
-                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterId()),
+                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterId(AdapterIdFragmentType)),
                     diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.Tags),
                     actionConfig);
             }

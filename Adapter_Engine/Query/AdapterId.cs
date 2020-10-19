@@ -39,9 +39,34 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static object AdapterId(this IBHoMObject bHoMObject)
+        public static object AdapterId(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
-            return bHoMObject.FindFragment<AdapterIdFragment>().Id;
+            IFragment fragment = null;
+            bHoMObject.Fragments.TryGetValue(adapterIdFragmentType, out fragment);
+
+            IAdapterId adapterIdFragment = fragment as IAdapterId;
+            if (adapterIdFragment != null)
+                return IAdapterId(adapterIdFragment);
+            else
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Specified {nameof(adapterIdFragmentType)} {adapterIdFragmentType.Name} is not a valid {typeof(IAdapterId).Name}.");
+                return null;
+            }
+        }
+
+        private static object IAdapterId(IAdapterId adapterIdFragment)
+        {
+            return AdapterId(adapterIdFragment as dynamic);
+        }
+
+        private static T AdapterId<T>(IAdapterId<T> adapterIdFragment)
+        {
+            return adapterIdFragment.Id;
+        }
+
+        private static object AdapterId(IAdapterId adapterId)
+        {
+            return Engine.Reflection.Compute.RunExtensionMethod(adapterId, "IAdapterId");
         }
     }
 }

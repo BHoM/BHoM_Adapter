@@ -46,7 +46,7 @@ namespace BH.Adapter.FileAdapter
             if (ids != null)
             {
                 HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
-                everything = everything.Where(x => !toDelete.Contains((Guid)x.AdapterId()));
+                everything = everything.Where(x => !toDelete.Contains((Guid)x.AdapterId(AdapterIdFragmentType)));
             }
                 
 

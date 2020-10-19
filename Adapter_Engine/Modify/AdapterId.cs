@@ -38,9 +38,12 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static void AdapterId(this IBHoMObject bHoMObject, object id)
+        public static void SetAdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, T id)
         {
-            bHoMObject.Fragments.AddOrReplace(new AdapterIdFragment() { Id = id });
+            var newAdapterIdFragment = (IAdapterId<T>)Activator.CreateInstance(adapterIdFragmentType);
+            newAdapterIdFragment.Id = id;
+
+            bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
         }
     }
 }

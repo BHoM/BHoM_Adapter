@@ -60,6 +60,9 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
+        public Type AdapterIdFragmentType { get; set; }
+
+
         public Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
         /***************************************************/
