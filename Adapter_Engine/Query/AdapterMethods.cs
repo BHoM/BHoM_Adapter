@@ -31,7 +31,7 @@ using System.Reflection;
 
 namespace BH.Engine.Adapter
 {
-  static partial class Query
+  public static partial class Query
   {
     /***************************************************/
     /**** Public Methods                            ****/

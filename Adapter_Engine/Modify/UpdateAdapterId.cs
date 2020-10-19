@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2020, the respective contributors. All rights reserved.
  *
@@ -22,29 +22,26 @@
 
 using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.oM.Reflection.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
-namespace BH.Adapter
+
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Modify
     {
-        [Description("Assigns to the object the next available id, obtained calling the NextFreeId method.")]
-        protected virtual void AssignNextFreeId<T>(IEnumerable<T> objects) where T : IBHoMObject
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
+        public static void UpdateAdapterId(this IBHoMObject bHoMObject, object id)
         {
-            bool refresh = true;
-            foreach (T item in objects)
-            {
-                if (AdapterIdName != null)
-                {
-                    item.CustomData[AdapterIdName] = NextFreeId(typeof(T), refresh);
-                    refresh = false;
-                }
-            }
+            bHoMObject.Fragments.AddOrReplace(new AdapterIdFragment() { Id = id });
         }
     }
 }
+

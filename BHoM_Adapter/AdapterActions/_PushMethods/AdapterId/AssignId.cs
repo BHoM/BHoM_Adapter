@@ -20,38 +20,32 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.Engine.Adapter;
 using BH.Engine.Base;
-using BH.oM.Data.Collections;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        public void CopyBHoMObjectProperties<T>(T target, T source, string adapterIdName) where T : class, IBHoMObject
+        [Description("Assigns to the object the next available id, obtained calling the NextFreeId method.")]
+        protected virtual void AssignNextFreeId<T>(IEnumerable<T> objects) where T : IBHoMObject
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
-
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
-
-            // Get id of the source and port it to the target
-            if (source.CustomData.ContainsKey(adapterIdName))
-                target.UpdateAdapterId(source.AdapterId());
+            bool refresh = true;
+            foreach (T item in objects)
+            {
+                if (AdapterIdName != null)
+                {
+                    item.Fragments.AddOrReplace(new AdapterIdFragment() { Id = NextFreeId(typeof(T), refresh) });
+                    refresh = false;
+                }
+            }
         }
     }
 }
-

@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Base;
+using BH.Engine.Base;
 using BH.oM.Data.Collections;
 using BH.Engine.Adapter;
 using BH.Engine.Reflection;
@@ -83,13 +84,12 @@ namespace BH.Adapter
                 IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
                 foreach (T item in objectsToPush)
                 {
-                    item.CustomData[AdapterIdName] = newObjects.First(x => comparer.Equals(x, item)).CustomData[AdapterIdName];
+                    item.UpdateAdapterId(newObjects.First(x => comparer.Equals(x, item)).AdapterId());
                 }
             }
 
             return true;
         }
-        
 
     }
 }

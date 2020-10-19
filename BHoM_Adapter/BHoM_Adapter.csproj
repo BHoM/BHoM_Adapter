@@ -92,8 +92,8 @@
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\FullCRUD.cs" />
     <Compile Include="AdapterActions\_PushMethods\CRUDDispatchers\UpdateOnly.cs" />
     <Compile Include="AdapterActions\_PushMethods\ProcessObjectsForPush.cs" />
-    <Compile Include="AdapterActions\_PushMethods\ExternalId\AssignId.cs" />
-    <Compile Include="AdapterActions\_PushMethods\ExternalId\NextFreeId.cs" />
+    <Compile Include="AdapterActions\_PushMethods\AdapterId\AssignId.cs" />
+    <Compile Include="AdapterActions\_PushMethods\AdapterId\NextFreeId.cs" />
     <Compile Include="CRUD\ICreate.cs" />
     <Compile Include="CRUD\IDelete.cs" />
     <Compile Include="CRUD\IRead.cs" />

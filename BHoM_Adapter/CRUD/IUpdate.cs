@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BH.Engine.Adapter;
 
 namespace BH.Adapter
 {
@@ -51,7 +52,7 @@ namespace BH.Adapter
             Type objectType = typeof(T);
             if (m_AdapterSettings.UseAdapterId && typeof(IBHoMObject).IsAssignableFrom(objectType))
             {
-                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).CustomData[AdapterIdName]), actionConfig);
+                IDelete(typeof(T), objects.Select(x => ((IBHoMObject)x).AdapterId()), actionConfig);
             }
             return ICreate(objects, actionConfig);
         }
