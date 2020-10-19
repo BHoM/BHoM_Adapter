@@ -38,7 +38,7 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static void UpdateAdapterId(this IBHoMObject bHoMObject, object id)
+        public static void AdapterId(this IBHoMObject bHoMObject, object id)
         {
             bHoMObject.Fragments.AddOrReplace(new AdapterIdFragment() { Id = id });
         }

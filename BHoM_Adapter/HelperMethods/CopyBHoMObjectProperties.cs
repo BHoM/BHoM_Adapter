@@ -50,7 +50,7 @@ namespace BH.Adapter
 
             // Get id of the source and port it to the target
             if (source.CustomData.ContainsKey(adapterIdName))
-                target.UpdateAdapterId(source.AdapterId());
+                target.AdapterId(source.AdapterId());
         }
     }
 }
