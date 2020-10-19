@@ -20,26 +20,24 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
+using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.oM.Data.Requests;
-using BH.oM.Reflection;
+using BH.Engine.Adapter;
+using BH.Engine.Base;
+using BH.oM.Data.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
-namespace BH.oM.Adapter
+namespace BH.Adapter
 {
-    public class AdapterIdFragment<T> : IAdapterIdFragment
+    public abstract partial class BHoMAdapter
     {
-        public T Id { get; set; }
-    }
 
-    public class AdapterIdFragment : IAdapterIdFragment
-    {
-        public object Id { get; set; }
     }
 }
 

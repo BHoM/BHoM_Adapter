@@ -75,7 +75,6 @@
     <Compile Include="ExecuteCommands\ClearResults.cs" />
     <Compile Include="ExecuteCommands\SaveAs.cs" />
     <Compile Include="ExecuteCommands\Save.cs" />
-    <Compile Include="AdapterIdFragment.cs" />
     <Compile Include="Module\ModuleSet.cs" />
     <Compile Include="Module\IAdapterModule.cs" />
     <Compile Include="IBHoMAdapter.cs" />
