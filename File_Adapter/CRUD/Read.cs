@@ -21,6 +21,7 @@
  */
 
 using BH.oM.Adapter;
+using BH.Engine.Adapter;
 using BH.oM.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -45,7 +46,7 @@ namespace BH.Adapter.FileAdapter
             if (ids != null)
             {
                 HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
-                everything = everything.Where(x => !toDelete.Contains((Guid)x.CustomData[AdapterIdName]));
+                everything = everything.Where(x => !toDelete.Contains((Guid)x.AdapterId()));
             }
                 
 

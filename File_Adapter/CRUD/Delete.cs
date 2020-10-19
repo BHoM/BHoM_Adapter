@@ -22,6 +22,7 @@
 
 using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.Engine.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace BH.Adapter.FileAdapter
 
             HashSet<Guid> toDelete = new HashSet<Guid>(ids.Cast<Guid>());
 
-            everything = everything.Where(x => (type == null || !type.IsAssignableFrom(x.GetType())) && (toDelete.Contains((Guid)x.CustomData[AdapterIdName])));
+            everything = everything.Where(x => (type == null || !type.IsAssignableFrom(x.GetType())) && (toDelete.Contains((Guid)x.AdapterId())));
 
             bool ok = true;
             if (m_isJSON)

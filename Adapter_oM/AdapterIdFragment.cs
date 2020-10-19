@@ -20,38 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
-using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.Engine.Adapter;
-using BH.Engine.Base;
-using BH.oM.Data.Collections;
+using BH.oM.Data.Requests;
+using BH.oM.Reflection;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace BH.Adapter
+namespace BH.oM.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public class AdapterIdFragment<T> : IAdapterIdFragment
     {
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        public void CopyBHoMObjectProperties<T>(T target, T source, string adapterIdName) where T : class, IBHoMObject
-        {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
+        public T Id { get; set; }
+    }
 
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
-
-            // Get id of the source and port it to the target
-            if (source.CustomData.ContainsKey(adapterIdName))
-                target.UpdateAdapterId(source.AdapterId());
-        }
+    public class AdapterIdFragment : IAdapterIdFragment
+    {
+        public object Id { get; set; }
     }
 }
 

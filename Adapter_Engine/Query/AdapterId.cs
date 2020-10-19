@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2020, the respective contributors. All rights reserved.
  *
@@ -20,37 +20,28 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.Engine.Adapter;
 using BH.Engine.Base;
-using BH.oM.Data.Collections;
+using BH.oM.Reflection.Attributes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace BH.Adapter
+
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Query
     {
-        [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        public void CopyBHoMObjectProperties<T>(T target, T source, string adapterIdName) where T : class, IBHoMObject
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
+        public static object AdapterId(this IBHoMObject bHoMObject)
         {
-            // Port tags from source to target
-            foreach (string tag in source.Tags)
-                target.Tags.Add(tag);
-
-            // If target does not have name, port the source name
-            if (string.IsNullOrWhiteSpace(target.Name))
-                target.Name = source.Name;
-
-            // Get id of the source and port it to the target
-            if (source.CustomData.ContainsKey(adapterIdName))
-                target.UpdateAdapterId(source.AdapterId());
+            return bHoMObject.FindFragment<AdapterIdFragment>().Id;
         }
     }
 }
