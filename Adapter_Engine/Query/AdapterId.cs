@@ -41,17 +41,25 @@ namespace BH.Engine.Adapter
 
         public static object AdapterId(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
-            IFragment fragment = null;
-            bHoMObject.Fragments.TryGetValue(adapterIdFragmentType, out fragment);
-
-            IAdapterId adapterIdFragment = fragment as IAdapterId;
-            if (adapterIdFragment != null)
-                return IAdapterId(adapterIdFragment);
-            else
+            if (adapterIdFragmentType.IsAssignableFrom(typeof(IAdapterId)))
             {
                 BH.Engine.Reflection.Compute.RecordError($"Specified {nameof(adapterIdFragmentType)} {adapterIdFragmentType.Name} is not a valid {typeof(IAdapterId).Name}.");
                 return null;
             }
+
+            List<IAdapterId> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId>().ToList();
+
+            if (fragmentList.Count != 0)
+            {
+                var ids = fragmentList.Select(f => IAdapterId(f as IAdapterId));
+
+                if (ids.Count() == 1)
+                    return ids.First();
+                else
+                    return ids;
+            }
+            else
+                return null;
         }
 
         private static object IAdapterId(IAdapterId adapterIdFragment)
