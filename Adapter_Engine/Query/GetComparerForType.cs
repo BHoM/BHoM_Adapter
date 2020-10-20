@@ -50,6 +50,11 @@ namespace BH.Engine.Adapter
             if (bHoMAdapter.AdapterComparers.ContainsKey(type))
                 return bHoMAdapter.AdapterComparers[type] as IEqualityComparer<T>;
 
+            var interfaceComparer = bHoMAdapter.AdapterComparers.Where(x => x.Key.IsAssignableFrom(type));
+
+            if (interfaceComparer.Any())
+                return interfaceComparer.First().Value as IEqualityComparer<T>;
+
             if (actionConfig != null && actionConfig.AllowHashForComparing)
                 return new DiffingHashComparer<T>(actionConfig.DiffConfig); // by default the hash doesn't consider GUIDs, Fragments and CustomData. You can set different exceptions in the ActionConfig's DiffConfig.
 
