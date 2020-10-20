@@ -36,8 +36,7 @@ namespace BH.Adapter
         /**** Public Properties                         ****/
         /***************************************************/
 
-        [Description("Used only as a key for the CustomData dictionary. E.g. key = Speckle_Id, value = 123")]
-        public string AdapterIdName { get; set; } // value to be assigned in the specific Adapter constructor, e.g. = BH.Engine.GSA.Convert.AdapterId;
+        public Type AdapterIdFragmentType { get; set; }
 
         [Description("Modules containing adapter functionality")]
         public ModuleSet AdapterModules { get; set; } = new ModuleSet();
@@ -59,9 +58,6 @@ namespace BH.Adapter
             // In your adapter constructor, populate this with values like:
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
-
-        public Type AdapterIdFragmentType { get; set; }
-
 
         public Guid AdapterGuid { get; set; } = Guid.NewGuid();
 

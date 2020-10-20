@@ -40,10 +40,14 @@ namespace BH.Engine.Adapter
 
         public static void SetAdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, T id)
         {
-            var newAdapterIdFragment = (IAdapterId<T>)Activator.CreateInstance(adapterIdFragmentType);
-            newAdapterIdFragment.Id = id;
+            IAdapterId newAdapterIdFragment = (IAdapterId)Activator.CreateInstance(adapterIdFragmentType);
+            var idProp = newAdapterIdFragment.GetType().GetProperty(nameof(BH.oM.Base.IAdapterId<T>.Id));
 
-            bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
+            if (idProp != null)
+            {
+                idProp.SetValue(newAdapterIdFragment, id, null);
+                bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
+            }
         }
     }
 }
