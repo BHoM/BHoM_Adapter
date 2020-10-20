@@ -34,7 +34,7 @@ namespace BH.oM.Adapter
 {
     public interface IBHoMAdapter
     {
-        string AdapterIdName { get; }
+        Type AdapterIdFragmentType { get; }
         ModuleSet AdapterModules { get; }
         Dictionary<Type, object> AdapterComparers { get; }
         Dictionary<Type, List<Type>> DependencyTypes { get; }

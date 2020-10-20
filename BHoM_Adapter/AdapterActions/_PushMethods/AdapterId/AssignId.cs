@@ -41,7 +41,7 @@ namespace BH.Adapter
             bool refresh = true;
             foreach (T item in objects)
             {
-                if (AdapterIdName != null)
+                if (AdapterIdFragmentType != null)
                 {
                     item.SetAdapterId(AdapterIdFragmentType, NextFreeId(typeof(T), refresh));
                     refresh = false;
