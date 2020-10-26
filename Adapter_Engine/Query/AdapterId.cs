@@ -64,35 +64,26 @@ namespace BH.Engine.Adapter
 
         public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
-            if (typeof(IAdapterId<T>).IsAssignableFrom(adapterIdFragmentType))
+            object id = AdapterId(bHoMObject, adapterIdFragmentType);
+
+            if (id is T)
             {
-                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
+                return (T)id;
+            }
+            try
+            {
+                return (T)Convert.ChangeType(id, typeof(T));
+            }
+            catch (InvalidCastException)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Found Id of type `{id.GetType().Name}` that cannot be converted to the requested type of `{typeof(T).Name}`.");
                 return default(T);
             }
-
-            List<IAdapterId<T>> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId<T>>().ToList();
-
-            if (fragmentList.Count != 0)
-            {
-                if (fragmentList.Count() == 1)
-                    return fragmentList.FirstOrDefault().Id;
-                else
-                    return ids;
-            }
-            else
-                return null;
-
-            return fragmentList.FirstOrDefault().Id;
         }
 
         private static object IAdapterId(IAdapterId adapterIdFragment)
         {
             return AdapterId(adapterIdFragment as dynamic);
-        }
-
-        private static T AdapterId<T>(IAdapterId<T> adapterIdFragment)
-        {
-            return adapterIdFragment.Id;
         }
 
         private static object AdapterId(IAdapterId adapterId)
