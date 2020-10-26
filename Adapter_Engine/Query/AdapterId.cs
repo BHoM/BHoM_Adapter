@@ -41,9 +41,9 @@ namespace BH.Engine.Adapter
 
         public static object AdapterId(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
-            if (adapterIdFragmentType.IsAssignableFrom(typeof(IAdapterId)))
+            if (typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
-                BH.Engine.Reflection.Compute.RecordError($"Specified {nameof(adapterIdFragmentType)} {adapterIdFragmentType.Name} is not a valid {typeof(IAdapterId).Name}.");
+                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
                 return null;
             }
 
@@ -51,7 +51,7 @@ namespace BH.Engine.Adapter
 
             if (fragmentList.Count != 0)
             {
-                var ids = fragmentList.Select(f => IAdapterId(f as IAdapterId));
+                IEnumerable<object> ids = fragmentList.Select(f => IAdapterId(f as IAdapterId));
 
                 if (ids.Count() == 1)
                     return ids.First();
@@ -60,6 +60,29 @@ namespace BH.Engine.Adapter
             }
             else
                 return null;
+        }
+
+        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        {
+            if (typeof(IAdapterId<T>).IsAssignableFrom(adapterIdFragmentType))
+            {
+                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
+                return default(T);
+            }
+
+            List<IAdapterId<T>> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId<T>>().ToList();
+
+            if (fragmentList.Count != 0)
+            {
+                if (fragmentList.Count() == 1)
+                    return fragmentList.FirstOrDefault().Id;
+                else
+                    return ids;
+            }
+            else
+                return null;
+
+            return fragmentList.FirstOrDefault().Id;
         }
 
         private static object IAdapterId(IAdapterId adapterIdFragment)
@@ -78,4 +101,3 @@ namespace BH.Engine.Adapter
         }
     }
 }
-
