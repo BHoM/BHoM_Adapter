@@ -51,22 +51,14 @@ namespace BH.Engine.Adapter
             if (typeof(T) == adapterIdFragmentType)
                 bHoMObject.Fragments.AddOrReplace(id as IFragment);
 
-            // Create an instance of the specified `adapterIdFragmentType`, set its generic `Id` property, then add it to the fragments.
+            // Create an instance of the specified `adapterIdFragmentType`, set its `Id` property, then add it to the fragments.
             IAdapterId newAdapterIdFragment = (IAdapterId)Activator.CreateInstance(adapterIdFragmentType);
-            var idProp = newAdapterIdFragment.GetType().GetProperty(nameof(BH.oM.Base.IAdapterId<T>.Id));
 
+            var idProp = newAdapterIdFragment.GetType().GetProperty(nameof(BH.oM.Base.IAdapterId.Id));
             if (idProp != null)
-            {
-                // Check if the type of the input `id` is compatible with the provided `adapterIdFragmentType`'s Id property.
-                if (idProp.PropertyType.Name != id.GetType().Name)
-                {
-                    BH.Engine.Reflection.Compute.RecordError($"Attempting to assign an {nameof(id)} of type `{id.GetType().Name}` which is not compatible with {adapterIdFragmentType.FullName}.");
-                    return;
-                }
-
                 idProp.SetValue(newAdapterIdFragment, id, null);
-                bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
-            }
+
+            bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
         }
 
         public static void SetAdapterId(this IBHoMObject bHoMObject, IAdapterId id)

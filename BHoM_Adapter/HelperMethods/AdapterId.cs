@@ -37,7 +37,20 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
+        public void SetAdapterId(IBHoMObject bHoMObject, object id)
+        {
+            bHoMObject.SetAdapterId(AdapterIdFragmentType, id);
+        }
 
+        public object GetAdapterId(IBHoMObject bHoMObject)
+        {
+            return bHoMObject.AdapterId(AdapterIdFragmentType);
+        }
+
+        public T GetAdapterId<T>(IBHoMObject bHoMObject)
+        {
+            return bHoMObject.AdapterId<T>(AdapterIdFragmentType);
+        }
     }
 }
 
