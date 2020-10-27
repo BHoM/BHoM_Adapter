@@ -51,7 +51,7 @@ namespace BH.Engine.Adapter
 
             if (fragmentList.Count != 0)
             {
-                IEnumerable<object> ids = fragmentList.Select(f => IAdapterId(f as IAdapterId));
+                IEnumerable<object> ids = fragmentList.Select(f => f.Id);
 
                 if (ids.Count() == 1)
                     return ids.First();
