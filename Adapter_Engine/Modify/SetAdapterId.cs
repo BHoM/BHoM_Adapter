@@ -41,7 +41,7 @@ namespace BH.Engine.Adapter
         public static void SetAdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, T id)
         {
             // Check if the specified `adapterIdFragmentType` is effectively an `IAdapterId`.
-            if (typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
+            if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
                 BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
                 return;
@@ -67,4 +67,3 @@ namespace BH.Engine.Adapter
         }
     }
 }
-
