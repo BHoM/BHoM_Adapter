@@ -81,14 +81,5 @@ namespace BH.Engine.Adapter
             }
         }
 
-        private static object IAdapterId(IAdapterId adapterIdFragment)
-        {
-            return AdapterId(adapterIdFragment as dynamic);
-        }
-
-        private static object AdapterId(IAdapterId adapterId)
-        {
-            return Engine.Reflection.Compute.RunExtensionMethod(adapterId, "IAdapterId");
-        }
     }
 }
