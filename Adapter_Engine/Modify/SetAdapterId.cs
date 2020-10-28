@@ -57,9 +57,7 @@ namespace BH.Engine.Adapter
             // Create an instance of the specified `adapterIdFragmentType`, set its `Id` property, then add it to the fragments.
             IAdapterId newAdapterIdFragment = (IAdapterId)Activator.CreateInstance(adapterIdFragmentType);
 
-            var idProp = newAdapterIdFragment.GetType().GetProperty(nameof(BH.oM.Base.IAdapterId.Id));
-            if (idProp != null)
-                idProp.SetValue(newAdapterIdFragment, id, null);
+            newAdapterIdFragment.Id = id;
 
             bHoMObject.Fragments.AddOrReplace(newAdapterIdFragment);
         }
