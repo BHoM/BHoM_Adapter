@@ -48,7 +48,7 @@ namespace BH.Engine.Adapter
             }
 
             // If the input `id` is already an instance of the specified `adapterIdFragmentType`, simply add it to the fragments.
-            if (id.GetType() == adapterIdFragmentType)
+            if (id != null && id.GetType() == adapterIdFragmentType)
             {
                 bHoMObject.Fragments.AddOrReplace(id as IFragment);
                 return;
