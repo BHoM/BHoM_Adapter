@@ -66,6 +66,12 @@ namespace BH.Engine.Adapter
         {
             object id = AdapterId(bHoMObject, adapterIdFragmentType);
 
+            if (id == null)
+            {
+                BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+                return default(T);
+            }
+
             if (id is T)
             {
                 return (T)id;
