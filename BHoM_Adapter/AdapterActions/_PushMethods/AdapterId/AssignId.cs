@@ -43,8 +43,12 @@ namespace BH.Adapter
             {
                 if (AdapterIdFragmentType != null)
                 {
-                    item.SetAdapterId(AdapterIdFragmentType, NextFreeId(typeof(T), refresh));
-                    refresh = false;
+                    object nextId = NextFreeId(typeof(T), refresh);
+                    if (nextId != null)
+                    {
+                        item.SetAdapterId(AdapterIdFragmentType, nextId);
+                        refresh = false;
+                    }
                 }
             }
         }
