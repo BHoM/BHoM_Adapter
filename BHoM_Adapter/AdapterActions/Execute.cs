@@ -43,6 +43,17 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
+        [Description("Performs a set up, then calls the Execute Action.")]
+        public virtual Output<List<object>, bool> SetupThenExecute(IExecuteCommand command, ActionConfig actionConfig = null)
+        {
+            // This method includes following are set-ups to be performed before the Remove Action is called.
+            // If you override this method, make sure you know what you're doing.
+
+            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
+            return Execute(command, actionConfig);
+        }
+
         [Description("To be implemented to send specific commands to the external software, through its API or other means." +
             "To be implemented (overridden) in Toolkits.")]
         [Output("Output<object, bool>", "Output is a tuple-like class with: " +
