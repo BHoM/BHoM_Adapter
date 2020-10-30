@@ -41,6 +41,27 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
+        [Description("Performs a set up, then calls the Remove Action.")]
+        public virtual int SetupThenRemove(object request, ActionConfig actionConfig = null)
+        {
+            // This method includes following are set-ups to be performed before the Remove Action is called.
+            // If you override this method, make sure you know what you're doing.
+
+            // If unset, set the actionConfig to a new ActionConfig.
+            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
+            // Always assure there is a Request. Allow to input a Type to generate a FilterRequest.
+            IRequest actualRequest = null;
+
+            if (request == null)
+                actualRequest = new FilterRequest();
+
+            if (request is Type)
+                actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
+
+            return Remove(actualRequest, actionConfig);
+        }
+
         [Description("Calls the basic CRUD/Delete method as appropriate." +
             "The base implementation just calls Delete. It can be overridden in Toolkits.")]
         public virtual int Remove(IRequest request, ActionConfig actionConfig = null)
