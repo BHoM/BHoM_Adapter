@@ -41,31 +41,17 @@ namespace BH.Adapter
         /******************************************************/
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
-
-        [Description("Performs a set up, then calls the Move Action.")]
-        public virtual bool SetupThenMove(BHoMAdapter source, BHoMAdapter target, 
-            IRequest request,
-            PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null,
-            PushType pushType = PushType.AdapterDefault, ActionConfig pushConfig = null)
+      
+        [Description("Performs a set up for the Request input of the Move Action.")]
+        public virtual bool VerifyMoveAdapters(BHoMAdapter source, BHoMAdapter target)
         {
-            // This method includes following are set-ups to be performed before the Move Action is called.
-            // If you override this method, make sure you know what you're doing.
-
             if (source == null || target == null)
             {
                 Engine.Reflection.Compute.RecordError("Adapter input cannot be null.");
                 return false;
             }
 
-            // If unset, set the actionConfig to a new ActionConfig.
-            pullConfig = pullConfig == null ? new ActionConfig() : pullConfig;
-            pushConfig = pushConfig == null ? new ActionConfig() : pushConfig;
-
-            if (request == null)
-                request = new FilterRequest();
-
-
-            return Move(target, request, pullType, pullConfig, pushType, pushConfig);
+            return true;
         }
 
         [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
