@@ -42,18 +42,6 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
       
-        [Description("Performs a set up for the Request input of the Move Action.")]
-        public virtual bool VerifyMoveAdapters(BHoMAdapter source, BHoMAdapter target)
-        {
-            if (source == null || target == null)
-            {
-                Engine.Reflection.Compute.RecordError("Adapter input cannot be null.");
-                return false;
-            }
-
-            return true;
-        }
-
         [Description("Performs a Pull and then a Push. Useful to move data between two different software without passing it through the UI.")]
         public virtual bool Move(IBHoMAdapter to, IRequest request,
             PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null,
