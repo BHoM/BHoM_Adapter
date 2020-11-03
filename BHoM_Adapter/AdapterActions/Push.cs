@@ -50,40 +50,6 @@ namespace BH.Adapter
             return true;
         }
 
-        [Description("Performs a set up for the objects to be sent to the Push Action.")]
-        public virtual bool SetupPushObjects(IEnumerable<object> objects, ActionConfig actionConfig, out IEnumerable<object> objectsToPush)
-        {
-            // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
-
-            // Read ActionConfig.
-            // If ActionConfig has a value for `WrapNonBHoMObjects`, it has precedence over the default value in AdapterSettings.
-            bool wrapNonBHoMObjects = m_AdapterSettings.WrapNonBHoMObjects;
-            if (actionConfig != null)
-                wrapNonBHoMObjects = actionConfig.WrapNonBHoMObjects;
-
-            // Object verification. 
-            objectsToPush = new List<IBHoMObject>();
-
-            // Verify that the input objects are IBHoMObjects.
-            if (objects.OfType<IBHoMObject>().Count() != objects.Count() & !wrapNonBHoMObjects)
-            {
-                Engine.Reflection.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
-                    "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true.");
-            }
-
-            // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
-            if (wrapNonBHoMObjects)
-                objectsToPush = WrapNonBHoMObjects(objects);
-            else
-                objectsToPush = objects.OfType<IBHoMObject>();
-
-            // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
-            if (m_AdapterSettings.CloneBeforePush)
-                objectsToPush = objectsToPush.Select(x => x.DeepClone());
-
-            return true;
-        }
-
         [Description("Performs a set up for the ActionConfig of the Push Action.")]
         public virtual bool SetupPushType(PushType inputPushType, out PushType pushType)
         {
@@ -101,7 +67,16 @@ namespace BH.Adapter
         {
             bool success = true;
 
-            IEnumerable<IBHoMObject> objectsToPush = objects.OfType<IBHoMObject>();
+            // ----------------------------------------//
+            //                 SET-UP                  //
+            // ----------------------------------------//
+
+            // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullPush).
+            if (pushType == PushType.AdapterDefault)
+                pushType = m_AdapterSettings.DefaultPushType;
+
+            // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
+            IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
 
             if (objectsToPush.Count() == 0)
             {
