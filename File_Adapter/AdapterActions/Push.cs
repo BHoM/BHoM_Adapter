@@ -37,10 +37,7 @@ namespace BH.Adapter.FileAdapter
         {
             // --------------- SET-UP ------------------
 
-            // Process the objects (verify they are valid; DeepClone them, wrap them, etc).
-            IEnumerable<IBHoMObject> objectsToPush = ProcessObjectsForPush(objects, actionConfig); // Note: default Push only supports IBHoMObjects.
-
-            if (objectsToPush.Count() == 0)
+            if (objects.Count() == 0)
             {
                 Engine.Reflection.Compute.RecordError("Input objects were invalid.");
                 return new List<object>();
@@ -60,13 +57,9 @@ namespace BH.Adapter.FileAdapter
 
             CreateFileAndFolder(pushType);
 
-            if (objectsToPush.Count() != objects.Count())
-                Engine.Reflection.Compute.RecordWarning("The file adapter can currently only be used with BHoMObjects." + Environment.NewLine +
-                    "If you want to push non-BHoMobject, specify a push config with the option `WrapNonBHoMObject` set to true.");
+            bool success = this.FullCRUD(objects.OfType<IBHoMObject>(), pushType, tag, actionConfig);
 
-            bool success = this.FullCRUD(objectsToPush, pushType, tag, actionConfig);
-
-            return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
+            return success ? objects.ToList() : new List<IObject>().Cast<object>().ToList();
         }
     }
 }

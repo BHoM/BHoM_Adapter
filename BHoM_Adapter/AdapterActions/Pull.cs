@@ -42,20 +42,11 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Performs a set up, then calls the Pull Action.")]
-        public virtual IEnumerable<object> SetupThenPull(object request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
+        [Description("Performs a set up for the Request input of the Pull Action.")]
+        public virtual bool SetupPullRequest(object request, out IRequest actualRequest)
         {
-            // This method includes following are set-ups to be performed before the Pull Action is called.
-            // If you override this method, make sure you know what you're doing.
-
-            // If unset, set the actionConfig to a new ActionConfig.
-            actionConfig = actionConfig == null ? new ActionConfig() : actionConfig;
-
             // Always assure there is a Request. Allow to input a Type to generate a FilterRequest.
-            IRequest actualRequest = null;
-
-            if (request == null)
-                actualRequest = new FilterRequest();
+            actualRequest = null;
 
             if (request is Type)
                 actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
@@ -63,7 +54,19 @@ namespace BH.Adapter
             if (typeof(IRequest).IsAssignableFrom(request.GetType()))
                 actualRequest = request as IRequest;
 
-            return Pull(actualRequest, pullType, actionConfig);
+            if (request == null)
+                actualRequest = new FilterRequest();
+
+            return true;
+        }
+
+        [Description("Performs a set up for the ActionConfig of the Pull Action.")]
+        public virtual bool SetupPullConfig(ActionConfig actionConfig, out ActionConfig pullConfig)
+        {
+            // If null, set the actionConfig to a new ActionConfig.
+            pullConfig = actionConfig == null ? new ActionConfig() : actionConfig;
+
+            return true;
         }
 
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
