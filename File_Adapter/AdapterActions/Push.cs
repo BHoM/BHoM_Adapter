@@ -59,8 +59,7 @@ namespace BH.Adapter.FileAdapter
 
             bool success = this.FullCRUD(objects.OfType<IBHoMObject>(), pushType, tag, actionConfig);
 
-            return success ? objects.ToList() : new List<IObject>().Cast<object>().ToList();
+            return success ? objects.ToList() : new List<object>();
         }
     }
 }
-
