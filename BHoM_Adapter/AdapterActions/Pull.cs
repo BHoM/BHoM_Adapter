@@ -48,12 +48,12 @@ namespace BH.Adapter
             // Always assure there is a Request. Allow to input a Type to generate a FilterRequest.
             actualRequest = null;
 
-            if (request is Type)
-                actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
-            else if (request == null)
+            if (request == null)
                 actualRequest = new FilterRequest();
             else if (typeof(IRequest).IsAssignableFrom(request.GetType()))
                 actualRequest = request as IRequest;
+            else if (request is Type)
+                actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
             else
                 return false;
 
