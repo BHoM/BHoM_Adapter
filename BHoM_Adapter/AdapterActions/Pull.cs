@@ -50,7 +50,7 @@ namespace BH.Adapter
 
             if (request == null)
                 actualRequest = new FilterRequest();
-            else if (typeof(IRequest).IsAssignableFrom(request.GetType()))
+            else if (request is IRequest)
                 actualRequest = request as IRequest;
             else if (request is Type)
                 actualRequest = BH.Engine.Data.Create.FilterRequest((Type)request, "");
@@ -84,4 +84,3 @@ namespace BH.Adapter
         }
     }
 }
-
