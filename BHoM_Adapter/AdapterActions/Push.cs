@@ -109,7 +109,7 @@ namespace BH.Adapter
                 }
             }
 
-            return success ? objectsToPush.Cast<object>().ToList() : new List<IObject>().Cast<object>().ToList();
+            return success ? objectsToPush.Cast<object>().ToList() : new List<object>();
         }
     }
 }
