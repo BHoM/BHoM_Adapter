@@ -56,7 +56,7 @@ namespace BH.Engine.Adapter
                 return interfaceComparer.First().Value as IEqualityComparer<T>;
 
             if (actionConfig != null && actionConfig.AllowHashForComparing)
-                return new DiffingHashComparer<T>(actionConfig.DiffConfig); // by default the hash doesn't consider GUIDs, Fragments and CustomData. You can set different exceptions in the ActionConfig's DiffConfig.
+                return new HashComparer<T>(actionConfig.DiffingConfig.DistinctConfig); // by default the hash doesn't consider GUIDs, Fragments and CustomData. You can set different exceptions in the ActionConfig's DiffConfig.
 
             return EqualityComparer<T>.Default;
         }
