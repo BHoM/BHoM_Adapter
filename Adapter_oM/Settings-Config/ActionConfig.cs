@@ -43,7 +43,7 @@ namespace BH.oM.Adapter
         public virtual bool AllowHashForComparing { get; set; } = false;
 
         [Description("Configurations for the Diffing hashing. Requires `AllowHashForComparing` to be set to true.")]
-        public virtual DiffingConfig DiffingConfig { get; set; } = new DiffingConfig();
+        public virtual ComparisonConfig ComparisonConfig { get; set; } = new ComparisonConfig();
     }
 }
 
