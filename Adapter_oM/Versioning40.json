@@ -1,9 +1,9 @@
 {
     "Property": {
         "ToNew": {
-            "BH.oM.Adapter.ActionConfig.DiffingConfig": "BH.oM.Adapter.ActionConfig.ComparisonConfig"
+            "BH.oM.Adapter.ActionConfig.DiffConfig": "BH.oM.Adapter.ActionConfig.ComparisonConfig"
         },
         "ToOld": {
-            "BH.oM.Adapter.ActionConfig.ComparisonConfig": "BH.oM.Adapter.ActionConfig.DiffingConfig"
+            "BH.oM.Adapter.ActionConfig.ComparisonConfig": "BH.oM.Adapter.ActionConfig.DiffConfig"
         }
     }
