@@ -87,12 +87,12 @@ namespace BH.Adapter
                 IEnumerable<IBHoMObject> withTag = Read(type, tag, actionConfig);
 
                 // Get indices of all with that tag only
-                IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => AdapterId(x, AdapterIdFragmentType)).OrderBy(x => x);
+                IEnumerable<object> ids = withTag.Where(x => x.Tags.Count == 1).Select(x => x.AdapterId(AdapterIdFragmentType)).OrderBy(x => x);
                 IDelete(type, ids);
 
                 // Remove tag if other tags as well
                 IEnumerable<IBHoMObject> multiTags = withTag.Where(x => x.Tags.Count > 1);
-                IUpdateTags(type, multiTags.Select(x => AdapterId(x, AdapterIdFragmentType)), multiTags.Select(x => x.Tags), actionConfig);
+                IUpdateTags(type, multiTags.Select(x => x.AdapterId(AdapterIdFragmentType)), multiTags.Select(x => x.Tags), actionConfig);
 
                 return ids.Count();
             }
