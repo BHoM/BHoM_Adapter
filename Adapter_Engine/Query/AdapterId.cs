@@ -39,30 +39,32 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        public static object AdapterId(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
-            object id = null;
-
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
                 BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
-                return default(T);
+                return null;
             }
 
             List<IAdapterId> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId>().ToList();
 
-            if (fragmentList.Count > 0)
+            if (fragmentList.Count != 0)
             {
                 IEnumerable<object> ids = fragmentList.Select(f => f.Id);
 
                 if (ids.Count() == 1)
-                    id = ids.First();
+                    return ids.First();
                 else
-                {
-                    BH.Engine.Reflection.Compute.RecordError($"A total of {ids.Count()} different IdFragments of type {adapterIdFragmentType.Name} were found on the object. Cannot return just one of them.");
-                    return default(T);
-                }
+                    return ids;
             }
+            else
+                return null;
+        }
+
+        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        {
+            object id = AdapterId(bHoMObject, adapterIdFragmentType);
 
             if (id == null)
             {

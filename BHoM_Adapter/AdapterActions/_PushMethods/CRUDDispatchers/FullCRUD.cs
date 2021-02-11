@@ -82,7 +82,7 @@ namespace BH.Adapter
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
                 if (readObjects.Any())
-                    IDelete(typeof(T), readObjects.Select(obj => AdapterId(obj, AdapterIdFragmentType)), actionConfig);
+                    IDelete(typeof(T), readObjects.Select(obj => obj.AdapterId(AdapterIdFragmentType)), actionConfig);
 
                 objectsToCreate = newObjects;
             }
@@ -178,11 +178,11 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
-                IDelete(typeof(T), toBeDeleted.Select(obj => AdapterId(obj, AdapterIdFragmentType)), actionConfig);
+                IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterId(AdapterIdFragmentType)), actionConfig);
 
             // Update the tags for the rest of the existing objects in the model
             IUpdateTags(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => AdapterId(x, AdapterIdFragmentType)),
+                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterId(AdapterIdFragmentType)),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
                 actionConfig);
 
@@ -211,14 +211,17 @@ namespace BH.Adapter
                 //For CreateNonExisting, the overlap objects are just kept, and not updated. To make sure tag functionality works though, 
                 //The obejcts need to get their tags (if any) updated.
                 IUpdateTags(typeof(T),
-                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => AdapterId(x.Item1, AdapterIdFragmentType)),
+                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterId(AdapterIdFragmentType)),
                     diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.Tags),
                     actionConfig);
             }
 
+
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
         }
+
+
     }
 }
 

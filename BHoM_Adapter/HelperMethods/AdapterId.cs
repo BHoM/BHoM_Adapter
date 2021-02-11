@@ -37,30 +37,6 @@ namespace BH.Adapter
 {
     public abstract partial class BHoMAdapter
     {
-        [Description("Returns the BHoMObject's Id of the provided FragmentType. If more than one matching IdFragment is found, the method returns a List of all Ids of that type.")]
-        public static object AdapterId(IBHoMObject bHoMObject, Type adapterIdFragmentType)
-        {
-            if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
-            {
-                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
-                return null;
-            }
-
-            List<IAdapterId> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId>().ToList();
-
-            if (fragmentList.Count != 0)
-            {
-                IEnumerable<object> ids = fragmentList.Select(f => f.Id);
-
-                if (ids.Count() == 1)
-                    return ids.First();
-                else
-                    return ids.ToList();
-            }
-            else
-                return null;
-        }
-
         public void SetAdapterId(IBHoMObject bHoMObject, object id)
         {
             bHoMObject.SetAdapterId(AdapterIdFragmentType, id);
@@ -68,7 +44,7 @@ namespace BH.Adapter
 
         public object GetAdapterId(IBHoMObject bHoMObject)
         {
-            return AdapterId(bHoMObject, AdapterIdFragmentType);
+            return bHoMObject.AdapterId(AdapterIdFragmentType);
         }
 
         public T GetAdapterId<T>(IBHoMObject bHoMObject)
