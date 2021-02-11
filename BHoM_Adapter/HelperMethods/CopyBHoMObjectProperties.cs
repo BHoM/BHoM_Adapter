@@ -50,7 +50,7 @@ namespace BH.Adapter
 
             // Get id of the source and port it to the target
             if (source.HasAdapterIdFragment(AdapterIdFragmentType))
-                target.SetAdapterId(AdapterIdFragmentType, source.AdapterId(AdapterIdFragmentType));
+                target.SetAdapterId(AdapterIdFragmentType, AdapterId(source, AdapterIdFragmentType));
         }
     }
 }
