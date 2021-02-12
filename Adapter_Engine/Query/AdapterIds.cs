@@ -39,7 +39,9 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Returns the BHoMObject's Id of the provided FragmentType. If more than one matching IdFragment is found, the method returns a List of all Ids of that type.")]
+        [Description("Returns the BHoMObject's Id of the provided FragmentType. " +
+            "If more than one matching IdFragment is found, the method returns a List of all Ids of that type." +
+            "If none is found, `null` is returned.")]
         public static object AdapterIds(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
         {
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))

@@ -39,14 +39,18 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Returns the BHoMObject's Id of the provided FragmentType, casted to its type. If more than one matching IdFragment is found, an error is returned.")]
-        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        [Description("Returns the BHoMObject's Id of the provided FragmentType, casted to its type.\n" +
+            "If more than one matching IdFragment is found, an error is returned.")]
+        [Input("notFoundWarning", "If true, a Warning is issued when no matching ID is found.")]
+        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, bool notFoundWarning = true)
         {
             object id = AdapterIds(bHoMObject, adapterIdFragmentType);
 
             if (id == null)
             {
-                BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+                if (notFoundWarning)
+                    BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+
                 return default(T);
             }
 
