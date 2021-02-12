@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-
+using System.Collections;
 
 namespace BH.Engine.Adapter
 {
@@ -54,6 +54,13 @@ namespace BH.Engine.Adapter
             {
                 return (T)id;
             }
+
+            if (id is IEnumerable)
+            {
+                BH.Engine.Reflection.Compute.RecordWarning($"More than one matching ID was found for type {adapterIdFragmentType.Name}.");
+                return default(T);
+            }
+
             try
             {
                 return (T)Convert.ChangeType(id, typeof(T));
