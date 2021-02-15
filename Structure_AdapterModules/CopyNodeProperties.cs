@@ -40,6 +40,10 @@ namespace BH.Adapter.Modules
             // If source is constrained and target is not, add source constraint to target
             if (source.Support != null && target.Support == null)
                 target.Support = source.Support;
+
+            // If source has a defined orientation and target does not, add local orientation from the source
+            if (source.Orientation != null && target.Orientation == null)
+                target.Orientation = source.Orientation;
         }
     }
 }
