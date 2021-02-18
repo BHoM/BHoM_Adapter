@@ -42,7 +42,7 @@ namespace BH.Engine.Adapter
         [Description("Returns the BHoMObject's Id of the provided FragmentType. " +
             "If more than one matching IdFragment is found, the method returns a List of all Ids of that type." +
             "If none is found, `null` is returned.")]
-        public static object AdapterIds(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        public static object AdapterIds(this IBHoMObject bHoMObject, Type adapterIdFragmentType = null)
         {
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
