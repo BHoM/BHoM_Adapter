@@ -60,7 +60,7 @@ namespace BH.Engine.Adapter
                 return (T)id;
             }
 
-            if (id is IEnumerable)
+            if (id is IEnumerable && !(id is string))
             {
                 BH.Engine.Reflection.Compute.RecordWarning($"More than one matching ID was found for type {adapterIdFragmentType.Name}.");
                 return default(T);
@@ -78,4 +78,3 @@ namespace BH.Engine.Adapter
         }
     }
 }
-
