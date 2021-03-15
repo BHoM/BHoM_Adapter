@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-
+using System.Collections;
 
 namespace BH.Engine.Adapter
 {
@@ -39,36 +39,19 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static object AdapterId(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
+        [PreviousVersion("4.0", "BH.Engine.Adapter.Query.AdapterId<T>(BH.oM.Base.IBHoMObject, Type adapterIdFragmentType)")]
+        [Description("Returns the BHoMObject's Id of the provided FragmentType, casted to its type.\n" +
+            "If more than one matching IdFragment is found, an error is returned.")]
+        [Input("notFoundWarning", "If true, a Warning is issued when no matching ID is found.")]
+        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, bool notFoundWarning = true)
         {
-            if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
-            {
-                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
-                return null;
-            }
-
-            List<IAdapterId> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId>().ToList();
-
-            if (fragmentList.Count != 0)
-            {
-                IEnumerable<object> ids = fragmentList.Select(f => f.Id);
-
-                if (ids.Count() == 1)
-                    return ids.First();
-                else
-                    return ids;
-            }
-            else
-                return null;
-        }
-
-        public static T AdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType)
-        {
-            object id = AdapterId(bHoMObject, adapterIdFragmentType);
+            object id = AdapterIds(bHoMObject, adapterIdFragmentType);
 
             if (id == null)
             {
-                BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+                if (notFoundWarning)
+                    BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+
                 return default(T);
             }
 
@@ -76,6 +59,13 @@ namespace BH.Engine.Adapter
             {
                 return (T)id;
             }
+
+            if (id is IEnumerable && !(id is string))
+            {
+                BH.Engine.Reflection.Compute.RecordWarning($"More than one matching ID was found for type {adapterIdFragmentType.Name}.");
+                return default(T);
+            }
+
             try
             {
                 return (T)Convert.ChangeType(id, typeof(T));
@@ -86,7 +76,5 @@ namespace BH.Engine.Adapter
                 return default(T);
             }
         }
-
     }
 }
-
