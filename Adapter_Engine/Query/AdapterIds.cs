@@ -20,38 +20,51 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.Engine.Adapter;
 using BH.Engine.Base;
-using BH.oM.Data.Collections;
+using BH.oM.Reflection.Attributes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace BH.Adapter
+
+namespace BH.Engine.Adapter
 {
-    public abstract partial class BHoMAdapter
+    public static partial class Query
     {
-        public void SetAdapterId(IBHoMObject bHoMObject, object id)
-        {
-            bHoMObject.SetAdapterId(AdapterIdFragmentType, id);
-        }
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
 
-        public object GetAdapterId(IBHoMObject bHoMObject)
+        [PreviousVersion("4.0", "BH.Engine.Adapter.Query.AdapterId(BH.oM.Base.IBHoMObject, Type adapterIdFragmentType)")]
+        [Description("Returns the BHoMObject's Id of the provided FragmentType. " +
+            "If more than one matching IdFragment is found, the method returns a List of all Ids of that type." +
+            "If none is found, `null` is returned.")]
+        public static object AdapterIds(this IBHoMObject bHoMObject, Type adapterIdFragmentType = null)
         {
-            return bHoMObject.AdapterIds(AdapterIdFragmentType);
-        }
+            if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
+            {
+                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
+                return null;
+            }
 
-        public T GetAdapterId<T>(IBHoMObject bHoMObject)
-        {
-            return bHoMObject.AdapterId<T>(AdapterIdFragmentType);
+            List<IAdapterId> fragmentList = bHoMObject.GetAllFragments(adapterIdFragmentType).OfType<IAdapterId>().ToList();
+
+            if (fragmentList.Count != 0)
+            {
+                IEnumerable<object> ids = fragmentList.Select(f => f.Id);
+
+                if (ids.Count() == 1)
+                    return ids.First();
+                else
+                    return ids;
+            }
+            else
+                return null;
         }
     }
 }
-
 
