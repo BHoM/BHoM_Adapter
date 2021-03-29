@@ -39,7 +39,6 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [PreviousVersion("4.0", "BH.Engine.Adapter.Query.AdapterId(BH.oM.Base.IBHoMObject, Type adapterIdFragmentType)")]
         [Description("Returns the BHoMObject's Id of the provided FragmentType. " +
             "If more than one matching IdFragment is found, the method returns a List of all Ids of that type." +
             "If none is found, `null` is returned.")]
