@@ -40,6 +40,12 @@ namespace BH.Engine.Adapter
 
         public static void SetAdapterId<T>(this IBHoMObject bHoMObject, Type adapterIdFragmentType, T id)
         {
+            if(bHoMObject == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot set an adapter ID to a null object.");
+                return;
+            }
+
             // Check if the specified `adapterIdFragmentType` is effectively an `IAdapterId`.
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
@@ -64,6 +70,12 @@ namespace BH.Engine.Adapter
 
         public static void SetAdapterId(this IBHoMObject bHoMObject, IAdapterId id)
         {
+            if (bHoMObject == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot set an adapter ID to a null object.");
+                return;
+            }
+
             bHoMObject.Fragments.AddOrReplace(id as IFragment);
         }
     }

@@ -41,6 +41,15 @@ namespace BH.Engine.Adapter
 
         public static bool HasAdapterIdFragment(this IBHoMObject iBHoMObject, Type fragmentType)
         {
+            if (iBHoMObject == null)
+                return false; //Null objects don't have fragments at all!
+
+            if(fragmentType == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot query whether the object has an adapter ID fragment if the fragment type is set to null.");
+                return false;
+            }
+
             IFragment fragment;
             iBHoMObject.Fragments.TryGetValue(fragmentType, out fragment);
 
