@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Create\BHoMAdapter.cs" />
     <Compile Include="Query\AdapterIds.cs" />
     <Compile Include="Query\HasAdapterIdFragment.cs" />
     <Compile Include="Query\AdapterId.cs" />
@@ -106,9 +107,7 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Create\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
