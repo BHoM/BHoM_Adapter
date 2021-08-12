@@ -37,7 +37,7 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Creates a adapter of the specified type. Method makes use of the constructor with the largest number of arguments. Tries to match the provided arguments to best fit the arguments of the constructor.")]
+        [Description("Creates an adapter of the specified type. Method makes use of the constructor with the largest number of arguments. Tries to match the provided arguments to best fit the arguments of the constructor.")]
         [Input("adapterType", "The type of adapter to create.")]
         [Input("filePath", "Optional file path parameter for the adapter. If the constructor of the adapter does not have a file path argument, this will be ignored.")]
         [Input("toolkitConfig", "Optional adapter config to be passed to the adapter. Needs to be of type matching the adapter. If nothing is provided, null will be used.")]
@@ -68,6 +68,11 @@ namespace BH.Engine.Adapter
             {
                 if (parameter.ParameterType == typeof(string) && parameter.Name.ToLower().Contains("file"))
                     arguments.Add(filePath);
+                else if (parameter.ParameterType == typeof(FileSettings))
+                {
+                    FileSettings fileSetting = new FileSettings() { Directory = System.IO.Path.GetDirectoryName(filePath), FileName = System.IO.Path.GetFileName(filePath) };
+                    arguments.Add(fileSetting);
+                }
                 else if (parameter.ParameterType == typeof(bool) && parameter.Name.ToLower().Contains("active"))
                     arguments.Add(active);
                 else if (toolkitConfig != null && (parameter.Name.ToLower().Contains("setting") || parameter.Name.ToLower().Contains("config")))
@@ -94,5 +99,6 @@ namespace BH.Engine.Adapter
         }
 
         /***************************************************/
+
     }
 }
