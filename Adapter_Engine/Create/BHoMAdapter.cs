@@ -100,5 +100,64 @@ namespace BH.Engine.Adapter
 
         /***************************************************/
 
+        [Description("Creates an adapter of the specified type. Method makes use of the constructor with the largest number of arguments and passes the provided parameters to that method.")]
+        [Input("adapterType", "The type of adapter to create.")]
+        [Input("parameters", "Arguments expected by the adapter constructor with the largest number of arguments.")]
+        [Output("adapter", "The created adapter of the specified type.")]
+        public static IBHoMAdapter BHoMAdapter(Type adapterType, List<object> parameters)
+        {
+            if (adapterType == null)
+            {
+                Reflection.Compute.RecordError("Provided adapterType is null. Can not create adapter.");
+                return null;
+            }
+
+            if (parameters == null)
+            {
+                Reflection.Compute.RecordError("Provided parameters is null. Can not create adapter.");
+                return null;
+            }
+
+            if (!typeof(IBHoMAdapter).IsAssignableFrom(adapterType))
+            {
+                Reflection.Compute.RecordError("The provided type is not an adapter type. Can not create the adapter.");
+                return null;
+            }
+
+            //Get the constructor with the largest number of arguments
+            ConstructorInfo constructor = adapterType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
+            ParameterInfo[] parameterInfo = constructor.GetParameters();
+
+            if (parameterInfo.Length != parameters.Count)
+            {
+                Reflection.Compute.RecordError($"The provided number of parameters does not match the number of arguments of the constructor with the largest number of inputs. Expecting {parameterInfo.Length} number of arguments and was given {parameters.Count}. Can not create the adapter.");
+                return null;
+            }
+
+            for (int i = 0; i < parameterInfo.Length; i++)
+            {
+                if (parameters[i] == null)
+                {
+                    if (parameterInfo[i].ParameterType.IsValueType)
+                    {
+                        parameters[i] = Activator.CreateInstance(parameterInfo[i].ParameterType);
+                        Reflection.Compute.RecordWarning($"A null argument was provided to an input expecting a value type. A default value of {parameters[i]} has been used in place of the null for the parameter {parameterInfo[i].Name}.");
+                    }
+                }
+                else
+                {
+                    if (!parameterInfo[i].ParameterType.IsAssignableFrom(parameters[i].GetType()))
+                    {
+                        Reflection.Compute.RecordError($"The parameter named {parameterInfo[i].Name} was given the wrong type of argument. Was expecting a {parameterInfo[i].ParameterType.Name} and was given a {parameters[i].GetType().Name}. Can not create the adapter.");
+                        return null;
+                    }
+                }
+
+            }
+
+            return constructor.Invoke(parameters.ToArray()) as IBHoMAdapter;
+        }
+
+        /***************************************************/
     }
 }
