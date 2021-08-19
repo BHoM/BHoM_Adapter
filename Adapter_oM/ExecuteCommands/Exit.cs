@@ -29,10 +29,10 @@ using System.Threading.Tasks;
 
 namespace BH.oM.Adapter.Commands
 {
-    [Description("Used to instruct the adapter to fully close down the running software. Adapter will generally not be useable after running this command.")]
+    [Description("Used to instruct the adapter to exit the software. The adapter will generally not be useable after running this command as the link to the software will be broken.")]
     public class Exit : IExecuteCommand
     {
-        [Description("If set to true atempts to save any open file before exiting the software.")]
+        [Description("If set to true, the adapter attempts to save any open file, closes the file and exits the software.")]
         public virtual bool SaveBeforeClose { get; set; } = true;
     }
 }
