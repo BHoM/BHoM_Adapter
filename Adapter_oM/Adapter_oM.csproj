@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExecuteCommands\Exit.cs" />
     <Compile Include="FileSettings.cs" />
     <Compile Include="ExecuteCommands\AnalyseLoadCases.cs" />
     <Compile Include="ExecuteCommands\CustomCommand.cs" />
