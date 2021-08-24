@@ -38,8 +38,11 @@ namespace BH.Engine.Adapter
     {
         [PreviousVersion("4.3", "BH.Engine.Adapter.Query.GetDependencyObjects(System.Collections.Generic.IEnumerable<BH.oM.Base.IBHoMObject>, System.Collections.Generic.List<System.Type>, System.String)")]
         [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
-        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IBHoMAdapter adapter, IEnumerable<T> objects, List<Type> dependencyTypes, string tag) where T : IBHoMObject
+        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IBHoMAdapter adapter, IEnumerable<T> objects, List<Type> dependencyTypes) where T : IBHoMObject
         {
+            if (adapter == null || objects == null || !objects.Any() || dependencyTypes == null || !dependencyTypes.Any())
+                return new Dictionary<Type, IEnumerable>();
+
             Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
             
             //Look for any GetDependencyModules of the current type
