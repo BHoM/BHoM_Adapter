@@ -29,14 +29,31 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using BH.oM.Adapter;
 
 namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
-        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(IEnumerable<T> objects, List<Type> dependencyTypes, string tag) where T : IBHoMObject
+        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IBHoMAdapter adapter, IEnumerable<T> objects, List<Type> dependencyTypes, string tag) where T : IBHoMObject
         {
             Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
+
+            List<IGetDependencyModule<T>> dependencyModules = adapter.AdapterModules.OfType<IGetDependencyModule<T>>().ToList();
+
+            if (dependencyModules.Count != 0)
+            {
+                foreach (Type t in dependencyTypes)
+                {
+                    foreach (IGetDependencyModule<T> module in dependencyModules)
+                    {
+                        var dependencies = module.GetDependencies(objects, t);
+                        if (dependencies.Key != null && dependencies.Value.Cast<object>().Any())
+                            dict.Add(dependencies.Key, dependencies.Value);
+                    }
+                }
+                return dict;
+            }
 
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (Type t in dependencyTypes)
