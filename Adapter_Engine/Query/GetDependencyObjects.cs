@@ -30,19 +30,24 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
+        [PreviousVersion("4.3", "BH.Engine.Adapter.Query.GetDependencyObjects(System.Collections.Generic.IEnumerable<BH.oM.Base.IBHoMObject>, System.Collections.Generic.List<System.Type>, System.String)")]
+        [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
         public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IBHoMAdapter adapter, IEnumerable<T> objects, List<Type> dependencyTypes, string tag) where T : IBHoMObject
         {
             Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
-
+            
+            //Look for any GetDependencyModules of the current type
             List<IGetDependencyModule<T>> dependencyModules = adapter.AdapterModules.OfType<IGetDependencyModule<T>>().ToList();
 
             if (dependencyModules.Count != 0)
             {
+                //Modules found, use them to extract dependency properties
                 foreach (Type t in dependencyTypes)
                 {
                     foreach (IGetDependencyModule<T> module in dependencyModules)
@@ -55,6 +60,7 @@ namespace BH.Engine.Adapter
                 return dict;
             }
 
+            //No modules found, instead rely on reflection to extract the dependency properties
             MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
             foreach (Type t in dependencyTypes)
             {
