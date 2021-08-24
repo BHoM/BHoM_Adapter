@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2021, the respective contributors. All rights reserved.
  *
@@ -20,27 +20,29 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BH.Adapter;
-using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.oM.Adapter;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
+using System.ComponentModel;
+using BH.oM.Structure.Loads;
+using System.Collections;
 
 namespace BH.Adapter.Modules.Structure
 {
-    public static class ModuleLoader
+    public class GetLoadcombinationDependencies : IGetDependencyModule<LoadCombination>
     {
-        [Description("Invoke this method in any Toolkit Adapter constructor to load functionality from the Structural Adapter Module.")]
-        public static void LoadModules(this BHoMAdapter adapter)
+        public KeyValuePair<Type, IEnumerable> GetDependencies(IEnumerable<LoadCombination> objects, Type type)
         {
-            adapter.AdapterModules.Add(new CopyNodeProperties());
-            adapter.AdapterModules.Add(new GetLoadcombinationDependencies());
+            if (type == typeof(Loadcase))
+                return new KeyValuePair<Type, IEnumerable>(type, objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<Loadcase>()));
+
+            if (type == typeof(LoadCombination))
+                return new KeyValuePair<Type, IEnumerable>(type, objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<LoadCombination>()));
+
+            return new KeyValuePair<Type, IEnumerable>();
         }
     }
 }
-
-
