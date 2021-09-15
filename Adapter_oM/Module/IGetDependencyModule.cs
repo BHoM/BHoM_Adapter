@@ -33,7 +33,7 @@ namespace BH.oM.Adapter
     [Description("Module for fetching dependency objects of a specific type from a IEnumerable with obejcts of type T.")]
     public interface IGetDependencyModule<in T> : IAdapterModule where T : IBHoMObject
     {
-        [Description("Method returning a KeyValuePair where the Type should be of the provided type and the IEnumerable should contain all obejcts of that type on the provided List of T.")]
+        [Description("Method returning a KeyValuePair where the Type should be of the provided type and the IEnumerable should contain all objects of that type on the provided List of T.")]
         KeyValuePair<Type, IEnumerable> GetDependencies(IEnumerable<T> objects, Type type);
     }
 }
