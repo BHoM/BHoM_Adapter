@@ -36,47 +36,58 @@ namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
-        [PreviousVersion("4.3", "BH.Engine.Adapter.Query.GetDependencyObjects(System.Collections.Generic.IEnumerable<BH.oM.Base.IBHoMObject>, System.Collections.Generic.List<System.Type>, System.String)")]
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
+        [PreviousVersion("5.0", "BH.Engine.Adapter.Query.GetDependencyObjects(System.Collections.Generic.IEnumerable<BH.oM.Base.IBHoMObject>, System.Collections.Generic.List<System.Type>, System.String)")]
         [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
-        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IBHoMAdapter adapter, IEnumerable<T> objects, List<Type> dependencyTypes) where T : IBHoMObject
+        public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IEnumerable<T> objects, List<Type> dependencyTypes, IBHoMAdapter adapter = null) where T : IBHoMObject
         {
-            if (adapter == null || objects == null || !objects.Any() || dependencyTypes == null || !dependencyTypes.Any())
+            if (objects == null || !objects.Any() || dependencyTypes == null || !dependencyTypes.Any())
                 return new Dictionary<Type, IEnumerable>();
 
             Dictionary<Type, IEnumerable> dict = new Dictionary<Type, IEnumerable>();
-            
-            //Look for any GetDependencyModules of the current type
-            List<IGetDependencyModule<T>> dependencyModules = adapter.AdapterModules.OfType<IGetDependencyModule<T>>().ToList();
 
-            if (dependencyModules.Count != 0)
-            {
-                //Modules found, use them to extract dependency properties
-                foreach (Type t in dependencyTypes)
-                {
-                    foreach (IGetDependencyModule<T> module in dependencyModules)
-                    {
-                        var dependencies = module.GetDependencies(objects, t);
-                        if (dependencies.Key != null && dependencies.Value.Cast<object>().Any())
-                            dict.Add(dependencies.Key, dependencies.Value);
-                    }
-                }
-                return dict;
-            }
+            var method = typeof(Query)
+                        .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+                        .Single(m => m.Name == nameof(GetDependencyObjects) && m.IsGenericMethodDefinition && m.GetParameters().Count() == 2);
 
-            //No modules found, instead rely on reflection to extract the dependency properties
-            MethodInfo miToList = typeof(Enumerable).GetMethod("Cast");
+
             foreach (Type t in dependencyTypes)
             {
-                IEnumerable<object> merged = objects.DistinctProperties<T>(t);
-                MethodInfo miListObject = miToList.MakeGenericMethod(new[] { t });
-
-                var list = miListObject.Invoke(merged, new object[] { merged });
+                MethodInfo generic = method.MakeGenericMethod(new Type[] { typeof(T), t });
+                var list = generic.Invoke(null, new object[] { objects, adapter });
 
                 dict.Add(t, list as IEnumerable);
             }
 
             return dict;
         }
+
+        /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
+
+        private static List<P> GetDependencyObjects<T, P>(this IEnumerable<T> objects, IBHoMAdapter adapter) where T : IBHoMObject where P : IBHoMObject
+        {
+            //If adapter is provided and not null, check for dependency modules
+            if (adapter != null)
+            {
+                //Look for any GetDependencyModules of the current type
+                List<IGetDependencyModule<T, P>> dependencyModules = adapter.AdapterModules.OfType<IGetDependencyModule<T, P>>().ToList();
+                if (dependencyModules.Count != 0)
+                {
+                    return dependencyModules.SelectMany(x => x.GetDependencies(objects)).ToList();
+                }
+            }
+
+            //No modules found, instead rely on reflection to extract the dependency properties
+            return objects.DistinctProperties<T, P>().ToList();
+
+        }
+
+        /***************************************************/
     }
 }
 

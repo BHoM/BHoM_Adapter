@@ -67,7 +67,7 @@ namespace BH.Adapter
             if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
-                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(this, objectsToPush, dependencyTypes);
+                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, this);
 
                 foreach (var depObj in dependencyObjects)
                     if (!FullCRUD(depObj.Value as dynamic, pushType, tag, actionConfig))

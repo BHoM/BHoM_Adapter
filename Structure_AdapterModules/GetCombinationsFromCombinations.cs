@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the Buildings and Habitats object Model (BHoM)
  * Copyright (c) 2015 - 2021, the respective contributors. All rights reserved.
  *
@@ -20,22 +20,24 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Threading.Tasks;
 using BH.oM.Base;
+using BH.oM.Adapter;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
+using System.ComponentModel;
+using BH.oM.Structure.Loads;
+using System.Collections;
 
-namespace BH.oM.Adapter
+namespace BH.Adapter.Modules.Structure
 {
-    [Description("Module for fetching dependency objects of a type P from a IEnumerable with objects of type T.")]
-    public interface IGetDependencyModule<in T, out P> : IAdapterModule where T : IBHoMObject where P : IBHoMObject
+    [Description("Dependency module for fetching all inner LoadCombinations stored in a list of Loadcombinations.")]
+    public class GetCombinationsFromCombinations : IGetDependencyModule<LoadCombination, LoadCombination>
     {
-        [Description("Method returning a IEnumerable with all Ps contained in the provided IEnumerable of T.")]
-        IEnumerable<P> GetDependencies(IEnumerable<T> objects);
+        public IEnumerable<LoadCombination> GetDependencies(IEnumerable<LoadCombination> objects)
+        {
+            return objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<LoadCombination>());
+        }
     }
 }
-
-
