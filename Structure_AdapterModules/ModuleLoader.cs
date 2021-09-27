@@ -38,7 +38,8 @@ namespace BH.Adapter.Modules.Structure
         public static void LoadModules(this BHoMAdapter adapter)
         {
             adapter.AdapterModules.Add(new CopyNodeProperties());
-            adapter.AdapterModules.Add(new GetLoadcombinationDependencies());
+            adapter.AdapterModules.Add(new GetCasesFromCombinations());
+            adapter.AdapterModules.Add(new GetCombinationsFromCombinations());
         }
     }
 }

@@ -32,17 +32,12 @@ using System.Collections;
 
 namespace BH.Adapter.Modules.Structure
 {
-    public class GetLoadcombinationDependencies : IGetDependencyModule<LoadCombination>
+    [Description("Dependency module for fetching all Loadcase stored in a list of Loadcombinations.")]
+    public class GetCasesFromCombinations : IGetDependencyModule<LoadCombination, Loadcase>
     {
-        public KeyValuePair<Type, IEnumerable> GetDependencies(IEnumerable<LoadCombination> objects, Type type)
+        public IEnumerable<Loadcase> GetDependencies(IEnumerable<LoadCombination> objects)
         {
-            if (type == typeof(Loadcase))
-                return new KeyValuePair<Type, IEnumerable>(type, objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<Loadcase>()));
-
-            if (type == typeof(LoadCombination))
-                return new KeyValuePair<Type, IEnumerable>(type, objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<LoadCombination>()));
-
-            return new KeyValuePair<Type, IEnumerable>();
+            return objects.SelectMany(x => x.LoadCases.Select(lc => lc.Item2).OfType<Loadcase>());
         }
     }
 }
