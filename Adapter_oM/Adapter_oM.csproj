@@ -19,24 +19,19 @@
   <ItemGroup>
     <Reference Include="BHoM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM.dll</HintPath>
-    <Private>False</Private>
-    <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="BHoM_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM_Engine.dll</HintPath>
-    <Private>False</Private>
-    <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Data_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Data_oM.dll</HintPath>
-    <Private>False</Private>
-    <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Diffing_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Diffing_oM.dll</HintPath>
-    <Private>False</Private>
-    <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Reflection_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Reflection_oM.dll</HintPath>
-    <Private>False</Private>
-    <SpecificVersion>false</SpecificVersion>
+    </Reference>
   </ItemGroup>
 
 </Project>
