@@ -23,37 +23,48 @@
   <ItemGroup>
     <Reference Include="Analytical_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Analytical_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="BHoM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="BHoM_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM_Engine.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Data_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Data_Engine.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Data_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Data_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Diffing_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Diffing_Engine.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Diffing_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Diffing_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Geometry_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Geometry_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Reflection_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Reflection_Engine.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Reflection_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Reflection_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
     <Reference Include="Structure_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Structure_oM.dll</HintPath>
-    </Reference>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
   </ItemGroup>
 
 </Project>
