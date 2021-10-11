@@ -26,44 +26,34 @@
   <ItemGroup>
     <Reference Include="Analytical_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Analytical_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="BHoM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="BHoM_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM_Engine.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Data_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Data_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Diffing_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Diffing_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Dimensional_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Dimensional_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Geometry_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Geometry_Engine.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Geometry_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Geometry_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Reflection_Engine">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Reflection_Engine.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
     <Reference Include="Structure_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Structure_oM.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
+    </Reference>
   </ItemGroup>
 
 </Project>
