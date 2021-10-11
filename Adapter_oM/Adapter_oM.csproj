@@ -17,7 +17,7 @@
   </Target>
 
   <ItemGroup>
-    <Reference Include="BHoM">
+    <Reference Include="BHoM, Version=5.0.0.0, Culture=en-gb, processorArchitecture=cli">
       <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM.dll</HintPath>
     </Reference>
     <Reference Include="BHoM_Engine">
