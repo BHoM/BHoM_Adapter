@@ -59,7 +59,7 @@ namespace BH.Adapter
             if (m_AdapterSettings.HandleDependencies)
             {
                 var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
-                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(newObjects, dependencyTypes, this); //first-level dependencies
+                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, this); //first-level dependencies
 
                 foreach (var kv in dependencyObjects)
                 {
