@@ -32,6 +32,7 @@ using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
 using BH.Engine.Diffing;
+using BH.Engine.Base.Objects;
 
 namespace BH.Engine.Adapter
 {
