@@ -40,7 +40,6 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [PreviousVersion("5.0", "BH.Engine.Adapter.Query.GetDependencyObjects(System.Collections.Generic.IEnumerable<BH.oM.Base.IBHoMObject>, System.Collections.Generic.List<System.Type>, System.String)")]
         [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
         public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IEnumerable<T> objects, List<Type> dependencyTypes, IBHoMAdapter adapter = null) where T : IBHoMObject
         {
