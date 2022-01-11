@@ -21,7 +21,7 @@
  */
 
 using BH.oM.Base;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,7 +45,7 @@ namespace BH.Engine.Adapter
         return m_AdapterMethodsList;
       else
       {
-        List<MethodInfo> allMethods = BH.Engine.Reflection.Query.AllMethodList().OfType<MethodInfo>().ToList();
+        List<MethodInfo> allMethods = BH.Engine.Base.Query.AllMethodList().OfType<MethodInfo>().ToList();
         m_AdapterMethodsList = allMethods.Where(x => x.DeclaringType.Name.EndsWith("Adapter")).ToList();
         // (if we moved the IBHoMAdapter interface from the BHoM_Adapter down in the base BH.oM, we could test for inheritance instead of "EndsWith")
       }

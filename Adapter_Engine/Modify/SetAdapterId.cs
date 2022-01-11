@@ -22,7 +22,7 @@
 
 using BH.oM.Adapter;
 using BH.oM.Base;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,14 +42,14 @@ namespace BH.Engine.Adapter
         {
             if(bHoMObject == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot set an adapter ID to a null object.");
+                BH.Engine.Base.Compute.RecordError("Cannot set an adapter ID to a null object.");
                 return;
             }
 
             // Check if the specified `adapterIdFragmentType` is effectively an `IAdapterId`.
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
-                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
+                BH.Engine.Base.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace BH.Engine.Adapter
         {
             if (bHoMObject == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot set an adapter ID to a null object.");
+                BH.Engine.Base.Compute.RecordError("Cannot set an adapter ID to a null object.");
                 return;
             }
 

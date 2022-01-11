@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Adapter
 {
@@ -39,7 +39,7 @@ namespace BH.Engine.Adapter
         {
             if(fileSettings == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot query the full file name from a null set of file settings.");
+                BH.Engine.Base.Compute.RecordError("Cannot query the full file name from a null set of file settings.");
                 return "";
             }
 

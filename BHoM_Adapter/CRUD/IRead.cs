@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using BH.oM.Analytical.Results;
 using BH.oM.Adapter;
 
@@ -46,7 +46,7 @@ namespace BH.Adapter
         // It must implement only logic for reading things (e.g. through API calls), without modifying objects.
         protected virtual IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
         {
-            Engine.Reflection.Compute.RecordError($"Read for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            BH.Engine.Base.Compute.RecordError($"Read for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<IBHoMObject>();
         }
 
@@ -64,7 +64,7 @@ namespace BH.Adapter
             // 1. extract all the needed info from the IRequest
             // 2. return a call to the Basic Method Read() with the extracted info.
 
-            Engine.Reflection.Compute.RecordError($"Read for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            BH.Engine.Base.Compute.RecordError($"Read for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<IBHoMObject>();
         }
 

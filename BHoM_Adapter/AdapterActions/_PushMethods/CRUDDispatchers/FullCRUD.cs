@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using BH.oM.Reflection;
 using BH.oM.Diffing;
 using BH.oM.Adapter;
 using BH.Engine.Base;

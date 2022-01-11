@@ -24,7 +24,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using BH.oM.Base;
 using BH.oM.Adapter;
 using System.Reflection;
@@ -47,7 +47,7 @@ namespace BH.Engine.Adapter
         {
             if (adapterType == null)
             {
-                Reflection.Compute.RecordError("Provided adapterType is null. Can not create adapter.");
+                BH.Engine.Base.Compute.RecordError("Provided adapterType is null. Can not create adapter.");
                 return null;
             }
             if (!active)
@@ -55,7 +55,7 @@ namespace BH.Engine.Adapter
 
             if (!typeof(IBHoMAdapter).IsAssignableFrom(adapterType))
             {
-                Reflection.Compute.RecordError("The provided type is not an adapter type. Can not create the adapter.");
+                BH.Engine.Base.Compute.RecordError("The provided type is not an adapter type. Can not create the adapter.");
                 return null;
             }
 
@@ -81,7 +81,7 @@ namespace BH.Engine.Adapter
                         arguments.Add(toolkitConfig);
                     else
                     {
-                        Reflection.Compute.RecordWarning($"Provided config is not of the correct type. Expecting a config of type {parameter.ParameterType.Name}. Null will be used instead.");
+                        Base.Compute.RecordWarning($"Provided config is not of the correct type. Expecting a config of type {parameter.ParameterType.Name}. Null will be used instead.");
                         arguments.Add(null);
                     }
                 }
@@ -108,19 +108,19 @@ namespace BH.Engine.Adapter
         {
             if (adapterType == null)
             {
-                Reflection.Compute.RecordError("Provided adapterType is null. Can not create adapter.");
+                BH.Engine.Base.Compute.RecordError("Provided adapterType is null. Can not create adapter.");
                 return null;
             }
 
             if (parameters == null)
             {
-                Reflection.Compute.RecordError("Provided parameters is null. Can not create adapter.");
+                BH.Engine.Base.Compute.RecordError("Provided parameters is null. Can not create adapter.");
                 return null;
             }
 
             if (!typeof(IBHoMAdapter).IsAssignableFrom(adapterType))
             {
-                Reflection.Compute.RecordError("The provided type is not an adapter type. Can not create the adapter.");
+                BH.Engine.Base.Compute.RecordError("The provided type is not an adapter type. Can not create the adapter.");
                 return null;
             }
 
@@ -130,7 +130,7 @@ namespace BH.Engine.Adapter
 
             if (parameterInfo.Length != parameters.Count)
             {
-                Reflection.Compute.RecordError($"The provided number of parameters does not match the number of arguments of the constructor with the largest number of inputs. Expecting {parameterInfo.Length} number of arguments and was given {parameters.Count}. Can not create the adapter.");
+                BH.Engine.Base.Compute.RecordError($"The provided number of parameters does not match the number of arguments of the constructor with the largest number of inputs. Expecting {parameterInfo.Length} number of arguments and was given {parameters.Count}. Can not create the adapter.");
                 return null;
             }
 
@@ -141,14 +141,14 @@ namespace BH.Engine.Adapter
                     if (parameterInfo[i].ParameterType.IsValueType)
                     {
                         parameters[i] = Activator.CreateInstance(parameterInfo[i].ParameterType);
-                        Reflection.Compute.RecordWarning($"A null argument was provided to an input expecting a value type. A default value of {parameters[i]} has been used in place of the null for the parameter {parameterInfo[i].Name}.");
+                        BH.Engine.Base.Compute.RecordWarning($"A null argument was provided to an input expecting a value type. A default value of {parameters[i]} has been used in place of the null for the parameter {parameterInfo[i].Name}.");
                     }
                 }
                 else
                 {
                     if (!parameterInfo[i].ParameterType.IsAssignableFrom(parameters[i].GetType()))
                     {
-                        Reflection.Compute.RecordError($"The parameter named {parameterInfo[i].Name} was given the wrong type of argument. Was expecting a {parameterInfo[i].ParameterType.Name} and was given a {parameters[i].GetType().Name}. Can not create the adapter.");
+                        BH.Engine.Base.Compute.RecordError($"The parameter named {parameterInfo[i].Name} was given the wrong type of argument. Was expecting a {parameterInfo[i].ParameterType.Name} and was given a {parameters[i].GetType().Name}. Can not create the adapter.");
                         return null;
                     }
                 }

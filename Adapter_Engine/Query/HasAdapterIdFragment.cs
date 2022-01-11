@@ -23,7 +23,7 @@
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,7 +46,7 @@ namespace BH.Engine.Adapter
 
             if(fragmentType == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot query whether the object has an adapter ID fragment if the fragment type is set to null.");
+                BH.Engine.Base.Compute.RecordError("Cannot query whether the object has an adapter ID fragment if the fragment type is set to null.");
                 return false;
             }
 

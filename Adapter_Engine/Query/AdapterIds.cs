@@ -23,7 +23,7 @@
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,13 +46,13 @@ namespace BH.Engine.Adapter
         {
             if(bHoMObject == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot query the adapter IDs for a null object.");
+                BH.Engine.Base.Compute.RecordError("Cannot query the adapter IDs for a null object.");
                 return null;
             }
 
             if (!typeof(IAdapterId).IsAssignableFrom(adapterIdFragmentType))
             {
-                BH.Engine.Reflection.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
+                BH.Engine.Base.Compute.RecordError($"The `{adapterIdFragmentType.Name}` is not a valid `{typeof(IAdapterId).Name}`.");
                 return null;
             }
 

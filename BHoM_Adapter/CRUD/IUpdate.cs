@@ -20,7 +20,6 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.oM.Data;
@@ -46,7 +45,7 @@ namespace BH.Adapter
         // It can be overridden at the Toolkit level if a more appropriate implementation is required.
         protected virtual bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            Compute.RecordNote($"The default IUpdate method for {typeof(T).Name} has been invoked by the Push.\n" +
+            BH.Engine.Base.Compute.RecordNote($"The default IUpdate method for {typeof(T).Name} has been invoked by the Push.\n" +
                 $"This method calls IDelete and then ICreate for the specified objects.");
 
             Type objectType = typeof(T);

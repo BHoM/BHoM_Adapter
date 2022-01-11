@@ -60,7 +60,7 @@ namespace BH.Adapter
             // Verify that the input objects are IBHoMObjects.
             if (objects.OfType<IBHoMObject>().Count() != objects.Count() & !wrapNonBHoMObjects)
             {
-                Engine.Reflection.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
+                BH.Engine.Base.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
                     "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true.");
             }
 

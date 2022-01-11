@@ -47,7 +47,7 @@ namespace BH.Adapter
         // Toolkits need to implement (override) this only to get the full CRUD to work.
         protected virtual int IDelete(Type type, IEnumerable<object> ids, ActionConfig actionConfig = null)
         {
-            Engine.Reflection.Compute.RecordError($"Delete for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            BH.Engine.Base.Compute.RecordError($"Delete for objects of type {type.Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return 0;
         }
 
@@ -62,7 +62,7 @@ namespace BH.Adapter
 
         protected virtual int Delete(IRequest request, ActionConfig actionConfig = null)
         {
-            Engine.Reflection.Compute.RecordError($"Delete for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            BH.Engine.Base.Compute.RecordError($"Delete for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return 0;
         }
 

@@ -30,7 +30,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using BH.oM.Adapter;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Adapter
 {

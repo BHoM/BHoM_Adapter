@@ -80,7 +80,7 @@ namespace BH.Adapter
 
             if (objectsToPush.Count() == 0)
             {
-                Engine.Reflection.Compute.RecordError("Input objects were invalid.");
+                BH.Engine.Base.Compute.RecordError("Input objects were invalid.");
                 return new List<object>();
             }
 

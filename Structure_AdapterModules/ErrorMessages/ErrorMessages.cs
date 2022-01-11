@@ -63,7 +63,7 @@ namespace BH.Adapter.Modules.Structure
             else
                 message += " Please instead make use of the appropriate ResultRequest that gives more options for the result extraction.";
 
-            Engine.Reflection.Compute.RecordError(message);
+            BH.Engine.Base.Compute.RecordError(message);
         }
 
         /***************************************************/
@@ -88,7 +88,7 @@ namespace BH.Adapter.Modules.Structure
 
             message += $" being pushed does not contain any id-information and can not be identified by the software.\nPlease make sure all {objDesc} assigned to the {loadDesc} have been pulled from the package to ensure they contain the necessary information.";
 
-            Engine.Reflection.Compute.RecordError(message);
+            BH.Engine.Base.Compute.RecordError(message);
         }
 
         /***************************************************/
