@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using BH.oM.Data.Requests;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using BH.oM.Analytical.Results;
 using BH.oM.Adapter;
 
@@ -53,7 +53,7 @@ namespace BH.Adapter
             // The implementation must:
             // 1. extract all the needed info from the IRequest
             // 2. return a call to the Basic Method ReadResult() with the extracted info.
-            Engine.Reflection.Compute.RecordError($"ReadResults for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
+            BH.Engine.Base.Compute.RecordError($"ReadResults for {request.GetType().Name} is not implemented in {(this as dynamic).GetType().Name}.");
             return new List<IResult>();
         }
    

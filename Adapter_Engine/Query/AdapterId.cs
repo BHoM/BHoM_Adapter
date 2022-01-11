@@ -23,7 +23,7 @@
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.Engine.Base;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,7 +49,7 @@ namespace BH.Engine.Adapter
             if (id == null)
             {
                 if (notFoundWarning)
-                    BH.Engine.Reflection.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
+                    BH.Engine.Base.Compute.RecordWarning($"AdapterId is null or missing for an object of type {bHoMObject.GetType().Name}.");
 
                 return default(T);
             }
@@ -61,17 +61,17 @@ namespace BH.Engine.Adapter
 
             if (id is IEnumerable && !(id is string))
             {
-                BH.Engine.Reflection.Compute.RecordWarning($"More than one matching ID was found for type {adapterIdFragmentType.Name}.");
+                BH.Engine.Base.Compute.RecordWarning($"More than one matching ID was found for type {adapterIdFragmentType.Name}.");
                 return default(T);
             }
 
             try
             {
-                return (T)Convert.ChangeType(id, typeof(T));
+                return (T)System.Convert.ChangeType(id, typeof(T));
             }
             catch (InvalidCastException)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Found Id of type `{id.GetType().Name}` that cannot be converted to the requested type of `{typeof(T).Name}`.");
+                BH.Engine.Base.Compute.RecordError($"Found Id of type `{id.GetType().Name}` that cannot be converted to the requested type of `{typeof(T).Name}`.");
                 return default(T);
             }
         }
