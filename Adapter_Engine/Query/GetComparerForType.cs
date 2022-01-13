@@ -21,7 +21,6 @@
  */
 
 using BH.Engine;
-using BH.Engine.Reflection;
 using BH.oM.Base;
 using BH.Engine.Base;
 using BH.oM.Data;
@@ -29,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using BH.oM.Adapter;
 using BH.Engine.Diffing;
 using BH.Engine.Base.Objects;
