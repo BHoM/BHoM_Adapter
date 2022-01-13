@@ -20,7 +20,6 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.Engine.Adapter;
@@ -31,7 +30,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 
 namespace BH.Adapter
 {
