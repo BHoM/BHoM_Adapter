@@ -44,6 +44,9 @@ namespace BH.Adapter
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
         protected bool FullCRUD<T>(IEnumerable<T> objectsToPush, PushType pushType = PushType.AdapterDefault, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
         {
+            if (objectsToPush == null || !objectsToPush.Any())
+                return true;
+
             // Make sure objects are distinct 
             List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
@@ -143,7 +146,7 @@ namespace BH.Adapter
 
         protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig, PushType pushType) where T : class, IBHoMObject
         {
-            IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
+            IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
             VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
 
             // Objects to push that do not have any overlap with the read ones
@@ -190,7 +193,22 @@ namespace BH.Adapter
             {
                 // Update the overlapping objects (between read and toPush), with the now ported properties.
                 if (diagram.Intersection != null && diagram.Intersection.Any())
-                    IUpdate(diagram.Intersection.Select(x => x.Item1), actionConfig);
+                {
+                    List<T> objectsToUpdate;
+                    if (this.m_AdapterSettings.OnlyUpdateChangedObjects)    //If true, make use of the IdentityComparers to scan for objects not fully identical, and filter out objects that are
+                    {
+                        IEqualityComparer<T> identityComparer = Engine.Adapter.Query.GetIdentityComparerForType<T>(this, actionConfig);
+                        if (identityComparer.GetType() == comparer.GetType())    //Same comparer used, hence all objects will be seen as fully identical
+                            objectsToUpdate = new List<T>();
+                        else
+                            objectsToUpdate = diagram.Intersection.Where(x => !identityComparer.Equals(x.Item1, x.Item2)).Select(x => x.Item1).ToList();    //Filter out objects not identical acording to identitycomparer
+                    }
+                    else
+                        objectsToUpdate = diagram.Intersection.Select(x => x.Item1).ToList();
+
+                    if(objectsToUpdate.Any())
+                        IUpdate(objectsToUpdate, actionConfig);
+                }
             }
             else if(pushType == PushType.CreateNonExisting)
             {
