@@ -48,7 +48,7 @@ namespace BH.Adapter
             List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
 
             // Make sure objects are tagged
-            if (tag != "")
+            if (!string.IsNullOrEmpty(tag))
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
             //Read all the objects of that type from the external model
