@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using BH.Adapter;
 using BH.oM.Adapter;
 using BH.oM.Base;
+using BH.oM.Structure.Elements;
 
 namespace BH.Adapter.Modules.Structure
 {
@@ -40,6 +41,10 @@ namespace BH.Adapter.Modules.Structure
             adapter.AdapterModules.Add(new CopyNodeProperties());
             adapter.AdapterModules.Add(new GetCasesFromCombinations());
             adapter.AdapterModules.Add(new GetCombinationsFromCombinations());
+            adapter.AdapterModules.Add(new GetLoadElementsWithoutId<Bar>(adapter));
+            adapter.AdapterModules.Add(new GetLoadElementsWithoutId<Node>(adapter));
+            adapter.AdapterModules.Add(new GetLoadElementsWithoutId<IAreaElement>(adapter));
+            adapter.AdapterModules.Add(new GetLoadElementsWithoutId<BHoMObject>(adapter));  //Gravity loads
         }
     }
 }
