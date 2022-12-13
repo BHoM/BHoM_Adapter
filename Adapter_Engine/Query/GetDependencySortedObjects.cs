@@ -46,7 +46,7 @@ namespace BH.Engine.Adapter
         [Input("bHoMAdapter", "The DependencyTypes that define the order of the output will be gathered from this Adapter instance.")]
         public static List<Tuple<Type, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, IBHoMAdapter bHoMAdapter)
         {
-            if ((objects?.Any() ?? true)|| bHoMAdapter == null)
+            if ((!objects?.Any() ?? true)|| bHoMAdapter == null)
                 return new List<Tuple<Type, IEnumerable<object>>>();
 
             // Group the objects by their specific type.
@@ -114,7 +114,7 @@ namespace BH.Engine.Adapter
 
             // Group per base type extracted from dependencies.
             // This is useful to reduce the number of CRUD calls.
-            var allTypesInDependencies = bHoMAdapter.DependencyTypes.Values.SelectMany(v => v);
+            var allTypesInDependencies = bHoMAdapter.DependencyTypes.Values.SelectMany(v => v).Distinct();
             for (int i = 0; i < orderedObjects.Count; i++)
             {
                 var kv = orderedObjects.ElementAt(i);
@@ -128,10 +128,21 @@ namespace BH.Engine.Adapter
                             int idx = orderedObjects.IndexOf(orderedObjects.First(o => o.Item1 == baseType));
 
                             var toAdd = new Tuple<Type, IEnumerable<object>>(baseType, orderedObjects[idx].Item2.Concat(kv.Item2));
-                            orderedObjects.Insert(idx, toAdd);
 
-                            orderedObjects.RemoveAt(i + 1);
-                            orderedObjects.RemoveAt(idx + 1);
+                            if (i < idx)
+                            {
+                                orderedObjects.RemoveAt(i);
+                                orderedObjects.RemoveAt(idx - 1);
+                                orderedObjects.Insert(i, toAdd);
+
+                            }
+                            else
+                            {
+                                orderedObjects.RemoveAt(idx);
+                                orderedObjects.RemoveAt(i - 1);
+                                orderedObjects.Insert(idx, toAdd);
+                            }
+
                         }
                     }
                 }
@@ -140,7 +151,6 @@ namespace BH.Engine.Adapter
             return orderedObjects;
         }
     }
-}
 }
 
 
