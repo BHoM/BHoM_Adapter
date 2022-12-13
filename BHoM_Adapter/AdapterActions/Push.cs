@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace BH.Adapter
 {
@@ -89,70 +90,7 @@ namespace BH.Adapter
             //               ACTUAL PUSH               //
             // ----------------------------------------//
 
-            // Group the objects by their specific type.
-            var typeGroups = objectsToPush.GroupBy(x => x.GetType());
-
-            // Collect all objects and related dependency objects, and group them by type, in this dictionary.
-            Dictionary<Type, List<IBHoMObject>> allObjectsPerType = new Dictionary<Type, List<IBHoMObject>>();
-
-            allObjectsPerType = Engine.Adapter.Query.GetAllObjectsAndDependencies(objectsToPush, this);
-
-            // Sort all objects and related dependencies by dependency order, so they can be pushed in the correct order.
-            List<Tuple<Type, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, IEnumerable<object>>>();
-
-            List<Type> handledGroups = new List<Type>();
-            foreach (var typeGroup in allObjectsPerType)
-            {
-                if (handledGroups.Contains(typeGroup.Key))
-                    continue;
-
-                // We can scan the rest of the input objects to see if they include dependencies of this current object type.
-                List<Type> dependenciesToLookFor = new List<Type>();
-
-                // Add direct dependencies of this current object type.
-                if (DependencyTypes.TryGetValue(typeGroup.Key, out List<Type> typeDeps))
-                    dependenciesToLookFor.AddRange(typeDeps);
-
-                // Check if the current object type has basetypes (interfaces) for which dependencies may have been specified.
-                // E.g. for a CrossSection object we can get ISectionProperty which it implements,
-                // which in turn is a type that commonly specifies additional dependencies (generally, IMaterialFragment).
-                foreach (var baseType in typeGroup.Key.BaseTypes())
-                {
-                    if (DependencyTypes.TryGetValue(baseType, out List<Type> baseTypeDeps))
-                        dependenciesToLookFor.AddRange(baseTypeDeps);
-                }
-
-                // If this current object type does not have dependencies, add it at the start of the list and continue.
-                if (!dependenciesToLookFor.Any())
-                {
-                    orderedObjects.Insert(0, new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
-                    handledGroups.Add(typeGroup.Key);
-                    continue;
-                }
-
-                // Scan the rest of the input objects to see they include dependencies,
-                // and add them to the orderedObjects list in order to prioritize them.
-                foreach (var otherTypeGroup in allObjectsPerType)
-                {
-                    if (otherTypeGroup.Key == typeGroup.Key)
-                        continue;
-
-                    if (dependenciesToLookFor.Contains(otherTypeGroup.Key) || dependenciesToLookFor.Any(d => d.IsAssignableFromIncludeGenericsAndRefTypes(otherTypeGroup.Key)))
-                    {
-                        orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(otherTypeGroup.Key, otherTypeGroup.Value.OfType<object>()));
-                        handledGroups.Add(otherTypeGroup.Key);
-                    }
-                }
-            }
-
-            // The non-handled groups can be added at the end in any order, because they don't have any dependency ordering.
-            foreach (var typeGroup in allObjectsPerType)
-            {
-                if (handledGroups.Contains(typeGroup.Key))
-                    continue;
-
-                orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
-            }
+            List<Tuple<Type, IEnumerable<object>>> orderedObjects = Engine.Adapter.Query.GetDependencySortedObjects(objectsToPush, this);
 
             // We now have objects grouped per type, and the groups are sorted following the dependency order.
             foreach (var group in orderedObjects)
