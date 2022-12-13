@@ -72,7 +72,7 @@ namespace BH.Engine.Adapter
         {
             //If adapter is provided and not null, check for dependency modules
             if (adapter != null)
-            {
+            {   
                 //Look for any GetDependencyModules of the current type
                 List<IGetDependencyModule<T, P>> dependencyModules = adapter.AdapterModules.OfType<IGetDependencyModule<T, P>>().ToList();
                 if (dependencyModules.Count != 0)
