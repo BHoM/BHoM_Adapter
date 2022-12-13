@@ -37,5 +37,23 @@ namespace BHoM_Adapter_Tests
 
             sa.Push(inputObjects);
         }
+
+        [Test]
+        public void TestPush2()
+        {
+            StructuralAdapter sa = new StructuralAdapter();
+
+            List<object> inputObjects = new List<object>();
+            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
+            inputObjects.AddRange(Create.RandomObjects<Node>(10));
+            inputObjects.AddRange(Create.RandomObjects<BarUniformlyDistributedLoad>(10));
+            inputObjects.AddRange(Create.RandomObjects<Loadcase>(10));
+
+            // Constraint6DOF, Node, Material, SteelSection, BarRelease, Offset, Bar, Loadcase, BarUniformlyDistributedLoad
+
+            //inputObjects.AddRange(Create.RandomObjects<GenericOrthotropicMaterial>(10));
+
+            sa.Push(inputObjects);
+        }
     }
 }

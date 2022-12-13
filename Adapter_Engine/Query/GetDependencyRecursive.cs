@@ -40,7 +40,7 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static Dictionary<Type, List<IBHoMObject>> GetAllObjectsAndDependencies(this IEnumerable<IBHoMObject> objects, IBHoMAdapter adapter)
+        public static Dictionary<Type, List<IBHoMObject>> GetObjectsAndRecursiveDependencies(this IEnumerable<IBHoMObject> objects, IBHoMAdapter adapter)
         {
             // Group the objects by their specific type.
             var typeGroups = objects.GroupBy(x => x.GetType());
@@ -57,13 +57,13 @@ namespace BH.Engine.Adapter
                 MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
                 dynamic objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
-                GetAllDependenciesForType(objList_specificType, allObjectsPerType, adapter);
+                GetDependencyObjectsRecursive(objList_specificType, allObjectsPerType, adapter);
             }
 
             return allObjectsPerType;
         }
 
-        private static void GetAllDependenciesForType<T>(this IEnumerable<T> objects, Dictionary<Type, List<IBHoMObject>> gatheredDependecies, IBHoMAdapter adapter) where T : IBHoMObject
+        private static void GetDependencyObjectsRecursive<T>(this IEnumerable<T> objects, Dictionary<Type, List<IBHoMObject>> gatheredDependecies, IBHoMAdapter adapter ) where T : IBHoMObject
         {
             List<Type> dependencies = GetDependencyTypes<T>(adapter);
             Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objects, dependencies, adapter);
@@ -75,7 +75,7 @@ namespace BH.Engine.Adapter
                 else
                     gatheredDependecies[depObj.Key] = depObj.Value.Cast<IBHoMObject>().ToList();
 
-                GetAllDependenciesForType(depObj.Value as dynamic, gatheredDependecies, adapter);
+                GetDependencyObjectsRecursive(depObj.Value as dynamic, gatheredDependecies, adapter);
             }
         }
     }
