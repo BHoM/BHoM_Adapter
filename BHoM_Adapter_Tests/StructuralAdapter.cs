@@ -1,5 +1,8 @@
 ﻿
 using BH.Adapter;
+using BH.Adapter.Tests;
+using BH.oM.Adapter;
+using BH.oM.Base;
 using BH.oM.Structure.Constraints;
 using BH.oM.Structure.Elements;
 using BH.oM.Structure.Loads;
@@ -8,9 +11,12 @@ using BH.oM.Structure.Offsets;
 using BH.oM.Structure.SectionProperties;
 using BH.oM.Structure.SurfaceProperties;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,8 +24,18 @@ namespace BHoM_Adapter_Tests
 {
     public class StructuralAdapter : BHoMAdapter
     {
+        public List<Tuple<Type, IEnumerable<IBHoMObject>>> Created { get; set; } = new List<Tuple<Type, IEnumerable<IBHoMObject>>>();
+        public List<Tuple<Type, IList>> ReadTypes { get; set; } = new List<Tuple<Type, IList>>();
+        public List<Tuple<Type, IEnumerable<IBHoMObject>>> Updated { get; set; } = new List<Tuple<Type, IEnumerable<IBHoMObject>>>();
+        public List<Tuple<Type, IEnumerable<object>>> Deleted { get; set; } = new List<Tuple<Type, IEnumerable<object>>>();
+
         public StructuralAdapter()
         {
+            m_AdapterSettings = new AdapterSettings()
+            {
+                UseAdapterId = false
+            };
+
             DependencyTypes = new Dictionary<Type, List<Type>>
             {
                 {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node), typeof(BarRelease), typeof(Offset)}},
@@ -36,6 +52,34 @@ namespace BHoM_Adapter_Tests
                 { typeof(IElementLoad<Bar>), new List<Type>{ typeof(Bar)} },
                 { typeof(IElementLoad<Node>), new List<Type>{ typeof(Node)} }
             };
+        }
+
+        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        {
+            Created.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
+
+            return true;
+        }
+
+        protected override IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
+        {
+            ReadTypes.Add(new Tuple<Type, IList>(type, ids));
+
+            return new List<IBHoMObject>();
+        }
+
+        protected override bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        {
+            Updated.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
+
+            return true;
+        }
+
+        protected override int IDelete(Type type, IEnumerable<object> ids, ActionConfig actionConfig = null)
+        {
+            Deleted.Add(new Tuple<Type, IEnumerable<object>>(type, ids));
+
+            return 0;
         }
     }
 }
