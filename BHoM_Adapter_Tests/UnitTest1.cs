@@ -4,6 +4,7 @@ using BH.oM.Structure.Elements;
 using BH.oM.Structure.Loads;
 using BH.oM.Structure.MaterialFragments;
 using BH.oM.Structure.SectionProperties;
+using BH.oM.Structure.SurfaceProperties;
 
 namespace BHoM_Adapter_Tests
 {
@@ -26,6 +27,9 @@ namespace BHoM_Adapter_Tests
             inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
             inputObjects.AddRange(Create.RandomObjects<BarUniformlyDistributedLoad>(10));
             inputObjects.AddRange(Create.RandomObjects<Loadcase>(10));
+            inputObjects.AddRange(Create.RandomObjects<FEMesh>(10));
+            inputObjects.AddRange(Create.RandomObjects<Panel>(10));
+            inputObjects.AddRange(Create.RandomObjects<ConstantThickness>(10));
 
             // Constraint6DOF, Node, Material, SteelSection, BarRelease, Offset, Bar, Loadcase, BarUniformlyDistributedLoad
 
