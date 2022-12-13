@@ -95,7 +95,7 @@ namespace BH.Adapter
             // Collect all objects and related dependency objects, and group them by type, in this dictionary.
             Dictionary<Type, List<IBHoMObject>> allObjectsPerType = new Dictionary<Type, List<IBHoMObject>>();
 
-            allObjectsPerType = Engine.Adapter.Query.GetAllObjectsAndDependencies(objectsToPush, DependencyTypes, this);
+            allObjectsPerType = Engine.Adapter.Query.GetAllObjectsAndDependencies(objectsToPush, this);
 
             // Sort all objects and related dependencies by dependency order, so they can be pushed in the correct order.
             List<Tuple<Type, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, IEnumerable<object>>>();
