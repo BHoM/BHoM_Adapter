@@ -22,6 +22,7 @@
 
 using BH.oM.Base;
 using BH.oM.Adapter;
+using BH.Engine.Reflection;
 using BH.Engine.Base;
 using BH.Engine.Adapter;
 using System;
@@ -91,11 +92,75 @@ namespace BH.Adapter
             // Group the objects by their specific type.
             var typeGroups = objectsToPush.GroupBy(x => x.GetType());
 
-            foreach (var typeGroup in typeGroups)
+            // Collect all objects and related dependency objects, and group them by type, in this dictionary.
+            Dictionary<Type, List<IBHoMObject>> allObjectsPerType = new Dictionary<Type, List<IBHoMObject>>();
+
+            allObjectsPerType = Engine.Adapter.Query.GetAllObjectsAndDependencies(objectsToPush, DependencyTypes, this);
+
+            // Sort all objects and related dependencies by dependency order, so they can be pushed in the correct order.
+            List<Tuple<Type, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, IEnumerable<object>>>();
+
+            List<Type> handledGroups = new List<Type>();
+            foreach (var typeGroup in allObjectsPerType)
             {
-                // Cast the objects to their specific types
-                MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
-                var objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
+                if (handledGroups.Contains(typeGroup.Key))
+                    continue;
+
+                // We can scan the rest of the input objects to see if they include dependencies of this current object type.
+                List<Type> dependenciesToLookFor = new List<Type>();
+
+                // Add direct dependencies of this current object type.
+                if (DependencyTypes.TryGetValue(typeGroup.Key, out List<Type> typeDeps))
+                    dependenciesToLookFor.AddRange(typeDeps);
+
+                // Check if the current object type has basetypes (interfaces) for which dependencies may have been specified.
+                // E.g. for a CrossSection object we can get ISectionProperty which it implements,
+                // which in turn is a type that commonly specifies additional dependencies (generally, IMaterialFragment).
+                foreach (var baseType in typeGroup.Key.BaseTypes())
+                {
+                    if (DependencyTypes.TryGetValue(baseType, out List<Type> baseTypeDeps))
+                        dependenciesToLookFor.AddRange(baseTypeDeps);
+                }
+
+                // If this current object type does not have dependencies, add it at the start of the list and continue.
+                if (!dependenciesToLookFor.Any())
+                {
+                    orderedObjects.Insert(0, new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
+                    handledGroups.Add(typeGroup.Key);
+                    continue;
+                }
+
+                // Scan the rest of the input objects to see they include dependencies,
+                // and add them to the orderedObjects list in order to prioritize them.
+                foreach (var otherTypeGroup in allObjectsPerType)
+                {
+                    if (otherTypeGroup.Key == typeGroup.Key)
+                        continue;
+
+                    if (dependenciesToLookFor.Contains(otherTypeGroup.Key) || dependenciesToLookFor.Any(d => d.IsAssignableFromIncludeGenericsAndRefTypes(otherTypeGroup.Key)))
+                    {
+                        orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(otherTypeGroup.Key, otherTypeGroup.Value.OfType<object>()));
+                        handledGroups.Add(otherTypeGroup.Key);
+                    }
+                }
+            }
+
+            // The non-handled groups can be added at the end in any order, because they don't have any dependency ordering.
+            foreach (var typeGroup in allObjectsPerType)
+            {
+                if (handledGroups.Contains(typeGroup.Key))
+                    continue;
+
+                orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
+            }
+
+            // We now have objects grouped per type, and the groups are sorted following the dependency order.
+            foreach (var group in orderedObjects)
+            {
+                // Cast the IEnumerable<object> to an IEnumerable<T> where T is the the specific type it contains.
+                // This is used to dynamically dispatch to the right type-specific CRUD method.
+                MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { group.Item1 });
+                object objList_specificType = enumCastMethod_specificType.Invoke(group.Item2, new object[] { group.Item2.ToList() });
 
                 if (pushType == PushType.FullPush || pushType == PushType.CreateNonExisting || pushType == PushType.UpdateOrCreateOnly)
                     success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
