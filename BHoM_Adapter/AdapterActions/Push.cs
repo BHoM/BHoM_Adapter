@@ -82,7 +82,7 @@ namespace BH.Adapter
 
             if (objectsToPush.Count() == 0)
             {
-                BH.Engine.Base.Compute.RecordError("Input objects were invalid.");
+                BH.Engine.Base.Compute.RecordError("Input objects were invalid. Check that they are of a type supported by this Adapter's Push.");
                 return new List<object>();
             }
 
