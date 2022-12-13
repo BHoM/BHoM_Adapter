@@ -60,17 +60,6 @@ namespace BH.Adapter
 
             readObjects = readObjects ?? new List<T>(); // null guard for readObjects
 
-            // Merge and push the dependencies
-            if (m_AdapterSettings.HandleDependencies)
-            {
-                var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
-                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, this);
-
-                foreach (var depObj in dependencyObjects)
-                    if (!FullCRUD(depObj.Value as dynamic, pushType, tag, actionConfig))
-                        return false;
-            }
-
             // Replace objects that overlap and define the objects that still have to be pushed
             IEnumerable<T> objectsToCreate;
 
