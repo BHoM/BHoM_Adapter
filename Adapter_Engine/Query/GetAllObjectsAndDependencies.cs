@@ -40,8 +40,7 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
-        public static Dictionary<Type, List<IBHoMObject>> GetAllObjectsAndDependencies<T>(this IEnumerable<T> objects, Dictionary<Type, List<Type>> allDependencyTypes, IBHoMAdapter adapter = null) where T : IBHoMObject
+        public static Dictionary<Type, List<IBHoMObject>> GetAllObjectsAndDependencies(this IEnumerable<IBHoMObject> objects, IBHoMAdapter adapter)
         {
             // Group the objects by their specific type.
             var typeGroups = objects.GroupBy(x => x.GetType());
@@ -55,46 +54,29 @@ namespace BH.Engine.Adapter
                 else
                     allObjectsPerType[typeGroup.Key] = typeGroup.Cast<IBHoMObject>().ToList();
 
+                MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
+                dynamic objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
 
-                if (!allDependencyTypes.TryGetValue(typeGroup.Key, out List<Type> dependencyTypes))
-                    continue;
-
-                //MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
-                //dynamic objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
-
-                //Dictionary<Type, IEnumerable> dependencyObjects = GetDependecyObjectWithCasting(typeGroup.First() as dynamic, typeGroup as dynamic, dependencyTypes, adapter);
-                Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(CastToFirstType(typeGroup.First() as dynamic, typeGroup as dynamic), dependencyTypes, adapter);
-
-                // Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objList_specificType, dependencyTypes, adapter);
-                foreach (var kv in dependencyObjects)
-                {
-                    if (allObjectsPerType.ContainsKey(kv.Key))
-                        allObjectsPerType[kv.Key].AddRange(kv.Value.Cast<IBHoMObject>());
-                    else
-                        allObjectsPerType[kv.Key] = kv.Value.Cast<IBHoMObject>().ToList();
-
-                    var recursedResult = kv.Value.OfType<IBHoMObject>().GetAllObjectsAndDependencies(allDependencyTypes, adapter);
-                    foreach (var recursedRes in recursedResult)
-                        if (allObjectsPerType.ContainsKey(recursedRes.Key))
-                            throw new Exception("");
-                        else
-                            allObjectsPerType[recursedRes.Key] = recursedRes.Value;
-                }
+                GetAllDependenciesForType(objList_specificType, allObjectsPerType, adapter);
             }
 
             return allObjectsPerType;
         }
 
-        /***************************************************/
-
-        private static Dictionary<Type, IEnumerable> GetDependecyObjectWithCasting<T>(T item, IEnumerable<IBHoMObject> ienumerable, List<Type> dependencyTypes, IBHoMAdapter adapter) where T : IBHoMObject
+        private static void GetAllDependenciesForType<T>(this IEnumerable<T> objects, Dictionary<Type, List<IBHoMObject>> gatheredDependecies, IBHoMAdapter adapter) where T : IBHoMObject
         {
-            return Engine.Adapter.Query.GetDependencyObjects(ienumerable.Cast<T>(), dependencyTypes, adapter);
-        }
+            List<Type> dependencies = GetDependencyTypes<T>(adapter);
+            Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objects, dependencies, adapter);
 
-        private static IEnumerable<T> CastToFirstType<T>(T type, IEnumerable<IBHoMObject> objects)
-        {
-            return objects.Cast<T>();
+            foreach (var depObj in dependencyObjects)
+            {
+                if (gatheredDependecies.ContainsKey(depObj.Key))
+                    gatheredDependecies[depObj.Key].AddRange(depObj.Value.Cast<IBHoMObject>());
+                else
+                    gatheredDependecies[depObj.Key] = depObj.Value.Cast<IBHoMObject>().ToList();
+
+                GetAllDependenciesForType(depObj.Value as dynamic, gatheredDependecies, adapter);
+            }
         }
     }
 }
