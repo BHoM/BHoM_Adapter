@@ -83,11 +83,5 @@ namespace BH.Adapter.Tests
             return objs;
         }
     }
-
-
-    public class TestFragment : IFragment
-    {
-        public object SomeProp { get; set; }
-    }
 }
 
