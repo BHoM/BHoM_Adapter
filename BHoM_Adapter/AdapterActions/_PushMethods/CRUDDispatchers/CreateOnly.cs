@@ -53,19 +53,6 @@ namespace BH.Adapter
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            // We may treat dependencies differently: like calling distinct only for them.
-            if (m_AdapterSettings.HandleDependencies)
-            {
-                var dependencyTypes = Engine.Adapter.Query.GetDependencyTypes<T>(this);
-                var dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objectsToPush, dependencyTypes, this); //first-level dependencies
-
-                foreach (var kv in dependencyObjects)
-                {
-                    if (!CreateOnly(kv.Value as dynamic, tag, actionConfig, objectLevel++))
-                        return false;
-                }
-            }
-
             // Assign Id if required
             if (m_AdapterSettings.UseAdapterId)
                 AssignNextFreeId(newObjects);
