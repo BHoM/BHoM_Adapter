@@ -42,23 +42,21 @@ namespace BH.Engine.Adapter
         public static List<Type> GetDependencyTypes<T>(this IBHoMAdapter bhomAdapter)
         {
             Type type = typeof(T);
+            List<Type> dependencyTypes = new List<Type>();
 
             if (bhomAdapter.DependencyTypes.ContainsKey(type))
-                return bhomAdapter.DependencyTypes[type];
+                dependencyTypes.AddRange(bhomAdapter.DependencyTypes[type]);
 
-            else if (type.BaseType != null && bhomAdapter.DependencyTypes.ContainsKey(type.BaseType))
-                return bhomAdapter.DependencyTypes[type.BaseType];
+            if (type.BaseType != null && bhomAdapter.DependencyTypes.ContainsKey(type.BaseType))
+                dependencyTypes.AddRange(bhomAdapter.DependencyTypes[type.BaseType]);
 
-            else
+            foreach (Type interType in type.GetInterfaces())
             {
-                foreach (Type interType in type.GetInterfaces())
-                {
-                    if (bhomAdapter.DependencyTypes.ContainsKey(interType))
-                        return bhomAdapter.DependencyTypes[interType];
-                }
+                if (bhomAdapter.DependencyTypes.ContainsKey(interType))
+                    dependencyTypes.AddRange(bhomAdapter.DependencyTypes[interType]);
             }
 
-            return new List<Type>();
+            return dependencyTypes.Distinct().ToList();
         }
     }
 }
