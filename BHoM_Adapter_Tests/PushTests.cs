@@ -103,5 +103,53 @@ namespace BHoM_Adapter_Tests
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
             Assert.AreEqual(correctOrder, createdOrder);
         }
+
+        [Test]
+        public void Dependecies_UpdateOnly()
+        {
+            List<object> inputObjects = new List<object>();
+            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
+            inputObjects.AddRange(Create.RandomObjects<Node>(10));
+            inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
+            inputObjects.AddRange(Create.RandomObjects<AluminiumSection>(10));
+
+            sa.Push(inputObjects, "", BH.oM.Adapter.PushType.UpdateOnly);
+
+            string correctOrderCreated = "BH.oM.Structure.Constraints.Constraint6DOF, BH.oM.Structure.MaterialFragments.IMaterialFragment, BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Node, BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset";
+            string correctOrderUpdated = "BH.oM.Structure.Elements.Node, BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Bar";
+
+            string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
+            string updateOrder = string.Join(", ", sa.Updated.Select(c => c.Item1.FullName));
+            Assert.AreEqual(correctOrderCreated, createdOrder);
+            Assert.AreEqual(correctOrderUpdated, updateOrder);
+        }
+
+        [Test]
+        public void DependencyOrder_MultipleSectionTypes()
+        {
+            List<object> inputObjects = new List<object>();
+            inputObjects.AddRange(Create.RandomObjects<ConcreteSection>(10));
+            inputObjects.AddRange(Create.RandomObjects<TimberSection>(10));
+            inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
+
+            sa.Push(inputObjects);
+
+            string correctOrder = "BH.oM.Structure.MaterialFragments.IMaterialFragment, BH.oM.Structure.SectionProperties.ISectionProperty";
+
+            string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
+
+            Assert.AreEqual(correctOrder, createdOrder);
+
+            List<Type> correctCreatedSectionTypes = inputObjects.Select(x => x.GetType()).Distinct().ToList();
+
+            Assert.IsTrue(sa.Created.Count == 2, "Wrong number of created object types.");
+            Assert.IsTrue(sa.Created[1].Item1 == typeof(ISectionProperty), "Sections not created as second item.");
+
+            List<Type> createdSectionTypes = sa.Created[1].Item2.Select(x => x.GetType()).Distinct().ToList();
+
+            Assert.AreEqual(correctCreatedSectionTypes, createdSectionTypes);
+
+            
+        }
     }
 }
