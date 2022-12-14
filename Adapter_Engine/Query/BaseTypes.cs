@@ -38,15 +38,16 @@ namespace BH.Engine.Adapter
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
+
         public static Dictionary<Type, List<Type>> m_cachedBaseTypes = new Dictionary<Type, List<Type>>();
 
         [Description("Gets all implemented interfaces and any base type of a given type.")]
         public static List<Type> BaseTypes(this Type type)
         {
-            List<Type> baseTypes = new List<Type>();
-
             if (type == null)
-                return baseTypes;
+                return new List<Type>();
+
+            List<Type> baseTypes;
 
             if (m_cachedBaseTypes.TryGetValue(type, out baseTypes))
                 return baseTypes;
