@@ -40,6 +40,10 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
+        [Description("Groups all objects and their dependencies by Type and PushType.")]
+        [Input("objects", "Objects to group. The dependency of these objects will also be gathered recursively and included in the output.")]
+        [Input("pushType", "PushType provided in the Push.")]
+        [Input("bHoMAdapter", "The DependencyTypes will be gathered from this Adapter instance.")]
         public static Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> GetObjectsAndRecursiveDependencies(this IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter adapter)
         {
             // Group the objects by their specific type.
@@ -55,21 +59,27 @@ namespace BH.Engine.Adapter
                 else
                     allObjectsPerType[key] = typeGroup.Cast<IBHoMObject>().ToList();
 
-                MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
-                dynamic objList_specificType = enumCastMethod_specificType.Invoke(typeGroup, new object[] { typeGroup });
+                MethodInfo enumCastMethodSpecificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { typeGroup.Key });
+                dynamic objListSpecificType = enumCastMethodSpecificType.Invoke(typeGroup, new object[] { typeGroup });
 
+                //For update only the pushtypes for the dependencies should be full crud.
+                //For all other push types, the same as the top level should be used for the dependencies.
                 PushType dependecyPushType = pushType == PushType.UpdateOnly ? PushType.FullPush : pushType;
 
-                GetDependencyObjectsRecursive(objList_specificType, allObjectsPerType, dependecyPushType, adapter);
+                GetDependencyObjectsRecursive(objListSpecificType, allObjectsPerType, dependecyPushType, adapter);
             }
 
             return allObjectsPerType;
         }
 
+        /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
+
         private static void GetDependencyObjectsRecursive<T>(this IEnumerable<T> objects, Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> gatheredDependecies, PushType pushType, IBHoMAdapter adapter) where T : IBHoMObject
         {
             List<Type> dependencies = GetDependencyTypes<T>(adapter);
-            Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objects, dependencies, adapter);
+            Dictionary<Type, IEnumerable> dependencyObjects = GetDependencyObjects(objects, dependencies, adapter);
 
             foreach (var depObj in dependencyObjects)
             {
@@ -82,6 +92,7 @@ namespace BH.Engine.Adapter
                 GetDependencyObjectsRecursive(depObj.Value as dynamic, gatheredDependecies, pushType, adapter);
             }
         }
+
+        /***************************************************/
     }
 }
-

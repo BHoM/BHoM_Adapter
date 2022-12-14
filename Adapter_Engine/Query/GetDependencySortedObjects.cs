@@ -39,10 +39,9 @@ namespace BH.Engine.Adapter
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Recursively gets all the dependencies of the input objects. Then, the dependency objects and input objects are grouped by type. " +
-              "Finally, the groups are sorted by dependency order. " +
-              "The resulting collection can be used as an input to invoke CRUD methods in the correct dependency order.")]
+        [Description("Collects and groups all of the obejcts and dependencies of all the objects by type and pushtype. Groups are sorted by dependency order.")]
         [Input("objects", "Objects to group and sort by dependency order. The dependency of these objects will also be gathered recursively and included in the output.")]
+        [Input("pushType", "PushType provided in the Push.")]
         [Input("bHoMAdapter", "The DependencyTypes that define the order of the output will be gathered from this Adapter instance.")]
         public static List<Tuple<Type, PushType, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
         {
@@ -53,7 +52,7 @@ namespace BH.Engine.Adapter
             var typeGroups = objects.GroupBy(x => x.GetType());
 
             // Collect all objects and related dependency objects, recursively, and group them by type.
-            Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> allObjectsPerType = Engine.Adapter.Query.GetObjectsAndRecursiveDependencies(objects, pushType, bHoMAdapter);
+            Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> allObjectsPerType = GetObjectsAndRecursiveDependencies(objects, pushType, bHoMAdapter);
 
             // Sort the groups by dependency order, so they can be pushed in the correct order.
             List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, PushType, IEnumerable<object>>>();
