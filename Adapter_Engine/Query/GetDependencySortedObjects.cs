@@ -39,7 +39,7 @@ namespace BH.Engine.Adapter
         /***************************************************/
         // These are support methods required by other methods in the Push process.
 
-        [Description("Recursively gets all the dependencies of the input objects. Then, the dependency objects and input objects are grouped by type." +
+        [Description("Recursively gets all the dependencies of the input objects. Then, the dependency objects and input objects are grouped by type. " +
               "Finally, the groups are sorted by dependency order. " +
               "The resulting collection can be used as an input to invoke CRUD methods in the correct dependency order.")]
         [Input("objects", "Objects to group and sort by dependency order. The dependency of these objects will also be gathered recursively and included in the output.")]
