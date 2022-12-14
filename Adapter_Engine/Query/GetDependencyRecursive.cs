@@ -63,7 +63,7 @@ namespace BH.Engine.Adapter
             return allObjectsPerType;
         }
 
-        private static void GetDependencyObjectsRecursive<T>(this IEnumerable<T> objects, Dictionary<Type, List<IBHoMObject>> gatheredDependecies, IBHoMAdapter adapter ) where T : IBHoMObject
+        private static void GetDependencyObjectsRecursive<T>(this IEnumerable<T> objects, Dictionary<Type, List<IBHoMObject>> gatheredDependecies, IBHoMAdapter adapter) where T : IBHoMObject
         {
             List<Type> dependencies = GetDependencyTypes<T>(adapter);
             Dictionary<Type, IEnumerable> dependencyObjects = Engine.Adapter.Query.GetDependencyObjects(objects, dependencies, adapter);
