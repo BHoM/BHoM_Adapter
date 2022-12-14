@@ -90,7 +90,12 @@ namespace BH.Adapter
             //               ACTUAL PUSH               //
             // ----------------------------------------//
 
-            List<Tuple<Type, IEnumerable<object>>> orderedObjects = Engine.Adapter.Query.GetDependencySortedObjects(objectsToPush, this);
+            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects;
+
+            if(m_AdapterSettings.HandleDependencies)
+                orderedObjects = Engine.Adapter.Query.GetDependencySortedObjects(objectsToPush, pushType, this);
+            else
+                orderedObjects = objectsToPush.GroupBy(x => x.GetType()).Select(x => new Tuple<Type, PushType, IEnumerable<object>>(x.Key, pushType, x.Cast<object>())).ToList();
 
             // We now have objects grouped per type, and the groups are sorted following the dependency order.
             foreach (var group in orderedObjects)
@@ -98,18 +103,30 @@ namespace BH.Adapter
                 // Cast the IEnumerable<object> to an IEnumerable<T> where T is the the specific type it contains.
                 // This is used to dynamically dispatch to the right type-specific CRUD method.
                 MethodInfo enumCastMethod_specificType = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(new[] { group.Item1 });
-                object objList_specificType = enumCastMethod_specificType.Invoke(group.Item2, new object[] { group.Item2.ToList() });
+                object objList_specificType = enumCastMethod_specificType.Invoke(group.Item2, new object[] { group.Item3.ToList() });
 
-                if (pushType == PushType.FullPush || pushType == PushType.CreateNonExisting || pushType == PushType.UpdateOrCreateOnly)
-                    success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
-                else if (pushType == PushType.CreateOnly)
+                switch (group.Item2)
                 {
-                    success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
+                    case PushType.FullPush:
+                    case PushType.UpdateOrCreateOnly:
+                    case PushType.CreateNonExisting:
+                        success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
+                        break;
+                    case PushType.CreateOnly:
+                        success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
+                        break;
+
+                    case PushType.UpdateOnly:
+                        success &= UpdateOnly(objList_specificType as dynamic, tag, actionConfig);
+                        break;
+
+                    case PushType.DeleteThenCreate:
+                    case PushType.AdapterDefault:
+                    default:
+                        Engine.Base.Compute.RecordError($"Push type {group.Item2} not implemented in {this.GetType().Name}.");
+                        break;
                 }
-                else if (pushType == PushType.UpdateOnly)
-                {
-                    success &= UpdateOnly(objList_specificType as dynamic, tag, actionConfig);
-                }
+
             }
 
             return success ? objectsToPush.Cast<object>().ToList() : new List<object>();
