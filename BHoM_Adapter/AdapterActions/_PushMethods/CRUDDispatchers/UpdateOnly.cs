@@ -44,29 +44,11 @@ namespace BH.Adapter
         {
             List<T> newObjects = objectsToPush.ToList();
 
-            // Make sure objects  are tagged
+            // Make sure objects are tagged
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
-
-            //// Merge and push the dependencies
-            //if (m_AdapterSettings.HandleDependencies)
-            //{
-            //    // Get the first-level dependencies.
-            //    var dependencyTypes = Query.GetDependencyTypes<T>(this);
-            //    var dependencyObjects = Query.GetDependencyObjects<T>(objectsToPush, dependencyTypes, this); 
-
-            //    // Of those first-level dependencies, recursively gather all sub-dependencies, and group them by type; sort the group by dependency order.
-            //    var allDependencyObjectsSorted = Query.GetDependencySortedObjects(dependencyObjects.Values.Cast<IBHoMObject>(), this);
-
-            //    foreach (var depObj in allDependencyObjectsSorted)
-            //        if (!FullCRUD(depObj.Item2 as dynamic, PushType.FullPush, tag, actionConfig))
-            //            return false;
-            //}
 
             return IUpdate(newObjects, actionConfig);
         }
     }
 }
-
-
-
