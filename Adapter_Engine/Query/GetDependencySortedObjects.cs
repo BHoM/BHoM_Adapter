@@ -44,21 +44,21 @@ namespace BH.Engine.Adapter
               "The resulting collection can be used as an input to invoke CRUD methods in the correct dependency order.")]
         [Input("objects", "Objects to group and sort by dependency order. The dependency of these objects will also be gathered recursively and included in the output.")]
         [Input("bHoMAdapter", "The DependencyTypes that define the order of the output will be gathered from this Adapter instance.")]
-        public static List<Tuple<Type, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, IBHoMAdapter bHoMAdapter)
+        public static List<Tuple<Type, PushType, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
         {
             if ((!objects?.Any() ?? true)|| bHoMAdapter == null)
-                return new List<Tuple<Type, IEnumerable<object>>>();
+                return new List<Tuple<Type, PushType, IEnumerable<object>>>();
 
             // Group the objects by their specific type.
             var typeGroups = objects.GroupBy(x => x.GetType());
 
             // Collect all objects and related dependency objects, recursively, and group them by type.
-            Dictionary<Type, List<IBHoMObject>> allObjectsPerType = Engine.Adapter.Query.GetObjectsAndRecursiveDependencies(objects, bHoMAdapter);
+            Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> allObjectsPerType = Engine.Adapter.Query.GetObjectsAndRecursiveDependencies(objects, pushType, bHoMAdapter);
 
             // Sort the groups by dependency order, so they can be pushed in the correct order.
-            List<Tuple<Type, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, IEnumerable<object>>>();
+            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, PushType, IEnumerable<object>>>();
 
-            List<Type> handledGroups = new List<Type>();
+            List<Tuple<Type, PushType>> handledGroups = new List<Tuple<Type, PushType>>();
             foreach (var typeGroup in allObjectsPerType)
             {
                 if (handledGroups.Contains(typeGroup.Key))
@@ -68,13 +68,13 @@ namespace BH.Engine.Adapter
                 List<Type> dependenciesToLookFor = new List<Type>();
 
                 // Add direct dependencies of this current object type.
-                if (bHoMAdapter.DependencyTypes.TryGetValue(typeGroup.Key, out List<Type> typeDeps))
+                if (bHoMAdapter.DependencyTypes.TryGetValue(typeGroup.Key.Item1, out List<Type> typeDeps))
                     dependenciesToLookFor.AddRange(typeDeps);
 
                 // Check if the current object type has basetypes (interfaces) for which dependencies may have been specified.
                 // E.g. for a CrossSection object we can get ISectionProperty which it implements,
                 // which in turn is a type that commonly specifies additional dependencies (generally, IMaterialFragment).
-                foreach (var baseType in typeGroup.Key.BaseTypes())
+                foreach (var baseType in typeGroup.Key.Item1.BaseTypes())
                 {
                     if (bHoMAdapter.DependencyTypes.TryGetValue(baseType, out List<Type> baseTypeDeps))
                         dependenciesToLookFor.AddRange(baseTypeDeps);
@@ -83,7 +83,7 @@ namespace BH.Engine.Adapter
                 // If this current object type does not have dependencies, add it at the start of the list and continue.
                 if (!dependenciesToLookFor.Any())
                 {
-                    orderedObjects.Insert(0, new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
+                    orderedObjects.Insert(0, new Tuple<Type, PushType, IEnumerable<object>>(typeGroup.Key.Item1, typeGroup.Key.Item2, typeGroup.Value.OfType<object>()));
                     handledGroups.Add(typeGroup.Key);
                     continue;
                 }
@@ -95,9 +95,9 @@ namespace BH.Engine.Adapter
                     if (handledGroups.Contains(otherTypeGroup.Key) || otherTypeGroup.Key == typeGroup.Key)
                         continue;
 
-                    if (dependenciesToLookFor.Contains(otherTypeGroup.Key) || dependenciesToLookFor.Any(d => d.IsAssignableFromIncludeGenericsAndRefTypes(otherTypeGroup.Key)))
+                    if (dependenciesToLookFor.Contains(otherTypeGroup.Key.Item1) || dependenciesToLookFor.Any(d => d.IsAssignableFromIncludeGenericsAndRefTypes(otherTypeGroup.Key.Item1)))
                     {
-                        orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(otherTypeGroup.Key, otherTypeGroup.Value.OfType<object>()));
+                        orderedObjects.Add(new Tuple<Type, PushType, IEnumerable<object>>(otherTypeGroup.Key.Item1, otherTypeGroup.Key.Item2, otherTypeGroup.Value.OfType<object>()));
                         handledGroups.Add(otherTypeGroup.Key);
                     }
                 }
@@ -109,7 +109,7 @@ namespace BH.Engine.Adapter
                 if (handledGroups.Contains(typeGroup.Key))
                     continue;
 
-                orderedObjects.Add(new Tuple<Type, IEnumerable<object>>(typeGroup.Key, typeGroup.Value.OfType<object>()));
+                orderedObjects.Add(new Tuple<Type, PushType, IEnumerable<object>>(typeGroup.Key.Item1, typeGroup.Key.Item2, typeGroup.Value.OfType<object>()));
             }
 
             // Group per base type extracted from dependencies.
@@ -121,30 +121,48 @@ namespace BH.Engine.Adapter
 
                 foreach (var baseType in kv.Item1.BaseTypes())
                 {
+                    bool found = false;
                     foreach (var t in allTypesInDependencies)
                     {
-                        if (baseType == t)
+                        if (baseType != t)
+                            continue;
+
+                        //Find matching item in the ordered obejct, matching the base type and push type.
+                        var matchingItem = orderedObjects.FirstOrDefault(o => o.Item1 == baseType && o.Item2 == kv.Item2);
+
+                        int matchingIndex;
+                        //Get index of matching object if match is not null.
+                        if (matchingItem != null)   
+                            matchingIndex = orderedObjects.IndexOf(matchingItem);   
+                        else
+                            matchingIndex = -1;
+
+                        if (matchingIndex == -1)    
                         {
-                            int idx = orderedObjects.IndexOf(orderedObjects.First(o => o.Item1 == baseType));
-
-                            var toAdd = new Tuple<Type, IEnumerable<object>>(baseType, orderedObjects[idx].Item2.Concat(kv.Item2));
-
-                            if (i < idx)
-                            {
-                                orderedObjects.RemoveAt(i);
-                                orderedObjects.RemoveAt(idx - 1);
-                                orderedObjects.Insert(i, toAdd);
-
-                            }
-                            else
-                            {
-                                orderedObjects.RemoveAt(idx);
-                                orderedObjects.RemoveAt(i - 1);
-                                orderedObjects.Insert(idx, toAdd);
-                            }
-
+                            //Nothing found. Replace the current item with base type instead of concrete type.
+                            orderedObjects[i] = new Tuple<Type, PushType, IEnumerable<object>>(baseType, kv.Item2, kv.Item3);
                         }
+                        else
+                        {
+                            //If matching base type is found, concatenate the to sets together, to be CRUD together.
+                            //For example, if the pushtype for both is the same, SteelSections and AluminiumSections will be grouped under ISectionProperty if ISectionProperty is in DependencyTypes.
+                            var toAdd = new Tuple<Type, PushType, IEnumerable<object>>(baseType, orderedObjects[matchingIndex].Item2, orderedObjects[matchingIndex].Item3.Concat(kv.Item3));
+
+                            int minIndex = Math.Min(i, matchingIndex);
+                            int maxIndex = Math.Max(i, matchingIndex);
+
+                            //Replace on minimum of the two indecies found and remove the other.
+                            orderedObjects[minIndex] = toAdd;
+                            orderedObjects.RemoveAt(maxIndex);
+                            i--;    //Decrement i as item has been removed from the list.
+                        }
+                        found = true;
+                        break;
+
                     }
+
+                    if (found)
+                        break;
                 }
             }
 
