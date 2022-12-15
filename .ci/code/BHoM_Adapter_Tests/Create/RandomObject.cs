@@ -41,4 +41,3 @@ namespace BH.Adapter.Tests
         }
     }
 }
-

@@ -20,7 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-
+using NUnit.Framework;
 using BH.Adapter.Tests;
 using BH.oM.Base;
 using BH.oM.Structure.Constraints;
@@ -30,7 +30,7 @@ using BH.oM.Structure.MaterialFragments;
 using BH.oM.Structure.SectionProperties;
 using BH.oM.Structure.SurfaceProperties;
 
-namespace BHoM_Adapter_Tests
+namespace BH.Tests.Adapter.Structure
 {
     public class PushTests
     {
@@ -148,8 +148,6 @@ namespace BHoM_Adapter_Tests
             List<Type> createdSectionTypes = sa.Created[1].Item2.Select(x => x.GetType()).Distinct().ToList();
 
             Assert.AreEqual(correctCreatedSectionTypes, createdSectionTypes);
-
-            
         }
     }
 }

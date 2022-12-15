@@ -20,7 +20,6 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-
 using BH.Adapter;
 using BH.Adapter.Tests;
 using BH.oM.Adapter;
@@ -42,7 +41,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BHoM_Adapter_Tests
+namespace BH.Tests.Adapter
 {
     public class StructuralAdapter : BHoMAdapter
     {
