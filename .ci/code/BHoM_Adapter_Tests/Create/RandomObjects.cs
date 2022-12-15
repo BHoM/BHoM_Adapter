@@ -22,6 +22,7 @@
 
 using BH.Engine.Base;
 using BH.oM.Base;
+using BH.Tests.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,4 +85,3 @@ namespace BH.Adapter.Tests
         }
     }
 }
-

@@ -23,7 +23,7 @@
 
 using BH.oM.Base;
 
-namespace BH.Adapter.Tests
+namespace BH.Tests.Adapter
 {
     public class TestFragment : IFragment
     {
