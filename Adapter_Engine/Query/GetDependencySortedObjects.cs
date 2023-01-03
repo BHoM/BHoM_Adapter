@@ -45,7 +45,7 @@ namespace BH.Engine.Adapter
         [Input("bHoMAdapter", "The DependencyTypes that define the order of the output will be gathered from this Adapter instance.")]
         public static List<Tuple<Type, PushType, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
         {
-            if ((!objects?.Any() ?? true)|| bHoMAdapter == null)
+            if ((!objects?.Any() ?? true) || bHoMAdapter == null)
                 return new List<Tuple<Type, PushType, IEnumerable<object>>>();
 
             // Group the objects by their specific type.
@@ -118,12 +118,12 @@ namespace BH.Engine.Adapter
             {
                 var kv = orderedObjects.ElementAt(i);
 
-                foreach (var baseType in kv.Item1.BaseTypes())
+                foreach (Type baseType in kv.Item1.BaseTypes())
                 {
                     bool found = false;
-                    foreach (var t in allTypesInDependencies)
+                    foreach (Type dependencyType in allTypesInDependencies)
                     {
-                        if (baseType != t)
+                        if (baseType != dependencyType)
                             continue;
 
                         //Find matching item in the ordered obejct, matching the base type and push type.
@@ -131,12 +131,12 @@ namespace BH.Engine.Adapter
 
                         int matchingIndex;
                         //Get index of matching object if match is not null.
-                        if (matchingItem != null)   
-                            matchingIndex = orderedObjects.IndexOf(matchingItem);   
+                        if (matchingItem != null)
+                            matchingIndex = orderedObjects.IndexOf(matchingItem);
                         else
                             matchingIndex = -1;
 
-                        if (matchingIndex == -1)    
+                        if (matchingIndex == -1)
                         {
                             //Nothing found. Replace the current item with base type instead of concrete type.
                             orderedObjects[i] = new Tuple<Type, PushType, IEnumerable<object>>(baseType, kv.Item2, kv.Item3);
@@ -162,6 +162,26 @@ namespace BH.Engine.Adapter
 
                     if (found)
                         break;
+                }
+            }
+
+            // If two types are subject to two different CRUD operations (e.g. UpdateOnly and FullCRUD),
+            // make sure the order of CRUD operations is appropriate (e.g. UpdateOnly must happen before FullCRUD to avoid duplicates).
+            // For example, this happens when both Nodes and Bars are sent via UpdateOnly during a same Push operation,
+            // and the Nodes being updated are the same assigned to the endpoints of the Bars being updated).
+            for (int i = 0; i < orderedObjects.Count; i++)
+            {
+                var kv1 = orderedObjects.ElementAt(i);
+
+                for (int j = i + 1; j < orderedObjects.Count; j++)
+                {
+                    var kv2 = orderedObjects.ElementAt(j);
+
+                    if (kv1.Item1 == kv2.Item1 && kv1.Item2 == PushType.FullPush && kv2.Item2 == PushType.UpdateOnly)
+                    {
+                        orderedObjects.RemoveAt(j);
+                        orderedObjects.Insert(i, kv2);
+                    }
                 }
             }
 
