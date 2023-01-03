@@ -109,14 +109,16 @@ namespace BH.Tests.Adapter.Structure
         public void Dependecies_UpdateOnly()
         {
             List<object> inputObjects = new List<object>();
-            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
             inputObjects.AddRange(Create.RandomObjects<Node>(10));
+            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
             inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
             inputObjects.AddRange(Create.RandomObjects<AluminiumSection>(10));
 
             sa.Push(inputObjects, "", BH.oM.Adapter.PushType.UpdateOnly);
 
-            string correctOrderCreated = "BH.oM.Structure.Constraints.Constraint6DOF, BH.oM.Structure.MaterialFragments.IMaterialFragment, BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Node, BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset";
+            string correctOrderCreated = "BH.oM.Structure.MaterialFragments.IMaterialFragment, BH.oM.Structure.Constraints.Constraint6DOF, " +
+                "BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Node, " +
+                "BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset";
             string correctOrderUpdated = "BH.oM.Structure.Elements.Node, BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Bar";
 
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
