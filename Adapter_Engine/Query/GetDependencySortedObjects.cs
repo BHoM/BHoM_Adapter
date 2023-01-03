@@ -172,11 +172,11 @@ namespace BH.Engine.Adapter
             // and the Nodes being updated are the same assigned to the endpoints of the Bars being updated).
             for (int i = 0; i < orderedObjects.Count; i++)
             {
-                var kv1 = orderedObjects.ElementAt(i);
+                var kv1 = orderedObjects[i];
 
                 for (int j = i + 1; j < orderedObjects.Count; j++)
                 {
-                    var kv2 = orderedObjects.ElementAt(j);
+                    var kv2 = orderedObjects[j];
 
                     if (kv1.Item1 == kv2.Item1 && kv1.Item2 == PushType.FullPush && kv2.Item2 == PushType.UpdateOnly)
                     {
