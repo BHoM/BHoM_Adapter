@@ -29,6 +29,7 @@ using BH.oM.Structure.Loads;
 using BH.oM.Structure.MaterialFragments;
 using BH.oM.Structure.SectionProperties;
 using BH.oM.Structure.SurfaceProperties;
+using BH.oM.Adapter;
 
 namespace BH.Tests.Adapter.Structure
 {
@@ -148,6 +149,30 @@ namespace BH.Tests.Adapter.Structure
             List<Type> createdSectionTypes = sa.Created[1].Item2.Select(x => x.GetType()).Distinct().ToList();
 
             Assert.AreEqual(correctCreatedSectionTypes, createdSectionTypes);
+        }
+
+        [Test]
+        public void DependencyOrder_UpdateAndFullPush()
+        {
+            List<object> inputObjects = new List<object>();
+            Node n = Create.RandomObject<Node>();
+            Bar bar = Create.RandomObject<Bar>();
+            bar.StartNode = n;
+            inputObjects.Add(bar);
+            inputObjects.Add(n);
+            inputObjects.Add(Create.RandomObject<AluminiumSection>()); // this should be moved up before the Bar's AluminiumSection's FullPush.
+            inputObjects.Add(new Aluminium());
+            inputObjects.Add(new Constraint6DOF()); // this should not "jump ahead"
+
+            var orderedObjects = Engine.Adapter.Query.GetDependencySortedObjects(inputObjects.OfType<IBHoMObject>().ToList(), BH.oM.Adapter.PushType.UpdateOnly, sa);
+
+            var onlyNodes = orderedObjects.Where(t => t.Item1 == typeof(Node));
+
+            Assert.IsTrue(onlyNodes.Any(t => t.Item2 == PushType.UpdateOnly), "Missing UpdateOnly in the list of pushed nodes.");
+            Assert.IsTrue(onlyNodes.Any(t => t.Item2 == PushType.FullPush), "Missing FullPush in the list of pushed nodes.");
+
+            Assert.IsTrue(orderedObjects.Where(t => t.Item1 == typeof(Node)).First().Item2 == PushType.UpdateOnly, 
+                "For Node objects, UpdateOnly should have come before FullPush.");
         }
     }
 }
