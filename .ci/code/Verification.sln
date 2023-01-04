@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adapter_Engine", "..\..\Ada
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BHoM_Adapter", "..\..\BHoM_Adapter\BHoM_Adapter.csproj", "{C389BC62-717D-4639-BACD-864CF97336BB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Structure_AdapterModules", "..\..\Structure_AdapterModules\Structure_AdapterModules.csproj", "{3E8F16BF-4EB2-47C8-B5D6-9A370A55B902}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C389BC62-717D-4639-BACD-864CF97336BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C389BC62-717D-4639-BACD-864CF97336BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C389BC62-717D-4639-BACD-864CF97336BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E8F16BF-4EB2-47C8-B5D6-9A370A55B902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E8F16BF-4EB2-47C8-B5D6-9A370A55B902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E8F16BF-4EB2-47C8-B5D6-9A370A55B902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E8F16BF-4EB2-47C8-B5D6-9A370A55B902}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
