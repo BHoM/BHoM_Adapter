@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2022, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -44,7 +44,7 @@ namespace BH.Engine.Adapter
         [Input("objects", "Objects to group and sort by dependency order. The dependency of these objects will also be gathered recursively and included in the output.")]
         [Input("pushType", "PushType provided in the Push.")]
         [Input("bHoMAdapter", "The DependencyTypes that define the order of the output will be gathered from this Adapter instance.")]
-        public static List<Tuple<Type, PushType, IEnumerable<object>>> GetDependencySortedObjects(IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
+        public static List<Tuple<Type, PushType, IEnumerable<object>>> GetDependencySortedObjects(this IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
         {
             if ((!objects?.Any() ?? true) || bHoMAdapter == null)
                 return new List<Tuple<Type, PushType, IEnumerable<object>>>();
