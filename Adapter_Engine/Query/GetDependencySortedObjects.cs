@@ -183,9 +183,6 @@ namespace BH.Engine.Adapter
                         orderedObjects.RemoveAt(j);
                         orderedObjects.Insert(i, kv2);
                     }
-
-                    if (found)
-                        break;
                 }
             }
 
