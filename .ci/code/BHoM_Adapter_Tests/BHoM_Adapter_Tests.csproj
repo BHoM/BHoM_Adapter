@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\..\Adapter_Engine\Adapter_Engine.csproj" />
     <ProjectReference Include="..\..\..\Adapter_oM\Adapter_oM.csproj" />
     <ProjectReference Include="..\..\..\BHoM_Adapter\BHoM_Adapter.csproj" />
+    <ProjectReference Include="..\..\..\Structure_AdapterModules\Structure_AdapterModules.csproj" />
   </ItemGroup>
 
   <ItemGroup>
