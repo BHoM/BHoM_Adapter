@@ -43,7 +43,7 @@ namespace BH.Engine.Adapter
         [Description("Groups all objects and their dependencies by Type and PushType.")]
         [Input("objects", "Objects to group. The dependency of these objects will also be gathered recursively and included in the output.")]
         [Input("pushType", "PushType provided in the Push.")]
-        [Input("bHoMAdapter", "The DependencyTypes will be gathered from this Adapter instance.")]
+        [Input("adapter", "The DependencyTypes will be gathered from this Adapter instance.")]
         public static Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> GetObjectsAndRecursiveDependencies(this IEnumerable<IBHoMObject> objects, PushType pushType, IBHoMAdapter adapter)
         {
             // Group the objects by their specific type.
