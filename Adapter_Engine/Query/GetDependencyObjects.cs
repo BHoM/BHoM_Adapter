@@ -41,6 +41,9 @@ namespace BH.Engine.Adapter
         /***************************************************/
 
         [Description("Fetches all dependancy objects of types provided from the list of the objects. Firsts checks for any DependencyModules, if no present matching the type, tries to scan any property returning the types.")]
+        [Input("objects", "Objects to get the dependency objects for.")]
+        [Input("dependencyTypes", "List of types that have dependencies.")]
+        [Input("adapter", "Adapter for which dependencies must be gathered.")]
         public static Dictionary<Type, IEnumerable> GetDependencyObjects<T>(this IEnumerable<T> objects, List<Type> dependencyTypes, IBHoMAdapter adapter = null) where T : IBHoMObject
         {
             if (objects == null || !objects.Any() || dependencyTypes == null || !dependencyTypes.Any())
