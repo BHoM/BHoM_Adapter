@@ -206,8 +206,6 @@ namespace BH.Adapter
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
         }
-
-
     }
 }
 
