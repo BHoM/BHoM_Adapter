@@ -59,9 +59,10 @@ namespace BH.Engine.Adapter
             foreach (Type t in dependencyTypes)
             {
                 MethodInfo generic = method.MakeGenericMethod(new Type[] { typeof(T), t });
-                var list = generic.Invoke(null, new object[] { objects, adapter });
+                IList list = generic.Invoke(null, new object[] { objects, adapter }) as IList;
 
-                dict.Add(t, list as IEnumerable);
+                if (list != null && list.Count != 0)
+                    dict.Add(t, list);
             }
 
             return dict;
