@@ -223,5 +223,41 @@ namespace BH.Tests.Adapter.Structure
 
             Assert.AreEqual(withoutIdCount, barCreationCount, "Wrong number of bars created.");
         }
+
+        [Test]
+        public void DependencyOrder_CreateGravityLoadHalfObjectsWithIds()
+        {
+            int objectCount = 10;
+            List<Bar> bars = Create.RandomObjects<Bar>(objectCount);
+            List<Panel> panels = Create.RandomObjects<Panel>(objectCount);
+            int withIdCount = objectCount / 2;
+            int withoutIdCount = objectCount - withIdCount;
+            for (int i = 0; i < withIdCount; i++)
+            {
+                Engine.Adapter.Modify.SetAdapterId(bars[i], new StructuralAdapterId { Id = i + 1 });
+                Engine.Adapter.Modify.SetAdapterId(panels[i], new StructuralAdapterId { Id = i + 1 });
+            }
+
+            //Shuffle the order fo the bars.
+            //Doing this to test that the order of bars with and without Id does not matter
+            Random random = new Random(2);
+            bars = bars.OrderBy(x => random.Next()).ToList();
+            panels = panels.OrderBy(x => random.Next()).ToList();
+
+            GravityLoad load = Create.RandomObject<GravityLoad>();
+            load.Objects.Elements = bars.Cast<BHoMObject>().Concat(panels).ToList();
+
+            sa.Push(new List<object> { load });
+
+            Assert.IsTrue(sa.Created.Any(x => x.Item1 == typeof(Bar)), "No bars created.");
+            int barCreationCount = sa.Created.First(x => x.Item1 == typeof(Bar)).Item2.Count();
+
+            Assert.AreEqual(withoutIdCount, barCreationCount, "Wrong number of bars created.");
+
+            Assert.IsTrue(sa.Created.Any(x => x.Item1 == typeof(Panel)), "No Panels created.");
+            int panelsCreationCount = sa.Created.First(x => x.Item1 == typeof(Panel)).Item2.Count();
+
+            Assert.AreEqual(withoutIdCount, panelsCreationCount, "Wrong number of Panels created.");
+        }
     }
 }
