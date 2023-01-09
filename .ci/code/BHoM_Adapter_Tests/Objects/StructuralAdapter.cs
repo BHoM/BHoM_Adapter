@@ -73,6 +73,9 @@ namespace BH.Tests.Adapter
                 { typeof(IElementLoad<Bar>), new List<Type>{ typeof(Bar)} },
                 { typeof(IElementLoad<Node>), new List<Type>{ typeof(Node)} }
             };
+
+            AdapterIdFragmentType = typeof(StructuralAdapterId);
+            BH.Adapter.Modules.Structure.ModuleLoader.LoadModules(this);
         }
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
