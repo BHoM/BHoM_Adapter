@@ -71,7 +71,8 @@ namespace BH.Tests.Adapter
                 {typeof(RigidLink), new List<Type> { typeof(LinkConstraint), typeof(Node) } },
                 {typeof(FEMesh), new List<Type> { typeof(Node), typeof(ISurfaceProperty)} },
                 { typeof(IElementLoad<Bar>), new List<Type>{ typeof(Bar)} },
-                { typeof(IElementLoad<Node>), new List<Type>{ typeof(Node)} }
+                { typeof(IElementLoad<Node>), new List<Type>{ typeof(Node)} },
+                { typeof(GravityLoad), new List<Type>{ typeof(Bar), typeof(Panel), typeof(FEMesh)} }
             };
 
             AdapterIdFragmentType = typeof(StructuralAdapterId);
