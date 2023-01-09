@@ -36,7 +36,7 @@ using BH.oM.Structure.Loads;
 
 namespace BH.Adapter.Modules
 {
-    [Description("Get all elements that does not contain an adapter ID of the expected type. Avoids the need to again read and check against elements already in the model.")]
+    [Description("Get all elements that do not contain an adapter ID of the expected type from the provided IElementLoads. Avoids the need to again read and check against elements already in the model.")]
     public class GetLoadElementsWithoutID<T> : IGetDependencyModule<IElementLoad<T>, T> where T : IBHoMObject
     {
         /***************************************************/
