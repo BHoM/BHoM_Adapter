@@ -176,5 +176,52 @@ namespace BH.Tests.Adapter.Structure
             Assert.IsTrue(orderedObjects.Where(t => t.Item1 == typeof(Node)).First().Item2 == PushType.UpdateOnly, 
                 "For Node objects, UpdateOnly should have come before FullPush.");
         }
+
+        [Test]
+        public void DependencyOrder_CreateLoadAllObjectsWithIds()
+        {
+            List<Bar> bars = Create.RandomObjects<Bar>(10);
+            for (int i = 0; i < bars.Count; i++)
+            {
+                Engine.Adapter.Modify.SetAdapterId(bars[i], new StructuralAdapterId { Id = i + 1 });
+            }
+            BarUniformlyDistributedLoad load = Create.RandomObject<BarUniformlyDistributedLoad>();
+            load.Objects.Elements = bars;
+
+            sa.Push(new List<object> { load });
+
+            string correctOrder = "BH.oM.Structure.Loads.Loadcase, BH.oM.Structure.Loads.BarUniformlyDistributedLoad";  //All bars contain Ids, hence no bars should be created even if there is a dependency on the bars
+            string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
+
+            Assert.AreEqual(correctOrder, createdOrder);
+        }
+
+        [Test]
+        public void DependencyOrder_CreateLoadHalfObjectsWithIds()
+        {
+            int objectCount = 10;
+            List<Bar> bars = Create.RandomObjects<Bar>(objectCount);
+            int withIdCount = objectCount / 2;
+            int withoutIdCount = objectCount - withIdCount;
+            for (int i = 0; i < withIdCount; i++)
+            {
+                Engine.Adapter.Modify.SetAdapterId(bars[i], new StructuralAdapterId { Id = i + 1 });
+            }
+
+            //Shuffle the order fo the bars.
+            //Doing this to test that the order of bars with and without Id does not matter
+            Random random = new Random(2);
+            bars = bars.OrderBy(x => random.Next()).ToList();
+
+            BarUniformlyDistributedLoad load = Create.RandomObject<BarUniformlyDistributedLoad>();
+            load.Objects.Elements = bars;
+
+            sa.Push(new List<object> { load });
+
+            Assert.IsTrue(sa.Created.Any(x => x.Item1 == typeof(Bar)), "No bars created.");
+            int barCreationCount = sa.Created.First(x => x.Item1 == typeof(Bar)).Item2.Count();
+
+            Assert.AreEqual(withoutIdCount, barCreationCount, "Wrong number of bars created.");
+        }
     }
 }
