@@ -45,7 +45,8 @@ namespace BH.Adapter.Modules.Structure
             adapter.AdapterModules.Add(new GetLoadElementsWithoutID<Node>(adapter));
             adapter.AdapterModules.Add(new GetLoadElementsWithoutID<IAreaElement>(adapter));
             adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<Bar>(adapter));
-            adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<IAreaElement>(adapter));
+            adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<Panel>(adapter));
+            adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<FEMesh>(adapter));
         }
     }
 }
