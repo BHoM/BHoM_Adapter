@@ -55,7 +55,8 @@ namespace BH.Tests.Adapter
         {
             m_AdapterSettings = new AdapterSettings()
             {
-                UseAdapterId = false
+                UseAdapterId = false,
+                OnlyUpdateChangedObjects = true,
             };
 
             DependencyTypes = new Dictionary<Type, List<Type>>
@@ -89,7 +90,6 @@ namespace BH.Tests.Adapter
 
             AdapterIdFragmentType = typeof(StructuralAdapterId);
             BH.Adapter.Modules.Structure.ModuleLoader.LoadModules(this);
-            this.m_AdapterSettings.OnlyUpdateChangedObjects = true;
         }
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
