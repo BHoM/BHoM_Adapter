@@ -31,6 +31,7 @@ using System.Linq;
 using BH.oM.Diffing;
 using BH.oM.Adapter;
 using BH.Engine.Base;
+using BH.Engine.Base.Objects;
 
 namespace BH.Adapter
 {
@@ -197,11 +198,8 @@ namespace BH.Adapter
                     List<T> objectsToUpdate;
                     if (this.m_AdapterSettings.OnlyUpdateChangedObjects)    //If true, make use of the IdentityComparers to scan for objects not fully identical, and filter out objects that are
                     {
-                        IEqualityComparer<T> identityComparer = Engine.Adapter.Query.GetIdentityComparerForType<T>(this, actionConfig);
-                        if (identityComparer.GetType() == comparer.GetType())    //Same comparer used, hence all objects will be seen as fully identical
-                            objectsToUpdate = new List<T>();
-                        else
-                            objectsToUpdate = diagram.Intersection.Where(x => !identityComparer.Equals(x.Item1, x.Item2)).Select(x => x.Item1).ToList();    //Filter out objects not identical acording to identitycomparer
+                        IEqualityComparer<T> fullyEqualComparer = new HashComparer<T>(actionConfig?.DiffingConfig?.ComparisonConfig ?? new ComparisonConfig());
+                        objectsToUpdate = diagram.Intersection.Where(x => !fullyEqualComparer.Equals(x.Item1, x.Item2)).Select(x => x.Item1).ToList();    //Filter out objects not identical acording to identitycomparer
                     }
                     else
                         objectsToUpdate = diagram.Intersection.Select(x => x.Item1).ToList();

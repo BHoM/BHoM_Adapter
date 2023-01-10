@@ -36,7 +36,6 @@ namespace BH.oM.Adapter
         Type AdapterIdFragmentType { get; }
         ModuleSet AdapterModules { get; }
         Dictionary<Type, object> AdapterComparers { get; }
-        Dictionary<Type, object> IdentityComparers { get; }
         Dictionary<Type, List<Type>> DependencyTypes { get; }
         Guid AdapterGuid { get; }
 
