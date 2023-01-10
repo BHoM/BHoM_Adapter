@@ -49,7 +49,7 @@ namespace BH.Adapter
                 return true;
 
             // Make sure objects are distinct 
-            List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
+            List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig)).ToList();
 
             // Add the tag if provided
             if (!string.IsNullOrWhiteSpace(tag))
@@ -57,7 +57,7 @@ namespace BH.Adapter
 
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
-            if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this) != EqualityComparer<T>.Default)
+            if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig) != EqualityComparer<T>.Default)
                 readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
             else
                 readObjects = new List<T>();
@@ -77,7 +77,7 @@ namespace BH.Adapter
                 objectsToCreate = newObjects;
             }
             else if (m_AdapterSettings.ProcessInMemory)
-                objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag);
+                objectsToCreate = ReplaceInMemory(newObjects, readObjects, tag, actionConfig);
             else
                 objectsToCreate = ReplaceThroughAPI(newObjects, readObjects, tag, actionConfig, pushType);
 
@@ -94,7 +94,7 @@ namespace BH.Adapter
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
+                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
                 foreach (T item in objectsToPush)
                 {
                     // Fetch any existing IAdapterId fragment and assign it to the item.
@@ -111,7 +111,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, bool mergeWithComparer = false) where T : class, IBHoMObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, ActionConfig actionConfig, bool mergeWithComparer = false) where T : class, IBHoMObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -125,7 +125,7 @@ namespace BH.Adapter
             {
                 VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(
                         newObjects, multiTaggedObjects.Concat(nonTaggedObjects),
-                        Engine.Adapter.Query.GetComparerForType<T>(this));
+                        Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig));
 
                 List<ICopyPropertiesModule<T>> copyPropertiesModules = this.GetCopyPropertiesModules<T>();
 

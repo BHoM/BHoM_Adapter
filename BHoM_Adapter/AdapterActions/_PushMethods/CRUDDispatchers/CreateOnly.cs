@@ -47,7 +47,7 @@ namespace BH.Adapter
         {
             bool callDistinct = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
 
-            List<T> newObjects = !callDistinct ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this)).ToList();
+            List<T> newObjects = !callDistinct ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig)).ToList();
 
             // Tag the objects, if tag is given.
             if (tag != "")
@@ -66,7 +66,7 @@ namespace BH.Adapter
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this);
+                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
                 foreach (T item in objectsToPush)
                 {
                     // Fetch any existing IAdapterId fragment and assign it to the item.
