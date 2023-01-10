@@ -50,13 +50,6 @@ namespace BH.Adapter
             // {typeof(Node), new BH.Engine.Structure.NodeDistanceComparer(3) }
         };
 
-        [Description("Object Identity comparers to be used within a specific Adapter.\n" +
-                     "Used to determine if the objects are identical and no update is required.\n" +
-                     "Differs from the AdapterComparers in that the AdapterComparers checks if two objects will be seen as the same in the software packege, while this comparers check if the objects are identical.\n" +
-                     "By default the HashComparer using the DiffingConfig on the ActionConfig is used.")]
-        public Dictionary<Type, object> IdentityComparers { get; protected set; } = new Dictionary<Type, object>
-        {
-        };
 
         [Description("Dependecies between different IBHoMObjects to be considered within a specific Adapter." +
             "E.g. A Line has dependency type of Points. " +

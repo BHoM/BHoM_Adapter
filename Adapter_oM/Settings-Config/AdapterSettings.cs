@@ -61,7 +61,7 @@ namespace BH.oM.Adapter
         public virtual bool UseAdapterId { get; set; } = true;
         public virtual bool UseHashComparerAsDefault { get; set; } = false;
         public virtual bool ProcessInMemory { get; set; } = false;
-        [Description("If true, Objects found to be the same acording to the AdapterComparer for the provided type is checked for full equality using the IdentityComparer of the type, and is not updated if equal acording to the latter.\n" + 
+        [Description("If true, Objects found to be the same acording to the AdapterComparer for the provided type is checked for full equality using the HashComparer of the type, and is not updated if equal acording to the HashComaprer.\n" + 
                      "If false, Objects found identical according to the AdapterComparer for the provided type is always sent to be updated.")]
         public virtual bool OnlyUpdateChangedObjects { get; set; } = false;
 
