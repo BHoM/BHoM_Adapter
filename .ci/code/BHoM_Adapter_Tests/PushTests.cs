@@ -30,6 +30,7 @@ using BH.oM.Structure.MaterialFragments;
 using BH.oM.Structure.SectionProperties;
 using BH.oM.Structure.SurfaceProperties;
 using BH.oM.Adapter;
+using System.Diagnostics.Contracts;
 
 namespace BH.Tests.Adapter.Structure
 {
@@ -258,6 +259,84 @@ namespace BH.Tests.Adapter.Structure
             int panelsCreationCount = sa.Created.First(x => x.Item1 == typeof(Panel)).Item2.Count();
 
             Assert.AreEqual(withoutIdCount, panelsCreationCount, "Wrong number of Panels created.");
+        }
+
+        [Test]
+        public void UpdateOnlyChanged()
+        {
+            //Create some random objects
+            int objectCount = 10;
+
+            List<Bar> bars = new List<Bar>();
+            List<Node> nodes = new List<Node>();
+            List<SteelSection> sectionProperties = new List<SteelSection>();
+            List<Steel> steels = new List<Steel>();
+
+            //Using methodology below to ensure the same random obejcts are created each set of the run.
+            //For some edge cases not using the methodology, some strings turned out the same/empty leading to the test failing
+            for (int i = 0; i < objectCount; i++)
+            {
+                bars.Add(BH.Engine.Base.Create.RandomObject(typeof(Bar), (i + 1) * 3) as Bar);
+                nodes.Add(BH.Engine.Base.Create.RandomObject(typeof(Node), (i + 1) * 7) as Node);
+                sectionProperties.Add(BH.Engine.Base.Create.RandomObject(typeof(SteelSection), (i + 1) * 37) as SteelSection);
+                steels.Add(BH.Engine.Base.Create.RandomObject(typeof(Steel), (i + 1) * 13) as Steel);
+            }
+
+
+            List<IBHoMObject> allObjects = bars.Cast<IBHoMObject>().Concat(nodes).Concat(sectionProperties).Concat(steels).ToList();
+
+            sa.Push(allObjects);
+
+            int changeCount = objectCount / 2;
+
+            HashSet<int> randomIds = new HashSet<int>();
+            Random random = new Random(2);
+            //Generate random ids to change
+            while (randomIds.Count < changeCount)
+            {
+                randomIds.Add((int)Math.Floor(random.NextDouble() * objectCount));
+            }
+
+            //Update the random obejcts with the random ids
+            //The update is ensured to not change the part of the object used by the comparer to identify the objects as the same
+            //Using methodology below to ensure the same random obejcts are created each set of the run.
+            //For some edge cases not using the methodology, some strings turned out the same/empty leading to the test failing
+            foreach (int i in randomIds)
+            {
+                bars[i].SectionProperty = BH.Engine.Base.Create.RandomObject(typeof(SteelSection), (i + 1) * 17) as SteelSection;
+                nodes[i].Support = BH.Engine.Base.Create.RandomObject(typeof(Constraint6DOF), (i + 1) * 19) as Constraint6DOF;
+                SteelSection newSection = BH.Engine.Base.Create.RandomObject(typeof(SteelSection), (i + 1) * 23) as SteelSection;
+                newSection.Name = sectionProperties[i].Name;
+                sectionProperties[i] = newSection;
+                Steel newMaterial = BH.Engine.Base.Create.RandomObject(typeof(Steel), (i + 1) * 31) as Steel;
+                newMaterial.Name = steels[i].Name;
+                steels[i] = newMaterial;
+            }
+
+            allObjects = bars.Cast<IBHoMObject>().Concat(nodes).Concat(sectionProperties).Concat(steels).ToList();
+
+            //Push the updated objects again
+            sa.Push(allObjects);
+
+            Assert.IsTrue(sa.Updated.Any(x => x.Item1 == typeof(Bar)), "No Bars Updated.");
+            int barUpdateCount = sa.Updated.First(x => x.Item1 == typeof(Bar)).Item2.Count();
+
+            Assert.AreEqual(changeCount, barUpdateCount, "Wrong number of Bars Updated.");
+
+            Assert.IsTrue(sa.Updated.Any(x => x.Item1 == typeof(Node)), "No Nodes Updated.");
+            int nodeUpdateCount = sa.Updated.First(x => x.Item1 == typeof(Node)).Item2.Count();
+
+            Assert.AreEqual(changeCount, nodeUpdateCount, "Wrong number of Nodes Updated.");
+
+            Assert.IsTrue(sa.Updated.Any(x => x.Item1 == typeof(ISectionProperty)), "No SectionProperty Updated.");
+            int sectionUpdateCount = sa.Updated.First(x => x.Item1 == typeof(ISectionProperty)).Item2.Count();
+
+            Assert.AreEqual(changeCount, sectionUpdateCount, "Wrong number of ISectionProperties Updated.");
+
+            Assert.IsTrue(sa.Updated.Any(x => x.Item1 == typeof(IMaterialFragment)), "No Materials Updated.");
+            int materialUpdateCount = sa.Updated.First(x => x.Item1 == typeof(IMaterialFragment)).Item2.Count();
+
+            Assert.AreEqual(changeCount, materialUpdateCount, "Wrong number of Materials Updated.");
         }
     }
 }
