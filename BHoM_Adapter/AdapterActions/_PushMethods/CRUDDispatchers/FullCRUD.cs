@@ -199,7 +199,7 @@ namespace BH.Adapter
                     if (this.m_AdapterSettings.OnlyUpdateChangedObjects)    //If true, make use of the IdentityComparers to scan for objects not fully identical, and filter out objects that are
                     {
                         IEqualityComparer<T> fullyEqualComparer = new HashComparer<T>(actionConfig?.DiffingConfig?.ComparisonConfig ?? new ComparisonConfig());
-                        objectsToUpdate = diagram.Intersection.Where(x => !fullyEqualComparer.Equals(x.Item1, x.Item2)).Select(x => x.Item1).ToList();    //Filter out objects not identical acording to identitycomparer
+                        objectsToUpdate = diagram.Intersection.Where(x => !fullyEqualComparer.Equals(x.Item1, x.Item2)).Select(x => x.Item1).ToList();    //Filter out objects not identical according to the HashComparer
                     }
                     else
                         objectsToUpdate = diagram.Intersection.Select(x => x.Item1).ToList();
