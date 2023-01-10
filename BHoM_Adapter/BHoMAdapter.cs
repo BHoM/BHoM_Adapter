@@ -50,7 +50,6 @@ namespace BH.Adapter
             // {typeof(Node), new BH.Engine.Structure.NodeDistanceComparer(3) }
         };
 
-
         [Description("Dependecies between different IBHoMObjects to be considered within a specific Adapter." +
             "E.g. A Line has dependency type of Points. " +
             "Needed because different software have different dependency relationships.")]
