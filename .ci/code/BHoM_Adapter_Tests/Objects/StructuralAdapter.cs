@@ -22,6 +22,7 @@
 
 using BH.Adapter;
 using BH.Adapter.Tests;
+using BH.Engine.Structure;
 using BH.oM.Adapter;
 using BH.oM.Base;
 using BH.oM.Structure.Constraints;
@@ -75,8 +76,20 @@ namespace BH.Tests.Adapter
                 { typeof(GravityLoad), new List<Type>{ typeof(Bar), typeof(Panel), typeof(FEMesh)} }
             };
 
+            AdapterComparers = new Dictionary<Type, object>
+            {
+                {typeof(Bar), new BarEndNodesDistanceComparer(3) },
+                {typeof(Node), new NodeDistanceComparer(3) },
+                {typeof(ISectionProperty), new NameOrDescriptionComparer() },
+                {typeof(ISurfaceProperty), new NameOrDescriptionComparer() },
+                {typeof(IMaterialFragment), new NameOrDescriptionComparer() },
+                {typeof(LinkConstraint), new NameOrDescriptionComparer() },
+                {typeof(Constraint6DOF), new NameOrDescriptionComparer() },
+            };
+
             AdapterIdFragmentType = typeof(StructuralAdapterId);
             BH.Adapter.Modules.Structure.ModuleLoader.LoadModules(this);
+            this.m_AdapterSettings.OnlyUpdateChangedObjects = true;
         }
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
@@ -90,7 +103,9 @@ namespace BH.Tests.Adapter
         {
             ReadTypes.Add(new Tuple<Type, IList>(type, ids));
 
-            return new List<IBHoMObject>();
+            List<IBHoMObject> modelObejcts = Created.Where(x => x.Item1.IsAssignableFrom(type)).SelectMany(x => x.Item2).ToList();
+
+            return modelObejcts;
         }
 
         protected override bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
