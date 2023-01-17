@@ -58,7 +58,12 @@ namespace BH.Adapter
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig) != EqualityComparer<T>.Default)
-                readObjects = ReadCashed<T>("", actionConfig)?.Where(x => x != null);
+            {
+                if (m_AdapterSettings.CacheCRUDobjects)
+                    readObjects = ReadCashed<T>("", actionConfig)?.Where(x => x != null);
+                else
+                    readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
+            }
             else
                 readObjects = new List<T>();
 
@@ -72,7 +77,12 @@ namespace BH.Adapter
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
                 if (readObjects.Any())
-                    DeleteFromModelAndCache<T>(readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                {
+                    if (m_AdapterSettings.CacheCRUDobjects)
+                        DeleteFromModelAndCache<T>(readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                    else
+                        IDelete(typeof(T), readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                }
 
                 objectsToCreate = newObjects;
             }
@@ -86,7 +96,8 @@ namespace BH.Adapter
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
-            if (!CreateAndCache(objectsToCreate, actionConfig))
+            if ((m_AdapterSettings.CacheCRUDobjects && !CreateAndCache(objectsToCreate, actionConfig))
+                || !ICreate(objectsToCreate, actionConfig))
                 return false;
 
             if (m_AdapterSettings.UseAdapterId)
@@ -168,12 +179,29 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
-                DeleteFromModelAndCache<T>(toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+            {
+                if (m_AdapterSettings.CacheCRUDobjects)
+                    DeleteFromModelAndCache<T>(toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                else
+                    IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+            }
 
             // Update the tags for the rest of the existing objects in the model
-            UpdateTagsCached<T>(readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
-                actionConfig);
+            if (m_AdapterSettings.CacheCRUDobjects)
+            {
+                UpdateTagsCached<T>(
+                    readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
+                    readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
+                    actionConfig);
+            }
+            else
+            {
+                IUpdateTags(
+                    typeof(T),
+                    readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
+                    readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
+                    actionConfig);
+            }
 
             // For the objects that have an overlap between existing and pushed 
             // (e.g. an end Node of a Bar being pushed is overlapping with the End Node of a Bar already in the model)
@@ -203,8 +231,13 @@ namespace BH.Adapter
                     else
                         objectsToUpdate = diagram.Intersection.Select(x => x.Item1).ToList();
 
-                    if(objectsToUpdate.Any())
-                        UpdateCached(objectsToUpdate, actionConfig);
+                    if (objectsToUpdate.Any())
+                    {
+                        if (this.m_AdapterSettings.CacheCRUDobjects)
+                            UpdateCached(objectsToUpdate, actionConfig);
+                        else
+                            IUpdate(objectsToUpdate, actionConfig);
+                    }
                 }
             }
             else if(pushType == PushType.CreateNonExisting)
