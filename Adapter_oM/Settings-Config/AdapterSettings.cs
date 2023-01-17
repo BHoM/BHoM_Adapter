@@ -65,6 +65,9 @@ namespace BH.oM.Adapter
                      "Otherwise, Objects found identical according to the AdapterComparer for the provided type are sent to the Update method.")]
         public virtual bool OnlyUpdateChangedObjects { get; set; } = false;
 
+        [Description("If true, CRUD operations will attempt read/write cache objects to speed things during a same Action.")]
+        public virtual bool CacheCRUDobjects { get; set; } = true;
+
         /****************************************/
         /****      CreateOnly settings      *****/
         /****************************************/
