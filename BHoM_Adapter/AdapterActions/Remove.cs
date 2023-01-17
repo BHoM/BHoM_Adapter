@@ -60,6 +60,7 @@ namespace BH.Adapter
             "The base implementation just calls Delete. It can be overridden in Toolkits.")]
         public virtual int Remove(IRequest request, ActionConfig actionConfig = null)
         {
+            this.ClearCache();
             return Delete(request as dynamic, actionConfig);
         }
     }
