@@ -48,7 +48,7 @@ namespace BH.Adapter
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
 
-            return IUpdate(newObjects, actionConfig);
+            return UpdateCached(newObjects, actionConfig);
         }
     }
 }

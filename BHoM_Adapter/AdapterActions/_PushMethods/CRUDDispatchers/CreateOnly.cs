@@ -58,7 +58,7 @@ namespace BH.Adapter
                 AssignNextFreeId(newObjects);
 
             // Create objects
-            if (!ICreate(newObjects, actionConfig))
+            if (!CreateAndCache(newObjects, actionConfig))
                 return false;
 
             if (callDistinct && m_AdapterSettings.UseAdapterId)
