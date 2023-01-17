@@ -49,7 +49,7 @@ namespace BH.Adapter
                 newObjects.ForEach(x => x.Tags.Add(tag));
             
             if (m_AdapterSettings.CacheCRUDobjects)
-                return UpdateCached(newObjects, actionConfig);
+                return UpdateIncludingCache(newObjects, actionConfig);
 
             return IUpdate(newObjects, actionConfig);
         }

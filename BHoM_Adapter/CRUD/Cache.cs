@@ -30,6 +30,7 @@ using BH.oM.Adapter;
 using BH.Engine.Adapter;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace BH.Adapter
 {
@@ -75,10 +76,10 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected virtual IEnumerable<T> ReadCashed<T>(string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual IEnumerable<T> GetCachedOrRead<T>(string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
             // Call the Basic Method Read() to get the objects based on the ids
-            IEnumerable<T> objects = ReadCashed<T>(new List<object>(), actionConfig);
+            IEnumerable<T> objects = GetCachedOrRead<T>(new List<object>(), actionConfig);
 
             // Null guard
             objects = objects ?? new List<T>();
@@ -92,26 +93,26 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected List<T> ReadCashed<T>(IList ids, ActionConfig actionConfig = null)
+        protected List<T> GetCachedOrRead<T>(IList ids, ActionConfig actionConfig = null)
         {
-            return ReadCashedDictionary<T, object>(ids, actionConfig).Values.ToList();
+            return GetCachedOrReadAsDictionary<object, T>(ids, actionConfig).Values.ToList();
         }
 
         /***************************************************/
 
-        protected Dictionary<TId, T> ReadCashedDictionary<T, TId>(IList ids = null, ActionConfig actionConfig = null)
+        protected Dictionary<TId, TObj> GetCachedOrReadAsDictionary<TId, TObj>(IList ids = null, ActionConfig actionConfig = null)
         {
 
-            Type t = typeof(T);
+            Type t = typeof(TObj);
             if (ids == null || ids.Count == 0)
             {
-                if (m_FullyCachedTypes.Contains(typeof(T)))
+                if (m_FullyCachedTypes.Contains(typeof(TObj)))
                 {
                     Dictionary<object, IBHoMObject> typeCache;
                     if (m_cache.TryGetValue(t, out typeCache))
-                        return typeCache.ToDictionary(x => (TId)x.Key, x => (T)x.Value);
+                        return typeCache.ToDictionary(x => (TId)x.Key, x => (TObj)x.Value);
                     else
-                        return new Dictionary<TId, T>();
+                        return new Dictionary<TId, TObj>();
                 }
                 else
                 {
@@ -142,7 +143,7 @@ namespace BH.Adapter
                         m_cache[t] = typeCache;
                     }
 
-                    return typeCache.ToDictionary(x => (TId)x.Key, x => (T)x.Value);
+                    return typeCache.ToDictionary(x => (TId)x.Key, x => (TObj)x.Value);
                 }
             }
             else
@@ -168,14 +169,6 @@ namespace BH.Adapter
 
                     if (idsNotInCache.Count > 0)
                     {
-                        //If some of the objects not found in the cache, they need to be read.
-                        //if (m_FullyCachedTypes.Contains(t))
-                        //{
-                        //    //Already read all objects, but still missing id. Return what was found and raise a warning
-                        //    Engine.Base.Compute.RecordWarning($"Unable to extract some objects of type {t.Name} with ids {string.Join(",", idsNotInCache)}.");
-                        //    return cachedObjects.OfType<T>().ToList();
-                        //}
-
                         IEnumerable<IBHoMObject> additionalObjects = IRead(t, idsNotInCache, actionConfig);
 
                         if (m_AdapterSettings.UseAdapterId)
@@ -200,7 +193,7 @@ namespace BH.Adapter
                         m_cache[t] = typeCache;
                     }
 
-                    return filteredObjects.ToDictionary(x => (TId)x.Key, x => (T)x.Value);
+                    return filteredObjects.ToDictionary(x => (TId)x.Key, x => (TObj)x.Value);
                 }
                 else
                 {
@@ -225,14 +218,14 @@ namespace BH.Adapter
                     }
                     m_cache[t] = typeCache;
 
-                    return typeCache.ToDictionary(x => (TId)x.Key, x => (T)x.Value);
+                    return typeCache.ToDictionary(x => (TId)x.Key, x => (TObj)x.Value);
                 }
             }
         }
 
         /***************************************************/
 
-        protected virtual bool UpdateCached<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
+        protected virtual bool UpdateIncludingCache<T>(IEnumerable<T> objects, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             if (!IUpdate(objects, actionConfig))
                 return false;
@@ -260,7 +253,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected virtual int UpdateTagsCached<T>(IEnumerable<object> ids, IEnumerable<HashSet<string>> newTags, ActionConfig actionConfig = null)
+        protected virtual int UpdateTagsIncludingCache<T>(IEnumerable<object> ids, IEnumerable<HashSet<string>> newTags, ActionConfig actionConfig = null)
         {
             Type t = typeof(T);
             int updateCount = IUpdateTags(t, ids, newTags, actionConfig);
@@ -299,7 +292,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected int DeleteFromModelAndCache<T>(IEnumerable<object> ids, ActionConfig actionConfig = null) where T : IBHoMObject
+        protected int DeleteIncludingCache<T>(IEnumerable<object> ids, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             Type t = typeof(T);
             int deleteCount = IDelete(t, ids, actionConfig);
