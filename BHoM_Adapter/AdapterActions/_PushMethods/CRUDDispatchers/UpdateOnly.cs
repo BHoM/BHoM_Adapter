@@ -47,8 +47,11 @@ namespace BH.Adapter
             // Make sure objects are tagged
             if (tag != "")
                 newObjects.ForEach(x => x.Tags.Add(tag));
+            
+            if (m_AdapterSettings.CacheCRUDobjects)
+                return UpdateCached(newObjects, actionConfig);
 
-            return UpdateCached(newObjects, actionConfig);
+            return IUpdate(newObjects, actionConfig);
         }
     }
 }
