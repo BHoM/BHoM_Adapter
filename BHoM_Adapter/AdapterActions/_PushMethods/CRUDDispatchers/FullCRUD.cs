@@ -58,7 +58,7 @@ namespace BH.Adapter
             //Read all the objects of that type from the external model
             IEnumerable<T> readObjects;
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig) != EqualityComparer<T>.Default)
-                readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
+                readObjects = ReadCashed<T>("", actionConfig)?.Where(x => x != null);
             else
                 readObjects = new List<T>();
 
@@ -72,7 +72,7 @@ namespace BH.Adapter
                 // All objects read from the model are to be deleted. 
                 // Note that this means that only objects of the same type of the objects being pushed will be deleted.
                 if (readObjects.Any())
-                    IDelete(typeof(T), readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                    DeleteFromModelAndCache<T>(readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
 
                 objectsToCreate = newObjects;
             }
@@ -86,7 +86,7 @@ namespace BH.Adapter
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
-            if (!ICreate(objectsToCreate, actionConfig))
+            if (!CreateAndCache(objectsToCreate, actionConfig))
                 return false;
 
             if (m_AdapterSettings.UseAdapterId)
@@ -168,11 +168,10 @@ namespace BH.Adapter
 
             // Extract the adapterIds from the toBeDeleted and call Delete() for all of them.
             if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
-                IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                DeleteFromModelAndCache<T>(toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
 
             // Update the tags for the rest of the existing objects in the model
-            IUpdateTags(typeof(T),
-                readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
+            UpdateTagsCached<T>(readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
                 readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
                 actionConfig);
 
@@ -205,19 +204,17 @@ namespace BH.Adapter
                         objectsToUpdate = diagram.Intersection.Select(x => x.Item1).ToList();
 
                     if(objectsToUpdate.Any())
-                        IUpdate(objectsToUpdate, actionConfig);
+                        UpdateCached(objectsToUpdate, actionConfig);
                 }
             }
             else if(pushType == PushType.CreateNonExisting)
             {
                 //For CreateNonExisting, the overlap objects are just kept, and not updated. To make sure tag functionality works though, 
                 //The obejcts need to get their tags (if any) updated.
-                IUpdateTags(typeof(T),
-                    diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterIds(AdapterIdFragmentType)),
+                UpdateTagsCached<T>(diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterIds(AdapterIdFragmentType)),
                     diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.Tags),
                     actionConfig);
             }
-
 
             // Return the objectsToPush that do not have any overlap with the existing ones; those will need to be created
             return objsToPush_exclusive;
