@@ -67,6 +67,7 @@ namespace BH.Adapter
         [Description("Pushes input objects using either the 'Full CRUD', 'CreateOnly' or 'UpdateOnly', depending on the PushType.")]
         public virtual List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
+            this.ClearCache();
             bool success = true;
 
             // ----------------------------------------//
@@ -129,6 +130,7 @@ namespace BH.Adapter
 
             }
 
+            this.ClearCache();
             return success ? objectsToPush.Cast<object>().ToList() : new List<object>();
         }
     }
