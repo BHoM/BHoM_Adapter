@@ -72,6 +72,7 @@ namespace BH.Adapter
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
+            this.ClearCache();
             // `(this as dynamic)` casts the abstract BHoMAdapter to its instance type (e.g. Speckle_Adapter), so all public ReadResults methods are captured
             if (request is IResultRequest)
                 return (this as dynamic).ReadResults(request as dynamic, actionConfig);
@@ -80,7 +81,9 @@ namespace BH.Adapter
             if (request is IRequest)
                 return (this as dynamic).Read(request as dynamic, actionConfig);
 
-            return IRead(null, null, actionConfig);
+            IEnumerable<object> read = IRead(null, null, actionConfig);
+            this.ClearCache();
+            return read;
         }
     }
 }
