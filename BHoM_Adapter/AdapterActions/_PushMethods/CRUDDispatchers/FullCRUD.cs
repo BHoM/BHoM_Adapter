@@ -60,7 +60,7 @@ namespace BH.Adapter
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig) != EqualityComparer<T>.Default)
             {
                 if (m_AdapterSettings.CacheCRUDobjects)
-                    readObjects = ReadCashed<T>("", actionConfig)?.Where(x => x != null);
+                    readObjects = GetCachedOrRead<T>("", actionConfig)?.Where(x => x != null);
                 else
                     readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
             }
@@ -79,7 +79,7 @@ namespace BH.Adapter
                 if (readObjects.Any())
                 {
                     if (m_AdapterSettings.CacheCRUDobjects)
-                        DeleteFromModelAndCache<T>(readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                        DeleteIncludingCache<T>(readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
                     else
                         IDelete(typeof(T), readObjects.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
                 }
@@ -96,8 +96,12 @@ namespace BH.Adapter
                 AssignNextFreeId(objectsToCreate);
 
             // Create objects
-            if ((m_AdapterSettings.CacheCRUDobjects && !CreateAndCache(objectsToCreate, actionConfig))
-                || !ICreate(objectsToCreate, actionConfig))
+            if (m_AdapterSettings.CacheCRUDobjects)
+            {
+                if (!CreateAndCache(newObjects, actionConfig))
+                    return false;
+            }
+            else if (!ICreate(newObjects, actionConfig))
                 return false;
 
             if (m_AdapterSettings.UseAdapterId)
@@ -181,7 +185,7 @@ namespace BH.Adapter
             if (pushType != PushType.UpdateOrCreateOnly && toBeDeleted != null && toBeDeleted.Any())
             {
                 if (m_AdapterSettings.CacheCRUDobjects)
-                    DeleteFromModelAndCache<T>(toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
+                    DeleteIncludingCache<T>(toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
                 else
                     IDelete(typeof(T), toBeDeleted.Select(obj => obj.AdapterIds(AdapterIdFragmentType)), actionConfig);
             }
@@ -189,7 +193,7 @@ namespace BH.Adapter
             // Update the tags for the rest of the existing objects in the model
             if (m_AdapterSettings.CacheCRUDobjects)
             {
-                UpdateTagsCached<T>(
+                UpdateTagsIncludingCache<T>(
                     readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.AdapterIds(AdapterIdFragmentType)),
                     readObjs_exclusive.Where(x => x.Tags.Count > 0).Select(x => x.Tags),
                     actionConfig);
@@ -234,7 +238,7 @@ namespace BH.Adapter
                     if (objectsToUpdate.Any())
                     {
                         if (this.m_AdapterSettings.CacheCRUDobjects)
-                            UpdateCached(objectsToUpdate, actionConfig);
+                            UpdateIncludingCache(objectsToUpdate, actionConfig);
                         else
                             IUpdate(objectsToUpdate, actionConfig);
                     }
@@ -244,7 +248,7 @@ namespace BH.Adapter
             {
                 //For CreateNonExisting, the overlap objects are just kept, and not updated. To make sure tag functionality works though, 
                 //The obejcts need to get their tags (if any) updated.
-                UpdateTagsCached<T>(diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterIds(AdapterIdFragmentType)),
+                UpdateTagsIncludingCache<T>(diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.AdapterIds(AdapterIdFragmentType)),
                     diagram.Intersection.Where(x => x.Item1.Tags.Count > 0).Select(x => x.Item1.Tags),
                     actionConfig);
             }
