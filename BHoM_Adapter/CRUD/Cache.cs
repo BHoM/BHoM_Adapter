@@ -99,7 +99,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected Dictionary<TId, T> ReadCashedDictionary<T, TId>(IList ids, ActionConfig actionConfig = null)
+        protected Dictionary<TId, T> ReadCashedDictionary<T, TId>(IList ids = null, ActionConfig actionConfig = null)
         {
 
             Type t = typeof(T);
