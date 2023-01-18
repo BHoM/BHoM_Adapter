@@ -36,11 +36,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace BH.Tests.Adapter
 {
@@ -51,12 +53,22 @@ namespace BH.Tests.Adapter
         public List<Tuple<Type, IEnumerable<IBHoMObject>>> Updated { get; set; } = new List<Tuple<Type, IEnumerable<IBHoMObject>>>();
         public List<Tuple<Type, IEnumerable<object>>> Deleted { get; set; } = new List<Tuple<Type, IEnumerable<object>>>();
 
-        public StructuralAdapter()
+        [Description("Useful e.g. to compare how many calls to Create are done with/without the caching mechanism.")]
+        public Dictionary<Type, int> CallsToCreatePerType { get; set; } = new Dictionary<Type, int>();
+        [Description("Useful e.g. to compare how many calls to Create are done with/without the caching mechanism.")]
+        public Dictionary<Type, int> CallsToReadPerType { get; set; } = new Dictionary<Type, int>();
+        [Description("Useful e.g. to compare how many calls to Create are done with/without the caching mechanism.")]
+        public Dictionary<Type, int> CallsToUpdatePerType { get; set; } = new Dictionary<Type, int>();
+        [Description("Useful e.g. to compare how many calls to Create are done with/without the caching mechanism.")]
+        public Dictionary<Type, int> CallsToDeletePerType { get; set; } = new Dictionary<Type, int>();
+
+        public StructuralAdapter(bool cacheCRUDobjects = true)
         {
             m_AdapterSettings = new AdapterSettings()
             {
                 UseAdapterId = false,
                 OnlyUpdateChangedObjects = true,
+                CacheCRUDobjects = cacheCRUDobjects
             };
 
             DependencyTypes = new Dictionary<Type, List<Type>>
@@ -86,6 +98,8 @@ namespace BH.Tests.Adapter
                 {typeof(IMaterialFragment), new NameOrDescriptionComparer() },
                 {typeof(LinkConstraint), new NameOrDescriptionComparer() },
                 {typeof(Constraint6DOF), new NameOrDescriptionComparer() },
+                {typeof(Offset), new NameOrDescriptionComparer() },
+                {typeof(BarRelease), new NameOrDescriptionComparer() }
             };
 
             AdapterIdFragmentType = typeof(StructuralAdapterId);
@@ -96,6 +110,11 @@ namespace BH.Tests.Adapter
         {
             Created.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
 
+            if (!CallsToCreatePerType.TryGetValue(typeof(T), out int n))
+                CallsToCreatePerType[typeof(T)] = 1;
+            else
+                CallsToCreatePerType[typeof(T)] = n + 1;
+
             return true;
         }
 
@@ -103,14 +122,37 @@ namespace BH.Tests.Adapter
         {
             ReadTypes.Add(new Tuple<Type, IList>(type, ids));
 
-            List<IBHoMObject> modelObejcts = Created.Where(x => x.Item1.IsAssignableFrom(type)).SelectMany(x => x.Item2).ToList();
+            List<IBHoMObject> modelObjects = Created.Where(x => x.Item1.IsAssignableFrom(type)).SelectMany(x => x.Item2).ToList();
 
-            return modelObejcts;
+            MethodInfo method = typeof(Engine.Adapter.Query).GetMethod("GetDependencyTypes");
+            method = method.MakeGenericMethod(type);
+
+            List<Type> dependencyTypes = method.Invoke(null, new object[] { this }) as List<Type>;
+
+            MethodInfo readCached = typeof(BHoMAdapter).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.Name == "GetCachedOrRead");
+
+            foreach (Type t in dependencyTypes)
+            {
+                MethodInfo generic = readCached.MakeGenericMethod(t);
+                generic.Invoke(this, new object[] { null, null });
+            }
+
+            if (!CallsToReadPerType.TryGetValue(type, out int n))
+                CallsToReadPerType[type] = 1;
+            else
+                CallsToReadPerType[type] = n + 1;
+
+            return modelObjects;
         }
 
         protected override bool IUpdate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
         {
             Updated.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
+
+            if (!CallsToUpdatePerType.TryGetValue(typeof(T), out int n))
+                CallsToUpdatePerType[typeof(T)] = 1;
+            else
+                CallsToUpdatePerType[typeof(T)] = n + 1;
 
             return true;
         }
@@ -118,6 +160,11 @@ namespace BH.Tests.Adapter
         protected override int IDelete(Type type, IEnumerable<object> ids, ActionConfig actionConfig = null)
         {
             Deleted.Add(new Tuple<Type, IEnumerable<object>>(type, ids));
+
+            if (!CallsToDeletePerType.TryGetValue(type, out int n))
+                CallsToDeletePerType[type] = 1;
+            else
+                CallsToDeletePerType[type] = n + 1;
 
             return 0;
         }

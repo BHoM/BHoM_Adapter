@@ -174,7 +174,7 @@ namespace BH.Tests.Adapter.Structure
             Assert.IsTrue(onlyNodes.Any(t => t.Item2 == PushType.UpdateOnly), "Missing UpdateOnly in the list of pushed nodes.");
             Assert.IsTrue(onlyNodes.Any(t => t.Item2 == PushType.FullPush), "Missing FullPush in the list of pushed nodes.");
 
-            Assert.IsTrue(orderedObjects.Where(t => t.Item1 == typeof(Node)).First().Item2 == PushType.UpdateOnly, 
+            Assert.IsTrue(orderedObjects.Where(t => t.Item1 == typeof(Node)).First().Item2 == PushType.UpdateOnly,
                 "For Node objects, UpdateOnly should have come before FullPush.");
         }
 
@@ -337,6 +337,35 @@ namespace BH.Tests.Adapter.Structure
             int materialUpdateCount = sa.Updated.First(x => x.Item1 == typeof(IMaterialFragment)).Item2.Count();
 
             Assert.AreEqual(changeCount, materialUpdateCount, "Wrong number of Materials Updated.");
+        }
+
+        [Test]
+        public void CountCRUDCallsPerType()
+        {
+            List<object> inputObjects = new List<object>();
+            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
+            inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
+
+            sa.Push(inputObjects);
+
+            Assert.IsTrue(sa.CallsToCreatePerType.All(kv => kv.Value == 1), "Calls to Create should be done once per each type.");
+            Assert.IsTrue(sa.CallsToReadPerType.All(kv => kv.Value == 1), "Calls to Read should be done once per each type.");
+        }
+
+        [Test]
+        public void CountCRUDCallsPerType_UpdateOnly()
+        {
+            List<object> inputObjects = new List<object>();
+            inputObjects.AddRange(Create.RandomObjects<Bar>(10));
+            inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
+
+            sa.Push(inputObjects);
+            sa.Push(inputObjects, "", PushType.UpdateOnly);
+
+            Assert.IsTrue(sa.CallsToCreatePerType.All(kv => kv.Value == 1), "Calls to Create should be done once per each type.");
+            Assert.IsTrue(sa.CallsToReadPerType.Where(kv => kv.Key == typeof(Bar)).First().Value == 1, "The Bar should be read only once.");
+            Assert.IsTrue(sa.CallsToReadPerType.Where(kv => kv.Key != typeof(Bar)).All(kv => kv.Value == 2));
+            Assert.IsTrue(sa.CallsToUpdatePerType.All(kv => kv.Value == 1), "Calls to Update should be done once per each type.");
         }
     }
 }
