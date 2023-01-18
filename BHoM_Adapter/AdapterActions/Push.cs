@@ -111,7 +111,7 @@ namespace BH.Adapter
                     case PushType.FullPush:
                     case PushType.UpdateOrCreateOnly:
                     case PushType.CreateNonExisting:
-                        success &= FullCRUD(objList_specificType as dynamic, pushType, tag, actionConfig);
+                        success &= FullCRUD(objList_specificType as dynamic, group.Item2, tag, actionConfig);
                         break;
                     case PushType.CreateOnly:
                         success &= CreateOnly(objList_specificType as dynamic, tag, actionConfig);
