@@ -77,6 +77,46 @@ namespace BH.Adapter
 
         /***************************************************/
 
+        [Description("Method for getting out a single object from the cache or the read from the model.")]
+        protected TObj GetCachedOrRead<TObj, TId>(TId id, ActionConfig actionConfig = null) where TObj : IBHoMObject
+        {
+            if (!m_AdapterSettings.UseAdapterId)
+            {
+                Engine.Base.Compute.RecordWarning("Unable to get single item from cache for adapters not using AdapterIds.");
+                return default(TObj);
+            }
+
+            if (id == null)
+                return default(TObj);
+
+            Type t = typeof(TObj);
+            Dictionary<object, IBHoMObject> typeCache;
+            if (!m_cache.TryGetValue(t, out typeCache))
+                typeCache = new Dictionary<object, IBHoMObject>();
+
+            IBHoMObject cacheObj = null;
+            if (!typeCache.TryGetValue(id, out cacheObj))
+            {
+                IEnumerable<IBHoMObject> read = IRead(t, new List<TId>() { id }, actionConfig);
+
+                foreach (IBHoMObject item in read)
+                {
+                    object itemId = GetAdapterId(item);
+                    if (itemId.Equals(id))
+                        cacheObj = item;
+                    typeCache[itemId] = item;
+                }
+                m_cache[t] = typeCache;
+            }
+
+            if (cacheObj is TObj)
+                return (TObj)cacheObj;
+            else
+                return default(TObj);
+        }
+
+        /***************************************************/
+
         [Description("Method for getting out a list of objects from the cache or the read from the model.")]
         protected List<T> GetCachedOrRead<T>(IList ids = null, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
