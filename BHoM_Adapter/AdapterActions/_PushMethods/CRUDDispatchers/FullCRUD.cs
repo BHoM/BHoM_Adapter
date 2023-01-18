@@ -95,15 +95,19 @@ namespace BH.Adapter
             if (m_AdapterSettings.UseAdapterId)
                 AssignNextFreeId(objectsToCreate);
 
-            // Create objects
-            if (m_AdapterSettings.CacheCRUDobjects)
+            // Create objects if there are any to be created.
+            if (objectsToCreate.Any())
             {
-                if (!CreateAndCache(newObjects, actionConfig))
+                if (m_AdapterSettings.CacheCRUDobjects)
+                {
+                    if (!CreateAndCache(objectsToCreate, actionConfig))
+                        return false;
+                }
+                else if (!ICreate(objectsToCreate, actionConfig))
                     return false;
             }
-            else if (!ICreate(newObjects, actionConfig))
-                return false;
 
+            // Needs to be done even if there are no objectsToCreate as this could include updated objects
             if (m_AdapterSettings.UseAdapterId)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
