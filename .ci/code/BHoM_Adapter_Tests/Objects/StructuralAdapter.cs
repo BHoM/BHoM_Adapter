@@ -134,7 +134,7 @@ namespace BH.Tests.Adapter
             foreach (Type t in dependencyTypes)
             {
                 MethodInfo generic = readCached.MakeGenericMethod(t);
-                generic.Invoke(this, new object[] { null, null });
+                generic.Invoke(this, new object[] { null, null, actionConfig });
             }
 
             if (!CallsToReadPerType.TryGetValue(type, out int n))

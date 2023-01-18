@@ -31,6 +31,7 @@ using BH.Engine.Adapter;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace BH.Adapter
 {
@@ -76,30 +77,26 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected virtual IEnumerable<T> GetCachedOrRead<T>(string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
+        [Description("Method for getting out a list of objects from the cache or the read from the model.")]
+        protected List<T> GetCachedOrRead<T>(IList ids = null, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
-            // Call the Basic Method Read() to get the objects based on the ids
-            IEnumerable<T> objects = GetCachedOrRead<T>(new List<object>(), actionConfig);
+            // Call the method extracting from cache or reading from model as dictionary.
+            //Setting key type to object to allow for any type of key
+            List<T> objects = GetCachedOrReadAsDictionary<object, T>(ids, actionConfig).Values.ToList();
 
             // Null guard
             objects = objects ?? new List<T>();
 
             // Filter by tag if any 
-            if (tag == "")
+            if (string.IsNullOrWhiteSpace(tag))
                 return objects;
             else
-                return objects.Where(x => x.Tags.Contains(tag));
+                return objects.Where(x => x.Tags.Contains(tag)).ToList();
         }
 
         /***************************************************/
 
-        protected List<T> GetCachedOrRead<T>(IList ids, ActionConfig actionConfig = null)
-        {
-            return GetCachedOrReadAsDictionary<object, T>(ids, actionConfig).Values.ToList();
-        }
-
-        /***************************************************/
-
+        [Description("Method for getting out a Dictionary of id and object from the cache or the read from the model.")]
         protected Dictionary<TId, TObj> GetCachedOrReadAsDictionary<TId, TObj>(IList ids = null, ActionConfig actionConfig = null)
         {
 
@@ -148,6 +145,7 @@ namespace BH.Adapter
             }
             else
             {
+                //Filtered obejct collection to store the objects to be returned either from the model or from the cache
                 Dictionary<object, IBHoMObject> filteredObjects = new Dictionary<object, IBHoMObject>();
                 Dictionary<object, IBHoMObject> typeCache;
                 if (m_cache.TryGetValue(t, out typeCache))
