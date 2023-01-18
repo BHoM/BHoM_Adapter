@@ -60,7 +60,7 @@ namespace BH.Adapter
             if (tag != "" || Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig) != EqualityComparer<T>.Default)
             {
                 if (m_AdapterSettings.CacheCRUDobjects)
-                    readObjects = GetCachedOrRead<T>("", actionConfig)?.Where(x => x != null);
+                    readObjects = GetCachedOrRead<T>(null, "", actionConfig)?.Where(x => x != null);
                 else
                     readObjects = Read(typeof(T), "", actionConfig)?.Where(x => x != null && x is T).Cast<T>();
             }
