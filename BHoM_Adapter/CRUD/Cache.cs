@@ -191,14 +191,12 @@ namespace BH.Adapter
                 if (m_cache.TryGetValue(t, out typeCache))
                 {
                     List<object> idsNotInCache = new List<object>();
-                    List<IBHoMObject> cachedObjects = new List<IBHoMObject>();
 
                     //Loop through the ids and try to fetch from cache.
                     foreach (object id in ids)
                     {
                         if (typeCache.TryGetValue(id, out IBHoMObject obj))
                         {
-                            cachedObjects.Add(obj);
                             filteredObjects[id] = obj;
                         }
                         else
