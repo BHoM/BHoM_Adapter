@@ -129,7 +129,7 @@ namespace BH.Tests.Adapter
 
             List<Type> dependencyTypes = method.Invoke(null, new object[] { this }) as List<Type>;
 
-            MethodInfo readCached = typeof(BHoMAdapter).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.Name == nameof(GetCachedOrRead));
+            MethodInfo readCached = typeof(BHoMAdapter).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(x => x.GetGenericArguments().Length == 1).FirstOrDefault(x => x.Name == nameof(GetCachedOrRead));
 
             foreach (Type t in dependencyTypes)
             {
