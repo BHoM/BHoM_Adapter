@@ -68,14 +68,18 @@ namespace BH.Tests.Adapter.Structure
 
             sa.Push(inputObjects);
 
-            string correctOrder = "BH.oM.Structure.Constraints.Constraint6DOF, BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
-                "BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Node, " +
-                "BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset, " +
-                "BH.oM.Structure.Elements.Bar, BH.oM.Structure.Loads.Loadcase, " +
-                "BH.oM.Structure.Loads.BarUniformlyDistributedLoad";
+            string correctOrder = "BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
+                                  "BH.oM.Structure.Constraints.Constraint6DOF, " +
+                                  "BH.oM.Structure.SectionProperties.ISectionProperty, " +
+                                  "BH.oM.Structure.Elements.Node, " +
+                                  "BH.oM.Structure.Constraints.BarRelease, " +
+                                  "BH.oM.Structure.Offsets.Offset, " +
+                                  "BH.oM.Structure.Elements.Bar, " +
+                                  "BH.oM.Structure.Loads.Loadcase, " +
+                                  "BH.oM.Structure.Loads.BarUniformlyDistributedLoad";
 
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
-            Assert.IsTrue(createdOrder == correctOrder);
+            Assert.AreEqual(correctOrder, createdOrder);
         }
 
 
@@ -95,12 +99,21 @@ namespace BH.Tests.Adapter.Structure
 
             sa.Push(inputObjects);
 
-            string correctOrder = "BH.oM.Structure.Constraints.Constraint4DOF, BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
-                "BH.oM.Structure.Constraints.Constraint6DOF, BH.oM.Structure.SectionProperties.ISectionProperty, " +
-                "BH.oM.Structure.Elements.Node, BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset, " +
-                "BH.oM.Structure.Elements.Bar, BH.oM.Structure.Loads.Loadcase, BH.oM.Structure.SurfaceProperties.ISurfaceProperty, " +
-                "BH.oM.Structure.Elements.Opening, BH.oM.Structure.Elements.Edge, BH.oM.Structure.Loads.BarUniformlyDistributedLoad, " +
-                "BH.oM.Structure.Elements.FEMesh, BH.oM.Structure.Elements.Panel";
+            string correctOrder = "BH.oM.Structure.Constraints.Constraint6DOF, " +
+                                  "BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
+                                  "BH.oM.Structure.Constraints.Constraint4DOF, " +
+                                  "BH.oM.Structure.Elements.Node, " +
+                                  "BH.oM.Structure.Elements.Edge, " +
+                                  "BH.oM.Structure.SectionProperties.ISectionProperty, " +
+                                  "BH.oM.Structure.Constraints.BarRelease, " +
+                                  "BH.oM.Structure.Offsets.Offset, " +
+                                  "BH.oM.Structure.SurfaceProperties.ISurfaceProperty, " +
+                                  "BH.oM.Structure.Elements.Bar, " +
+                                  "BH.oM.Structure.Loads.Loadcase, " +
+                                  "BH.oM.Structure.Elements.Opening, " +
+                                  "BH.oM.Structure.Loads.BarUniformlyDistributedLoad, " +
+                                  "BH.oM.Structure.Elements.FEMesh, " +
+                                  "BH.oM.Structure.Elements.Panel";
 
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
             Assert.AreEqual(correctOrder, createdOrder);
@@ -117,9 +130,12 @@ namespace BH.Tests.Adapter.Structure
 
             sa.Push(inputObjects, "", BH.oM.Adapter.PushType.UpdateOnly);
 
-            string correctOrderCreated = "BH.oM.Structure.MaterialFragments.IMaterialFragment, BH.oM.Structure.Constraints.Constraint6DOF, " +
-                "BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Node, " +
-                "BH.oM.Structure.Constraints.BarRelease, BH.oM.Structure.Offsets.Offset";
+            string correctOrderCreated = "BH.oM.Structure.Constraints.Constraint6DOF, " +
+                                         "BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
+                                         "BH.oM.Structure.SectionProperties.ISectionProperty, " +
+                                         "BH.oM.Structure.Elements.Node, " +
+                                         "BH.oM.Structure.Constraints.BarRelease, " +
+                                         "BH.oM.Structure.Offsets.Offset";
             string correctOrderUpdated = "BH.oM.Structure.Elements.Node, BH.oM.Structure.SectionProperties.ISectionProperty, BH.oM.Structure.Elements.Bar";
 
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
