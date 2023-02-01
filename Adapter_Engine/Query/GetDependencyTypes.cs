@@ -41,7 +41,12 @@ namespace BH.Engine.Adapter
         [Description("Returns the dependency types for a certain object type.")]
         public static List<Type> GetDependencyTypes<T>(this IBHoMAdapter bhomAdapter)
         {
-            Type type = typeof(T);
+            return GetDependencyTypes(bhomAdapter, typeof(T));
+        }
+
+        [Description("Returns the dependency types for a certain object type.")]
+        public static List<Type> GetDependencyTypes(this IBHoMAdapter bhomAdapter, Type type)
+        {
             List<Type> dependencyTypes = new List<Type>();
 
             if (bhomAdapter.DependencyTypes.ContainsKey(type))
