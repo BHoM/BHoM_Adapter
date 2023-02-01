@@ -30,6 +30,7 @@ using System.Linq;
 using BH.oM.Adapter;
 using BH.oM.Base.Attributes;
 using BH.Engine.Reflection;
+using System.Reflection;
 
 namespace BH.Engine.Adapter
 {
@@ -56,68 +57,14 @@ namespace BH.Engine.Adapter
             Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> allObjectsPerType = GetObjectsAndRecursiveDependencies(objects, pushType, bHoMAdapter);
 
             // Sort the groups by dependency order, so they can be pushed in the correct order.
-            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, PushType, IEnumerable<object>>>();
-
-            List<Tuple<Type, PushType>> handledGroups = new List<Tuple<Type, PushType>>();
-            foreach (var typeGroup in allObjectsPerType)
-            {
-                if (handledGroups.Contains(typeGroup.Key))
-                    continue;
-
-                // We can scan the rest of the input objects to see if they include dependencies of this current object type.
-                List<Type> dependenciesToLookFor = new List<Type>();
-
-                // Add direct dependencies of this current object type.
-                if (bHoMAdapter.DependencyTypes.TryGetValue(typeGroup.Key.Item1, out List<Type> typeDeps))
-                    dependenciesToLookFor.AddRange(typeDeps);
-
-                // Check if the current object type has basetypes (interfaces) for which dependencies may have been specified.
-                // E.g. for a CrossSection object we can get ISectionProperty which it implements,
-                // which in turn is a type that commonly specifies additional dependencies (generally, IMaterialFragment).
-                foreach (var baseType in typeGroup.Key.Item1.BaseTypes())
-                {
-                    if (bHoMAdapter.DependencyTypes.TryGetValue(baseType, out List<Type> baseTypeDeps))
-                        dependenciesToLookFor.AddRange(baseTypeDeps);
-                }
-
-                // If this current object type does not have dependencies, add it at the start of the list and continue.
-                if (!dependenciesToLookFor.Any())
-                {
-                    orderedObjects.Insert(0, new Tuple<Type, PushType, IEnumerable<object>>(typeGroup.Key.Item1, typeGroup.Key.Item2, typeGroup.Value.OfType<object>()));
-                    handledGroups.Add(typeGroup.Key);
-                    continue;
-                }
-
-                // Scan the rest of the input objects to see they include dependencies,
-                // and add them to the orderedObjects list in order to prioritize them.
-                foreach (var otherTypeGroup in allObjectsPerType)
-                {
-                    if (handledGroups.Contains(otherTypeGroup.Key) || otherTypeGroup.Key == typeGroup.Key)
-                        continue;
-
-                    if (dependenciesToLookFor.Contains(otherTypeGroup.Key.Item1) || dependenciesToLookFor.Any(d => d.IsAssignableFromIncludeGenericsAndRefTypes(otherTypeGroup.Key.Item1)))
-                    {
-                        orderedObjects.Add(new Tuple<Type, PushType, IEnumerable<object>>(otherTypeGroup.Key.Item1, otherTypeGroup.Key.Item2, otherTypeGroup.Value.OfType<object>()));
-                        handledGroups.Add(otherTypeGroup.Key);
-                    }
-                }
-            }
-
-            // The non-handled groups can be added at the end in any order, because they don't have any dependency ordering.
-            foreach (var typeGroup in allObjectsPerType)
-            {
-                if (handledGroups.Contains(typeGroup.Key))
-                    continue;
-
-                orderedObjects.Add(new Tuple<Type, PushType, IEnumerable<object>>(typeGroup.Key.Item1, typeGroup.Key.Item2, typeGroup.Value.OfType<object>()));
-            }
+            List<Tuple<Type, PushType, IEnumerable<object>>> baseTypeGroupObjects = allObjectsPerType.Select(x => new Tuple<Type, PushType, IEnumerable<object>> (x.Key.Item1, x.Key.Item2, x.Value )).ToList();
 
             // Group per base type extracted from dependencies.
             // This is useful to reduce the number of CRUD calls.
             var allTypesInDependencies = bHoMAdapter.DependencyTypes.Values.SelectMany(v => v).Distinct();
-            for (int i = 0; i < orderedObjects.Count; i++)
+            for (int i = 0; i < baseTypeGroupObjects.Count; i++)
             {
-                var kv = orderedObjects.ElementAt(i);
+                var kv = baseTypeGroupObjects.ElementAt(i);
 
                 foreach (Type baseType in kv.Item1.BaseTypes())
                 {
@@ -128,32 +75,32 @@ namespace BH.Engine.Adapter
                             continue;
 
                         //Find matching item in the ordered obejct, matching the base type and push type.
-                        var matchingItem = orderedObjects.FirstOrDefault(o => o.Item1 == baseType && o.Item2 == kv.Item2);
+                        var matchingItem = baseTypeGroupObjects.FirstOrDefault(o => o.Item1 == baseType && o.Item2 == kv.Item2);
 
                         int matchingIndex;
                         //Get index of matching object if match is not null.
                         if (matchingItem != null)
-                            matchingIndex = orderedObjects.IndexOf(matchingItem);
+                            matchingIndex = baseTypeGroupObjects.IndexOf(matchingItem);
                         else
                             matchingIndex = -1;
 
                         if (matchingIndex == -1)
                         {
                             //Nothing found. Replace the current item with base type instead of concrete type.
-                            orderedObjects[i] = new Tuple<Type, PushType, IEnumerable<object>>(baseType, kv.Item2, kv.Item3);
+                            baseTypeGroupObjects[i] = new Tuple<Type, PushType, IEnumerable<object>>(baseType, kv.Item2, kv.Item3);
                         }
                         else
                         {
                             //If matching base type is found, concatenate the to sets together, to be CRUD together.
                             //For example, if the pushtype for both is the same, SteelSections and AluminiumSections will be grouped under ISectionProperty if ISectionProperty is in DependencyTypes.
-                            var toAdd = new Tuple<Type, PushType, IEnumerable<object>>(baseType, orderedObjects[matchingIndex].Item2, orderedObjects[matchingIndex].Item3.Concat(kv.Item3));
+                            var toAdd = new Tuple<Type, PushType, IEnumerable<object>>(baseType, baseTypeGroupObjects[matchingIndex].Item2, baseTypeGroupObjects[matchingIndex].Item3.Concat(kv.Item3));
 
                             int minIndex = Math.Min(i, matchingIndex);
                             int maxIndex = Math.Max(i, matchingIndex);
 
                             //Replace on minimum of the two indecies found and remove the other.
-                            orderedObjects[minIndex] = toAdd;
-                            orderedObjects.RemoveAt(maxIndex);
+                            baseTypeGroupObjects[minIndex] = toAdd;
+                            baseTypeGroupObjects.RemoveAt(maxIndex);
                             i--;    //Decrement i as item has been removed from the list.
                         }
                         found = true;
@@ -165,6 +112,17 @@ namespace BH.Engine.Adapter
                         break;
                 }
             }
+
+            //Dictionary to store the dependency depth of each type
+            //The dependency depth indicates how many objects being pushed that depend on them
+            //This means that the types with the highest depth count should be pushed first
+            Dictionary<Type, int> dependecyDepth = new Dictionary<Type, int>();
+
+            //Method runs through all types, and recursively calls the dependecy types, and increments the depth of each type for every time it is found
+            EvaluateDependencyDepths(bHoMAdapter, baseTypeGroupObjects.Select(x => x.Item1).Distinct(), dependecyDepth);
+
+            //Sorts the types by highest to lowest depth count
+            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = baseTypeGroupObjects.OrderByDescending(x => dependecyDepth[x.Item1]).ToList();
 
             // If two types are subject to two different CRUD operations (e.g. UpdateOnly and FullCRUD),
             // make sure the order of CRUD operations is appropriate (e.g. UpdateOnly must happen before FullCRUD to avoid duplicates).
@@ -188,6 +146,25 @@ namespace BH.Engine.Adapter
 
             return orderedObjects;
         }
+
+        /***************************************************/
+
+        [Description("Looping through all types and their dependencies and incrementally increases the depth counter for every time a type is found.")]
+        private static void EvaluateDependencyDepths(this IBHoMAdapter bHoMAdapter, IEnumerable<Type> types, Dictionary<Type, int> depths)
+        {
+            foreach (Type type in types)
+            {
+                if (!depths.ContainsKey(type))
+                    depths[type] = 0;   //First appearance of the type, either as a standalone object or as a dependecy
+                else
+                    depths[type]++;     //Increment depth counter for every time the dependecy is found, either as the standalone type, or as a dependency object
+
+                //Recursive call to make sure all dependecies are incremented
+                EvaluateDependencyDepths(bHoMAdapter, bHoMAdapter.GetDependencyTypes(type), depths);
+            }
+        }
+
+        /***************************************************/
     }
 }
 
