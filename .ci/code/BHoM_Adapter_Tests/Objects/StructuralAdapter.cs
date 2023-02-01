@@ -43,6 +43,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using BH.Engine.Adapter;
 
 namespace BH.Tests.Adapter
 {
@@ -124,10 +125,7 @@ namespace BH.Tests.Adapter
 
             List<IBHoMObject> modelObjects = Created.Where(x => x.Item1.IsAssignableFrom(type)).SelectMany(x => x.Item2).ToList();
 
-            MethodInfo method = typeof(Engine.Adapter.Query).GetMethod(nameof(Engine.Adapter.Query.GetDependencyTypes));
-            method = method.MakeGenericMethod(type);
-
-            List<Type> dependencyTypes = method.Invoke(null, new object[] { this }) as List<Type>;
+            List<Type> dependencyTypes = this.GetDependencyTypes(type);
 
             MethodInfo readCached = typeof(BHoMAdapter).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(x => x.GetGenericArguments().Length == 1).FirstOrDefault(x => x.Name == nameof(GetCachedOrRead));
 
