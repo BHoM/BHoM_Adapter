@@ -195,6 +195,27 @@ namespace BH.Tests.Adapter.Structure
         }
 
         [Test]
+        public void DependencyOrder_CreateLoadNoObjectsWithIds()
+        {
+            List<BarUniformlyDistributedLoad> loads = Create.RandomObjects<BarUniformlyDistributedLoad>(3);
+
+            sa.Push(loads);
+
+            string correctOrder = "BH.oM.Structure.MaterialFragments.IMaterialFragment, " +
+                                  "BH.oM.Structure.Constraints.Constraint6DOF, " +
+                                  "BH.oM.Structure.SectionProperties.ISectionProperty, " +
+                                  "BH.oM.Structure.Elements.Node, " +
+                                  "BH.oM.Structure.Constraints.BarRelease, " +
+                                  "BH.oM.Structure.Offsets.Offset, " +
+                                  "BH.oM.Structure.Elements.Bar, " +
+                                  "BH.oM.Structure.Loads.Loadcase, " +
+                                  "BH.oM.Structure.Loads.BarUniformlyDistributedLoad";
+            string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
+
+            Assert.AreEqual(correctOrder, createdOrder);
+        }
+
+        [Test]
         public void DependencyOrder_CreateLoadAllObjectsWithIds()
         {
             List<Bar> bars = Create.RandomObjects<Bar>(10);
