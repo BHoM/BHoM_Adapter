@@ -58,11 +58,9 @@ namespace BH.Adapter
             "Item2 = A boolean indicating if the Execute was successful.")]
         public virtual Output<List<object>, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
+            BH.Engine.Base.Compute.RecordError($"Execute is not implemented in {this.GetType().Name}.");
+
             return new Output<List<object>, bool> { Item1 = null, Item2 = false};
         }
     }
 }
-
-
-
-
