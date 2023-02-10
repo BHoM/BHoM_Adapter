@@ -31,6 +31,8 @@ using BH.oM.Structure.SectionProperties;
 using BH.oM.Structure.SurfaceProperties;
 using BH.oM.Adapter;
 using System.Diagnostics.Contracts;
+using AutoBogus;
+using Shouldly;
 
 namespace BH.Tests.Adapter.Structure
 {
@@ -41,6 +43,26 @@ namespace BH.Tests.Adapter.Structure
         public void Setup()
         {
             sa = new StructuralAdapter();
+        }
+
+        private static IEnumerable<TestCaseData> GetTestContainers()
+        {
+            // BH.Engine.Base.Create.RandomObject() can't deal with generics. Using AutoFaker instead. Example:
+            // AutoFaker creates 1 objects of the requested type per each IEnumerable property.
+            // E.g. Container<Bar> will have 1 + 1 + 1 = 3 Bars.  
+            yield return new TestCaseData(new AutoFaker<TestContainer<Bar>>().Generate(), 5, 50);
+        }
+
+
+        [Test]
+        [TestCaseSource(nameof(GetTestContainers))]
+        public void UnpackObjsDuringPush<T>(TestContainer<T> container, int numberOfTypes, int minTotalObjects)
+        {
+            sa.Push(new List<object>() { container });
+
+            IEnumerable<BH.oM.Base.IBHoMObject>? sectionProperties = sa.Created.Where(c => c.Item1 == typeof(ISectionProperty)).FirstOrDefault()?.Item2 ?? new List<IBHoMObject>();
+            sa.Created.Count.ShouldBe(numberOfTypes);
+            sa.Created.SelectMany(kv => kv.Item2).Count().ShouldBeGreaterThan(minTotalObjects);
         }
 
         [Test]

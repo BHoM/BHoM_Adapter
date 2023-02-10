@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using BH.oM.Adapter;
+using IContainer = BH.oM.Base.IContainer;
 
 namespace BH.Adapter
 {
@@ -66,13 +67,27 @@ namespace BH.Adapter
             //        OBJECT PREPARATION        // 
             // -------------------------------- // 
 
+            // Unpack any container present in the input objects
+            List<object> unpackedObjs = new List<object>();
+
+            foreach (var obj in objects)
+            {
+                if (obj is IContainer container)
+                {
+                    unpackedObjs.AddRange(container.Unpack());
+                }
+                else
+                    unpackedObjs.Add(obj);
+            }
+
             IEnumerable<IBHoMObject> objectsToPush = new List<IBHoMObject>();
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             if (wrapNonBHoMObjects)
-                objectsToPush = WrapNonBHoMObjects(objects);
+                objectsToPush = WrapNonBHoMObjects(unpackedObjs);
             else
-                objectsToPush = objects.OfType<IBHoMObject>();
+                objectsToPush = unpackedObjs.OfType<IBHoMObject>();
+
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             if (m_AdapterSettings.CloneBeforePush)
