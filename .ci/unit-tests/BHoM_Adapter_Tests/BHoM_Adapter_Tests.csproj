@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -55,5 +57,9 @@
       <HintPath>C:\ProgramData\BHoM\Assemblies\Structure_oM.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not &quot;$(ConfigurationName)&quot; == &quot;Test&quot; (xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;C:\ProgramData\BHoM\Assemblies&quot; /Y)" />
+  </Target>
 
 </Project>

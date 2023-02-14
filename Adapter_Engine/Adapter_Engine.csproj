@@ -9,14 +9,19 @@
     <Copyright>Copyright © https://github.com/BHoM</Copyright>
     <RootNamespace>BH.Engine.Adapter</RootNamespace>
     <FileVersion>6.1.0.0</FileVersion>
+    <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\Build\</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+    <OutputPath>..\Build\</OutputPath>
+  </PropertyGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot;  &quot;C:\ProgramData\BHoM\Assemblies&quot; /Y" />
+    <Exec Command="if not &quot;$(ConfigurationName)&quot; == &quot;Test&quot; (xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;C:\ProgramData\BHoM\Assemblies&quot; /Y)" />
   </Target>
 
   <ItemGroup>
