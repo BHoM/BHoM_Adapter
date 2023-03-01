@@ -16,7 +16,6 @@ namespace BH.Adapter.Modules.Structure
     {
         public void PreprocessObjects(IEnumerable<object> objects)
         {
-            return;
             IEnumerable<IBHoMObject> bhObjs = objects.OfType<IBHoMObject>();
 
             List<ILoad> loads = new List<ILoad>();
