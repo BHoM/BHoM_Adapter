@@ -133,9 +133,9 @@ namespace BH.Tests.Adapter.Structure
                                   "BH.oM.Structure.Elements.Bar, " +
                                   "BH.oM.Structure.Loads.Loadcase, " +
                                   "BH.oM.Structure.Elements.Opening, " +
-                                  "BH.oM.Structure.Loads.BarUniformlyDistributedLoad, " +
                                   "BH.oM.Structure.Elements.FEMesh, " +
-                                  "BH.oM.Structure.Elements.Panel";
+                                  "BH.oM.Structure.Elements.Panel, " +
+                                  "BH.oM.Structure.Loads.BarUniformlyDistributedLoad";
 
             string createdOrder = string.Join(", ", sa.Created.Select(c => c.Item1.FullName));
             Assert.AreEqual(correctOrder, createdOrder);
@@ -444,8 +444,9 @@ namespace BH.Tests.Adapter.Structure
             List<Panel> panels = Create.RandomObjects<Panel>();
             AreaUniformlyDistributedLoad load = Create.RandomObject<AreaUniformlyDistributedLoad>();
             load.Objects.Elements = panels.Cast<IAreaElement>().ToList();
-            inputObjects.AddRange(panels);
+
             inputObjects.Add(load);
+            inputObjects.AddRange(panels);
 
             sa.Push(inputObjects);
         }
