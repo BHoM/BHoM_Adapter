@@ -144,11 +144,16 @@ namespace BH.Tests.Adapter.Structure
         [Test]
         public void Dependecies_UpdateOnly()
         {
-            List<object> inputObjects = new List<object>();
+            List<IBHoMObject> inputObjects = new List<IBHoMObject>();
             inputObjects.AddRange(Create.RandomObjects<Node>(10));
             inputObjects.AddRange(Create.RandomObjects<Bar>(10));
             inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
             inputObjects.AddRange(Create.RandomObjects<AluminiumSection>(10));
+
+            for (int i = 0; i < inputObjects.Count; i++)
+            {
+                BH.Engine.Adapter.Modify.SetAdapterId(inputObjects[i], typeof(StructuralAdapterId), i);
+            }
 
             sa.Push(inputObjects, "", BH.oM.Adapter.PushType.UpdateOnly);
 
@@ -414,9 +419,14 @@ namespace BH.Tests.Adapter.Structure
         [Test]
         public void CountCRUDCallsPerType_UpdateOnly()
         {
-            List<object> inputObjects = new List<object>();
+            List<IBHoMObject> inputObjects = new List<IBHoMObject>();
             inputObjects.AddRange(Create.RandomObjects<Bar>(10));
             inputObjects.AddRange(Create.RandomObjects<SteelSection>(10));
+
+            for (int i = 0; i < inputObjects.Count; i++)
+            {
+                BH.Engine.Adapter.Modify.SetAdapterId(inputObjects[i], typeof(StructuralAdapterId), i);
+            }
 
             sa.Push(inputObjects);
             sa.Push(inputObjects, "", PushType.UpdateOnly);
@@ -438,8 +448,6 @@ namespace BH.Tests.Adapter.Structure
             inputObjects.Add(load);
 
             sa.Push(inputObjects);
-
-
         }
     }
 }
