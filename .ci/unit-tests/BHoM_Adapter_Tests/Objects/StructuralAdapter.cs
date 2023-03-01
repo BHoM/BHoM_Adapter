@@ -68,7 +68,7 @@ namespace BH.Tests.Adapter
         {
             m_AdapterSettings = new AdapterSettings()
             {
-                UseAdapterId = false,
+                UseAdapterId = true,
                 OnlyUpdateChangedObjects = true,
                 CacheCRUDobjects = cacheCRUDobjects
             };
@@ -110,11 +110,10 @@ namespace BH.Tests.Adapter
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
         {
+
             ValidateCreateObjects(objects as dynamic);
 
             Created.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
-
-
 
             if (!CallsToCreatePerType.TryGetValue(typeof(T), out int n))
                 CallsToCreatePerType[typeof(T)] = 1;
@@ -189,5 +188,24 @@ namespace BH.Tests.Adapter
 
             return 0;
         }
+
+        protected override object NextFreeId(Type objectType, bool refresh = false)
+        {
+            if (refresh || !m_nextId.ContainsKey(objectType))
+            {
+                int nextId = Created.Where(x => x.Item1 == objectType).SelectMany(x => x.Item2).Count();
+                m_nextId[objectType] = nextId;
+                return nextId;
+            }
+            else
+            { 
+                int prev = m_nextId[objectType];
+                int next = prev + 1;
+                m_nextId[objectType] = next;
+                return next;
+            }
+        }
+
+        Dictionary<Type, int> m_nextId = new Dictionary<Type, int>();
     }
 }
