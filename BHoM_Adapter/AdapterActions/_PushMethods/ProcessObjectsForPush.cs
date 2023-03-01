@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Linq;
 using BH.oM.Adapter;
 using IContainer = BH.oM.Base.IContainer;
+using BH.oM.Adapter.Module;
 
 namespace BH.Adapter
 {
@@ -92,6 +93,12 @@ namespace BH.Adapter
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             if (m_AdapterSettings.CloneBeforePush)
                 objectsToPush = objectsToPush.Select(x => x.DeepClone()).ToList();
+
+            //Run through any Preprocessing modules on the Adapter
+            foreach (IPushPreProcessModule preprocessModule in AdapterModules.OfType<IPushPreProcessModule>())
+            {
+                preprocessModule.PreprocessObjects(objectsToPush);
+            }
 
             return objectsToPush;
         }
