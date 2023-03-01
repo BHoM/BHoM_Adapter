@@ -426,5 +426,20 @@ namespace BH.Tests.Adapter.Structure
             Assert.IsTrue(sa.CallsToReadPerType.Where(kv => kv.Key != typeof(Bar)).All(kv => kv.Value == 2));
             Assert.IsTrue(sa.CallsToUpdatePerType.All(kv => kv.Value == 1), "Calls to Update should be done once per each type.");
         }
+
+        [Test]
+        public void Preprocess_PanelLoads()
+        {
+            List<object> inputObjects = new List<object>();
+            List<Panel> panels = Create.RandomObjects<Panel>();
+            AreaUniformlyDistributedLoad load = Create.RandomObject<AreaUniformlyDistributedLoad>();
+            load.Objects.Elements = panels.Cast<IAreaElement>().ToList();
+            inputObjects.AddRange(panels);
+            inputObjects.Add(load);
+
+            sa.Push(inputObjects);
+
+
+        }
     }
 }
