@@ -97,7 +97,7 @@ namespace BH.Adapter
             //Run through any Preprocessing modules on the Adapter
             foreach (IPushPreProcessModule preprocessModule in AdapterModules.OfType<IPushPreProcessModule>())
             {
-                preprocessModule.PreprocessObjects(objectsToPush);
+                objectsToPush = preprocessModule.PreprocessObjects(objectsToPush);
             }
 
             return objectsToPush;
