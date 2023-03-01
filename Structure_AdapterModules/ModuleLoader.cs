@@ -47,6 +47,7 @@ namespace BH.Adapter.Modules.Structure
             adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<Bar>(adapter));
             adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<Panel>(adapter));
             adapter.AdapterModules.Add(new GetGravityLoadElementsWithoutID<FEMesh>(adapter));
+            adapter.AdapterModules.Add(new ReplaceObjectsInLoadsModule());
         }
     }
 }
