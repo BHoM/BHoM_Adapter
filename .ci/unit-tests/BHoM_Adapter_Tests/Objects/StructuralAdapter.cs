@@ -44,6 +44,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using BH.Engine.Adapter;
+using BH.Engine.Base;
 
 namespace BH.Tests.Adapter
 {
@@ -109,7 +110,11 @@ namespace BH.Tests.Adapter
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
         {
+            ValidateCreateObjects(objects as dynamic);
+
             Created.Add(new Tuple<Type, IEnumerable<IBHoMObject>>(typeof(T), objects.OfType<IBHoMObject>()));
+
+
 
             if (!CallsToCreatePerType.TryGetValue(typeof(T), out int n))
                 CallsToCreatePerType[typeof(T)] = 1;
@@ -117,6 +122,24 @@ namespace BH.Tests.Adapter
                 CallsToCreatePerType[typeof(T)] = n + 1;
 
             return true;
+        }
+
+        private void ValidateCreateObjects(IEnumerable<object> objects)
+        { 
+            
+        }
+
+        private void ValidateCreateObjects<T>(IEnumerable<IElementLoad<T>> objects) where T : IBHoMObject
+        {
+            foreach (IElementLoad<T> load in objects)
+            {
+                foreach (IBHoMObject bhObj in load.Objects.Elements)
+                {
+                    StructuralAdapterId id = bhObj.FindFragment<StructuralAdapterId>();
+                    if (id == null)
+                        throw new Exception("Elements on loads do not contain required Ids.");
+                }
+            }
         }
 
         protected override IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
