@@ -31,7 +31,7 @@ namespace BH.oM.Adapter.Module
     [Description("Module for any additional pre-processing to be done to the objects beofre being pushed. This is called after all other preprocessing, such as cloning is done.")]
     public interface IPushPreProcessModule : IAdapterModule
     {
-        [Description("Method called during ProcessObjectsForPush")]
+        [Description("Method called during ProcessObjectsForPush.")]
         IEnumerable<IBHoMObject> PreprocessObjects(IEnumerable<IBHoMObject> objects);
     }
 }
