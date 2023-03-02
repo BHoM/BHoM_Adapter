@@ -53,42 +53,46 @@ namespace BH.Adapter
                 wrapNonBHoMObjects = actionConfig.WrapNonBHoMObjects;
 
 
-            // -------------------------------- // 
-            //              CHECKS              // 
-            // -------------------------------- // 
-
-            // Verify that the input objects are IBHoMObjects.
-            if (objects.OfType<IBHoMObject>().Count() != objects.Count() & !wrapNonBHoMObjects)
-            {
-                BH.Engine.Base.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
-                    "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true.");
-            }
-
-            // -------------------------------- // 
-            //        OBJECT PREPARATION        // 
-            // -------------------------------- // 
+            // ---------------------------------------- // 
+            //        OBJECT PREPARATION - Unpack       // 
+            // ---------------------------------------- // 
 
             // Unpack any container present in the input objects
-            List<object> unpackedObjs = new List<object>();
+            List<object> objectsIncludingUnpacked = new List<object>();
 
             foreach (var obj in objects)
             {
                 if (obj is IContainer container)
                 {
-                    unpackedObjs.AddRange(container.Unpack());
+                    objectsIncludingUnpacked.AddRange(container.Unpack());
                 }
                 else
-                    unpackedObjs.Add(obj);
+                    objectsIncludingUnpacked.Add(obj);
+            }
+
+            // -------------------------------- // 
+            //              CHECKS              // 
+            // -------------------------------- // 
+
+            // Verify that the input objects are IBHoMObjects.
+            if (objectsIncludingUnpacked.OfType<IBHoMObject>().Count() != objectsIncludingUnpacked.Count() & !wrapNonBHoMObjects)
+            {
+                BH.Engine.Base.Compute.RecordWarning("Only non-null BHoMObjects are supported by the default Push. " + // = you can override if needed; 
+                    "\nConsider specifying actionConfig['WrapNonBHoMObjects'] to true.");
             }
 
             IEnumerable<IBHoMObject> objectsToPush = new List<IBHoMObject>();
 
             // Wrap non-BHoM objects into a Custom BHoMObject to make them compatible with the CRUD.
             if (wrapNonBHoMObjects)
-                objectsToPush = WrapNonBHoMObjects(unpackedObjs);
+                objectsToPush = WrapNonBHoMObjects(objectsIncludingUnpacked);
             else
-                objectsToPush = unpackedObjs.OfType<IBHoMObject>();
+                objectsToPush = objectsIncludingUnpacked.OfType<IBHoMObject>();
 
+
+            // ----------------------------------------- // 
+            //        OBJECT PREPARATION - Cloning       // 
+            // ----------------------------------------- // 
 
             // Clone the objects for immutability in the UI. CloneBeforePush should always be true, except for very specific cases.
             if (m_AdapterSettings.CloneBeforePush)
