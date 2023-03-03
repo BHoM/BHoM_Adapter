@@ -44,6 +44,7 @@ namespace BH.Tests.Adapter.Structure
         public void Setup()
         {
             sa = new StructuralAdapter();
+            BH.Engine.Base.Compute.ClearCurrentEvents();
         }
 
         private static IEnumerable<TestCaseData> GetTestContainers()
@@ -450,6 +451,8 @@ namespace BH.Tests.Adapter.Structure
             inputObjects.AddRange(panels);
 
             sa.Push(inputObjects);
+            //No duplicate ids, hence no warning should be raised
+            Engine.Base.Query.CurrentEvents().ShouldNotContain(x => x.Message.StartsWith("Some objects pushed have duplicate BHoM_Guids"));
         }
 
 
@@ -477,6 +480,8 @@ namespace BH.Tests.Adapter.Structure
 
 
             sa.Created.Where(x => x.Item1 == typeof(Bar)).SelectMany(x => x.Item2).Count().ShouldBe(barCount);
+            //Duplicate Ids irrelevant hence no warning should be raised
+            Engine.Base.Query.CurrentEvents().ShouldNotContain(x => x.Message.StartsWith("Some objects pushed have duplicate BHoM_Guids"));
         }
 
         [Test]
