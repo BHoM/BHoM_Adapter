@@ -34,6 +34,7 @@ using System.Diagnostics.Contracts;
 using AutoBogus;
 using Shouldly;
 
+
 namespace BH.Tests.Adapter.Structure
 {
     public class PushTests
@@ -441,7 +442,7 @@ namespace BH.Tests.Adapter.Structure
         public void Preprocess_PanelLoads()
         {
             List<object> inputObjects = new List<object>();
-            List<Panel> panels = Create.RandomObjects<Panel>();
+            List<Panel> panels = Create.RandomObjects<Panel>(10);
             AreaUniformlyDistributedLoad load = Create.RandomObject<AreaUniformlyDistributedLoad>();
             load.Objects.Elements = panels.Cast<IAreaElement>().ToList();
 
@@ -449,6 +450,66 @@ namespace BH.Tests.Adapter.Structure
             inputObjects.AddRange(panels);
 
             sa.Push(inputObjects);
+        }
+
+
+        [Test]
+        public void Preprocess_PushTranslatedBars()
+        {
+            List<object> inputObjects = new List<object>();
+            
+            Bar bar = Create.RandomObject<Bar>();
+            int barCount = 10;
+
+            for (int i = 0; i < barCount; i++)
+            {
+                //Tranforming bars does not replace the Guids
+                Bar translated = BH.Engine.Structure.Modify.Transform(bar, Engine.Geometry.Create.TranslationMatrix(new oM.Geometry.Vector { Z = i }));
+                inputObjects.Add(translated);
+            }
+
+            //Culling only happens when there are loads
+            PointLoad load = Create.RandomObject<PointLoad>();
+            inputObjects.Add(load);
+
+
+            sa.Push(inputObjects);
+
+
+            sa.Created.Where(x => x.Item1 == typeof(Bar)).SelectMany(x => x.Item2).Count().ShouldBe(barCount);
+        }
+
+        [Test]
+        public void Preprocess_PanelLoadsDuplicateIds()
+        {
+            //All panels are set to have the same Guid, hence should not be able to rely on the replace mechanism
+            List<object> inputObjects = new List<object>();
+            List<Panel> panels = Create.RandomObjects<Panel>(10);
+            Guid guid = Guid.NewGuid();
+            panels.ForEach(x => x.BHoM_Guid = guid);
+
+            AreaUniformlyDistributedLoad load = Create.RandomObject<AreaUniformlyDistributedLoad>();
+            load.Objects.Elements = panels.Cast<IAreaElement>().ToList();
+
+            inputObjects.Add(load);
+            inputObjects.AddRange(panels);
+
+            //Expecting this to crash on ValidateCreateObjects, and warning to be raised to inform that replacement could not happen
+            try
+            {
+                sa.Push(inputObjects);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "Elements on loads do not contain required Ids.")
+                {
+                    BH.Engine.Base.Query.CurrentEvents().ShouldContain(x => x.Message.StartsWith("Some objects pushed have duplicate BHoM_Guids"));
+                }
+                else
+                    throw;
+            }
+
+
         }
     }
 }
