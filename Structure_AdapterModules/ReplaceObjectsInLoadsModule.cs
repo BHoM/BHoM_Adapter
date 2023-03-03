@@ -39,50 +39,63 @@ namespace BH.Adapter.Modules.Structure
         public IEnumerable<IBHoMObject> PreprocessObjects(IEnumerable<IBHoMObject> objects)
         {
             List<ILoad> loads = new List<ILoad>();
-            Dictionary<Guid, IBHoMObject> nonLoads = new Dictionary<Guid, IBHoMObject>();
+            Dictionary<Guid, List<IBHoMObject>> nonLoads = new Dictionary<Guid, List<IBHoMObject>>();
 
             //Split load obejcts from non-load objects
             foreach (IBHoMObject obj in objects)
             {
                 if (obj is ILoad load)
                     loads.Add(load);
+                else if (!nonLoads.ContainsKey(obj.BHoM_Guid))
+                    nonLoads[obj.BHoM_Guid] = new List<IBHoMObject> { obj };
                 else
-                    nonLoads[obj.BHoM_Guid] = obj;
+                    nonLoads[obj.BHoM_Guid].Add(obj);
             }
 
-            //If no non-load obejcts are being pushed, can simply return, as nothing can be replaced
-            if (nonLoads.Count == 0)
+            //If no non-load obejcts are being pushed or the list does not contain any load, can simply return, as nothing can be replaced
+            if (nonLoads.Count == 0 || loads.Count == 0)
                 return objects;
 
+            bool duplicatesFound = false;
             foreach (ILoad load in loads)
             {
-                //Load through all loads, and try to update the objects
-                ReplaceObjects(load as dynamic, nonLoads);
+                //Loop through all loads, and try to update the objects
+                duplicatesFound |= ReplaceObjects(load as dynamic, nonLoads);
             }
+
+            if (duplicatesFound)
+                BH.Engine.Base.Compute.RecordWarning("Some objects pushed have duplicate BHoM_Guids. This means objects on loads not able to be updated.");
 
             //Returns the objects in order of first non-loads followed by loads
             //This ensures that the objects are pushed before loads
             //For many cases this will be handled by dependency types, but for cases where this is yet to be implemented, this solution helps fix the order
-            return nonLoads.Values.Concat(loads);
+            return nonLoads.Values.SelectMany(x => x).Concat(loads);
         }
 
 
-        private void ReplaceObjects<T>(IElementLoad<T> load, Dictionary<Guid, IBHoMObject> objects) where T : IBHoMObject
+        private bool ReplaceObjects<T>(IElementLoad<T> load, Dictionary<Guid, List<IBHoMObject>> objects) where T : IBHoMObject
         {
+            bool duplicatesFound = false;
             //Run through all elements stored on the load
             for (int i = 0; i < load.Objects.Elements.Count; i++)
             {
                 //Try to find an item with the same guid in the non-load objects
-                if (objects.TryGetValue(load.Objects.Elements[i].BHoM_Guid, out IBHoMObject replacement))
+                if (objects.TryGetValue(load.Objects.Elements[i].BHoM_Guid, out List<IBHoMObject> replacement))
                 {
+                    if (replacement.Count != 1)
+                    {
+                        duplicatesFound = true;
+                        continue;
+                    }
                     //Ensure the found object is of the correct type
-                    if (replacement is T tObject)
+                    if (replacement[0] is T tObject)
                     {
                         //replace with the other object
                         load.Objects.Elements[i] = tObject;
                     }
                 }
             }
+            return duplicatesFound;
         }
 
         private void ReplaceObjects(ILoad load, Dictionary<Guid, IBHoMObject> objects)
