@@ -47,7 +47,14 @@ namespace BH.Adapter
         {
             bool callDistinct = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
 
-            List<T> newObjects = !callDistinct ? objectsToPush.ToList() : objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig)).ToList();
+            List<T> newObjects;
+            if (!callDistinct)
+                newObjects = objectsToPush.ToList();
+            else
+            {
+                IEnumerable<IGrouping<T, T>> distinctGroups = GroupAndCopyProperties(objectsToPush, actionConfig);
+                newObjects = distinctGroups.Select(x => x.Key).ToList();
+            }
 
             // Tag the objects, if tag is given.
             if (tag != "")

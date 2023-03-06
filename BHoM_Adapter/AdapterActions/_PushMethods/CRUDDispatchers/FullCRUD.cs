@@ -43,13 +43,14 @@ namespace BH.Adapter
         // These methods dispatch calls to different CRUD methods as required by the Push.
 
         [Description("Performs the full CRUD, calling the single CRUD methods as appropriate.")]
-        protected bool FullCRUD<T>(IEnumerable<T> objectsToPush, PushType pushType = PushType.AdapterDefault, string tag = "", ActionConfig actionConfig = null) where T : class, IBHoMObject
+        protected bool FullCRUD<T>(IEnumerable<T> objectsToPush, PushType pushType = PushType.AdapterDefault, string tag = "", ActionConfig actionConfig = null) where T : IBHoMObject
         {
             if (objectsToPush == null || !objectsToPush.Any())
                 return true;
 
-            // Make sure objects are distinct 
-            List<T> newObjects = objectsToPush.Distinct(Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig)).ToList();
+            // Make sure objects are distinct and that any copy-proeprty module for the type is run
+            IEnumerable<IGrouping<T,T>> distinctGroups = GroupAndCopyProperties(objectsToPush, actionConfig);
+            List<T> newObjects = distinctGroups.Select(x => x.Key).ToList();
 
             // Add the tag if provided
             if (!string.IsNullOrWhiteSpace(tag))
@@ -130,7 +131,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, ActionConfig actionConfig, bool mergeWithComparer = false) where T : class, IBHoMObject
+        protected IEnumerable<T> ReplaceInMemory<T>(IEnumerable<T> newObjects, IEnumerable<T> existingOjects, string tag, ActionConfig actionConfig, bool mergeWithComparer = false) where T : IBHoMObject
         {
             // Separate objects based on tags
             List<T> multiTaggedObjects = existingOjects.Where(x => x.Tags.Contains(tag) && x.Tags.Count > 1).ToList();
@@ -164,7 +165,7 @@ namespace BH.Adapter
 
         /***************************************************/
 
-        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig, PushType pushType) where T : class, IBHoMObject
+        protected IEnumerable<T> ReplaceThroughAPI<T>(IEnumerable<T> objsToPush, IEnumerable<T> readObjs, string tag, ActionConfig actionConfig, PushType pushType) where T : IBHoMObject
         {
             IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
             VennDiagram<T> diagram = Engine.Data.Create.VennDiagram(objsToPush, readObjs, comparer);
