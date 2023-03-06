@@ -28,6 +28,8 @@ using System.Reflection;
 using System.ComponentModel;
 using BH.oM.Structure.Elements;
 using BH.oM.Structure.SectionProperties;
+using BH.Engine.Structure;
+using BH.Engine.Geometry;
 
 namespace BH.Adapter.Modules
 {
@@ -38,12 +40,27 @@ namespace BH.Adapter.Modules
         public void CopyProperties(Node target, Node source)
         {
             // If source is constrained and target is not, add source constraint to target
-            if (source.Support != null && target.Support == null)
-                target.Support = source.Support;
+            if (source.Support != null)
+            {
+                if (target.Support == null)
+                    target.Support = source.Support;
+                else
+                {
+                    string desc1 = target.Support.Description();
+                    string desc2 = source.Support.Description();
+                    if(desc1 != desc2)
+                        Engine.Base.Compute.RecordNote($"Node in position ({target.Position.X},{target.Position.Y},{target.Position.Z}) contains conflicting supports. Support {desc1} will be used on the node.");
+                }
+            }
 
             // If source has a defined orientation and target does not, add local orientation from the source
-            if (source.Orientation != null && target.Orientation == null)
-                target.Orientation = source.Orientation;
+            if (source.Orientation != null)
+            {
+                if (target.Orientation == null)
+                    target.Orientation = source.Orientation;
+                else if(!source.Orientation.IsEqual(target.Orientation))
+                    BH.Engine.Base.Compute.RecordNote($"Node in position ({target.Position.X}, {target.Position.Y}, {target.Position.Z}) contains conflicting orientaions. Orientation with Normal vector ({target.Orientation.Z.X}, {target.Orientation.Z.Y}, {target.Orientation.Z.Z}) will be used on the node.");
+            }
         }
     }
 }
