@@ -35,18 +35,18 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         [Description("Groups the objects by the coparer for the particular type, and then runs any CopyPropertiesModules available for the type.")]
-        private IEnumerable<IGrouping<T, T>> GroupAndCopyProperties<T>(IEnumerable<T> objectsToPush, ActionConfig actionConfig = null) where T : class, IBHoMObject
+        private IEnumerable<IGrouping<T, T>> GroupAndCopyProperties<T>(IEnumerable<T> objectsToPush, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             IEnumerable<IGrouping<T, T>> grouped = objectsToPush.GroupBy(x => x, Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig));
 
             List<ICopyPropertiesModule<T>> copyPropertiesModules = this.GetCopyPropertiesModules<T>();
 
-            foreach (var copyModule in copyPropertiesModules)
+            foreach (var group in grouped)
             {
-                foreach (var group in grouped)
+                T keep = group.Key;
+                foreach (T item in group.Skip(1))
                 {
-                    T keep = group.Key;
-                    foreach (T item in group.Skip(1))
+                    foreach (var copyModule in copyPropertiesModules)
                     {
                         copyModule.CopyProperties(keep, item);
                     }

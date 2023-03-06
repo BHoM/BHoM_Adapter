@@ -36,7 +36,7 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         [Description("Gets distinct objects based on implemented AdapterComparer of the particular type, with CopyPropertyModules available for the type run.")]
-        private List<T> DistinctWithCopiedProperties<T>(IEnumerable<T> objectsToPush, ActionConfig actionConfig = null) where T : class, IBHoMObject
+        private List<T> DistinctWithCopiedProperties<T>(IEnumerable<T> objectsToPush, ActionConfig actionConfig = null) where T : IBHoMObject
         {
             return GroupAndCopyProperties(objectsToPush, actionConfig).Select(x => x.Key).ToList();
         }
