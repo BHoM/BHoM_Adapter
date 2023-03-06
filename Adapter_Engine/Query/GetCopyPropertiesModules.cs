@@ -32,7 +32,7 @@ namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
-        public static List<ICopyPropertiesModule<T>> GetCopyPropertiesModules<T>(this IBHoMAdapter adapter) where T : class, IBHoMObject
+        public static List<ICopyPropertiesModule<T>> GetCopyPropertiesModules<T>(this IBHoMAdapter adapter) where T : IBHoMObject
         {
             return adapter.AdapterModules.OfType<ICopyPropertiesModule<T>>().ToList();
         }

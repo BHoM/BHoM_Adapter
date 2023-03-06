@@ -36,7 +36,7 @@ namespace BH.Adapter
     public abstract partial class BHoMAdapter
     {
         [Description("Gets called during the Push. Takes properties specified from the source IBHoMObject and assigns them to the target IBHoMObject.")]
-        public void CopyBHoMObjectProperties<T>(T target, T source) where T : class, IBHoMObject
+        public void CopyBHoMObjectProperties<T>(T target, T source) where T : IBHoMObject
         {
             // Port tags from source to target
             foreach (string tag in source.Tags)
