@@ -46,6 +46,7 @@ namespace BH.Adapter
                 T keep = group.Key;
                 foreach (T item in group.Skip(1))
                 {
+                    CopyBHoMObjectProperties(keep, item);
                     foreach (var copyModule in copyPropertiesModules)
                     {
                         copyModule.CopyProperties(keep, item);
