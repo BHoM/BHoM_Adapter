@@ -33,7 +33,7 @@ using BH.oM.Adapter;
 using System.Diagnostics.Contracts;
 using AutoBogus;
 using Shouldly;
-
+using BH.oM.Geometry;
 
 namespace BH.Tests.Adapter.Structure
 {
@@ -515,6 +515,63 @@ namespace BH.Tests.Adapter.Structure
             }
 
 
+        }
+
+        [Test]
+        public void CopyProperties_NodesReplaced()
+        {
+            //Create bar from line. Nodes will have null-constraints on the Bar
+            Line line = new Line { Start = new Point { X = 0 }, End = new Point { X = 10 } };
+            Bar bar = BH.Engine.Structure.Create.Bar(line, null, 0);
+
+            //Create nodes in the same position
+            Node node1 = new Node { Position = line.Start, Support = Create.RandomObject<Constraint6DOF>() };
+            Node node2 = new Node { Position = line.End, Support = Create.RandomObject<Constraint6DOF>() };
+
+            //Push with bar before the nodes
+            List<IBHoMObject> inputObjs = new List<IBHoMObject> { bar, node1, node2 };
+            sa.Push(inputObjs);
+
+            //Make sure the nodes in the model contain the supports
+            var supports = sa.Created.Where(x => x.Item1 == typeof(Node)).SelectMany(x => x.Item2).Cast<Node>().Select(x => x.Support).Where(x => x != null);
+            supports.ShouldContain(x => x.Name == node1.Support.Name);
+            supports.ShouldContain(x => x.Name == node2.Support.Name);
+        }
+
+        [Test]
+        public void DuplicateObjects_EnsureAllOutputHaveIds()
+        {
+            //Create duplicate elements
+            Steel steel1 = Create.RandomObject<Steel>();
+            Steel steel2 = Create.RandomObject<Steel>();
+
+            steel1.Name = "MatName";
+            steel2.Name = steel1.Name;
+
+            SteelSection section1 = Create.RandomObject<SteelSection>();
+            SteelSection section2 = Create.RandomObject<SteelSection>();
+            section1.Material = steel1;
+            section2.Material = steel2;
+            section1.Name = "SecName";
+            section2.Name = section1.Name;
+
+            Line line = new Line { Start = new Point { X = 0 }, End = new Point { X = 10 } };
+            Bar bar1 = BH.Engine.Structure.Create.Bar(line, section1, 0);
+            Bar bar2 = BH.Engine.Structure.Create.Bar(line, section1, 0);
+
+            Node node1 = new Node { Position = line.Start };
+            Node node2 = new Node { Position = line.End };
+
+            //Push duplicates
+            List<IBHoMObject> inputObjs = new List<IBHoMObject> { bar1, bar2, node1, node2, section1, section2 };
+            List<IBHoMObject> pushed = sa.Push(inputObjs).OfType<IBHoMObject>().ToList();
+
+            //Make sure correct number of items has been created to ensure comparers work.
+            //If this does not work, the check of all objects having assigned Ids is pointless
+            sa.Created.Where(x => x.Item1 != typeof(Node)).ShouldAllBe(x => x.Item2.Count() == 1);
+            sa.Created.Where(x => x.Item1 == typeof(Node)).ShouldAllBe(x => x.Item2.Count() == 2);
+
+            pushed.ShouldAllBe(x => BH.Engine.Base.Query.FindFragment<StructuralAdapterId>(x, typeof(StructuralAdapterId)) != null, "At least one of the pushed objects did not contain an AdapterId Fragment.");
         }
     }
 }
