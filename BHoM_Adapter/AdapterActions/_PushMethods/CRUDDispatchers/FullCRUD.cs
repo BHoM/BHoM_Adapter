@@ -119,7 +119,7 @@ namespace BH.Adapter
                     IFragment idFragment;
                     if (group.Key.Fragments.TryGetValue(AdapterIdFragmentType, out idFragment))
                     {
-                        foreach (T item in group.Skip(1))
+                        foreach (T item in group.Skip(1))   //Skip 1 as first instance is the key
                         {
                             item.SetAdapterId(idFragment as IAdapterId);
                         }
