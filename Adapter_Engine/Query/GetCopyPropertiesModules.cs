@@ -32,6 +32,7 @@ namespace BH.Engine.Adapter
 {
     public static partial class Query
     {
+        [Description("Gets any adapter module on the adapter for copying properties of an object of type T to another object of type T.")]
         public static List<ICopyPropertiesModule<T>> GetCopyPropertiesModules<T>(this IBHoMAdapter adapter) where T : IBHoMObject
         {
             return adapter.AdapterModules.OfType<ICopyPropertiesModule<T>>().ToList();
