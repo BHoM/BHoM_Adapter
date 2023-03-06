@@ -48,11 +48,12 @@ namespace BH.Adapter
             bool callDistinct = objectLevel == 0 ? m_AdapterSettings.CreateOnly_DistinctObjects : m_AdapterSettings.CreateOnly_DistinctDependencies;
 
             List<T> newObjects;
+            IEnumerable<IGrouping<T, T>> distinctGroups = null;
             if (!callDistinct)
                 newObjects = objectsToPush.ToList();
             else
             {
-                IEnumerable<IGrouping<T, T>> distinctGroups = GroupAndCopyProperties(objectsToPush, actionConfig);
+                distinctGroups = GroupAndCopyProperties(objectsToPush, actionConfig);
                 newObjects = distinctGroups.Select(x => x.Key).ToList();
             }
 
@@ -73,20 +74,21 @@ namespace BH.Adapter
             else if(!ICreate(newObjects, actionConfig))
                 return false;
 
-            if (callDistinct && m_AdapterSettings.UseAdapterId)
+            if (callDistinct && m_AdapterSettings.UseAdapterId && distinctGroups != null)
             {
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
-                foreach (T item in objectsToPush)
+                foreach (var group in distinctGroups)
                 {
-                    // Fetch any existing IAdapterId fragment and assign it to the item.
-                    // This preserves any additional property other than `Id` that may be in the fragment.
-                    IFragment fragment;
-                    newObjects.First(x => comparer.Equals(x, item)).Fragments.TryGetValue(AdapterIdFragmentType, out fragment);
-
-                    item.SetAdapterId(fragment as IAdapterId);
+                    IFragment idFragment;
+                    if (group.Key.Fragments.TryGetValue(AdapterIdFragmentType, out idFragment))
+                    {
+                        foreach (T item in group.Skip(1))
+                        {
+                            item.SetAdapterId(idFragment as IAdapterId);
+                        }
+                    }
                 }
             }
 

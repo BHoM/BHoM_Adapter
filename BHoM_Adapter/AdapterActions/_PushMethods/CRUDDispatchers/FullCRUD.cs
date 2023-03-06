@@ -114,15 +114,16 @@ namespace BH.Adapter
                 // Map Ids to the original set of objects (before we extracted the distincts elements from it).
                 // If some objects of the original set were not Created (because e.g. they were already existing in the external model and had already an id, 
                 // therefore no new id was assigned to them) they will not get mapped, so the original set will be left with them intact.
-                IEqualityComparer<T> comparer = Engine.Adapter.Query.GetComparerForType<T>(this, actionConfig);
-                foreach (T item in objectsToPush)
+                foreach (var group in distinctGroups)
                 {
-                    // Fetch any existing IAdapterId fragment and assign it to the item.
-                    // This preserves any additional property other than `Id` that may be in the fragment.
-                    IFragment fragment;
-                    newObjects.First(x => comparer.Equals(x, item)).Fragments.TryGetValue(AdapterIdFragmentType, out fragment);
-
-                    item.SetAdapterId(fragment as IAdapterId);
+                    IFragment idFragment;
+                    if (group.Key.Fragments.TryGetValue(AdapterIdFragmentType, out idFragment))
+                    {
+                        foreach (T item in group.Skip(1))
+                        {
+                            item.SetAdapterId(idFragment as IAdapterId);
+                        }
+                    }
                 }
             }
 
