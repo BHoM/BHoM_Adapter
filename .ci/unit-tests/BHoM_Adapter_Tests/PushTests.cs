@@ -518,6 +518,8 @@ namespace BH.Tests.Adapter.Structure
         }
 
         [Test]
+        [Description("Tests that objects being pushed are correctly 'merged' by calls to CopyProperties modules. \n" +
+                     "Two nodes pushed in the same location, one with a support and one without, the adapter should make sure the final node being sent for creation should contain the support.")]
         public void CopyProperties_NodesReplaced()
         {
             //Create bar from line. Nodes will have null-constraints on the Bar
@@ -539,6 +541,7 @@ namespace BH.Tests.Adapter.Structure
         }
 
         [Test]
+        [Description("Tests that all objects sent to the push have AdapterIds assigned, even though some have been identified as duplicates and hence culled out.")]
         public void DuplicateObjects_EnsureAllOutputHaveIds()
         {
             //Create duplicate elements
@@ -563,7 +566,7 @@ namespace BH.Tests.Adapter.Structure
             Node node2 = new Node { Position = line.End };
 
             //Push duplicates
-            List<IBHoMObject> inputObjs = new List<IBHoMObject> { bar1, bar2, node1, node2, section1, section2 };
+            List<IBHoMObject> inputObjs = new List<IBHoMObject> { bar1, bar2, node1, node2, section1, section2, steel1, steel2 };
             List<IBHoMObject> pushed = sa.Push(inputObjs).OfType<IBHoMObject>().ToList();
 
             //Make sure correct number of items has been created to ensure comparers work.
