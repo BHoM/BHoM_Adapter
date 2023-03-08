@@ -45,27 +45,36 @@ namespace BH.Adapter.Modules
 
         public IEnumerable<T> GetDependencies(IEnumerable<GravityLoad> objects)
         {
-            List<T> noIdLoadObjects = new List<T>();
-            foreach (GravityLoad load in objects)
-            {
-                if(load?.Objects?.Elements != null)
-                    noIdLoadObjects.AddRange(load.Objects.Elements.OfType<T>().Where(x => x != null && !x.Fragments.Contains(m_adapterIdType)));
-            }
-            return noIdLoadObjects;
-        }
 
+            if (m_adapter?.AdapterIdFragmentType == null)
+            {
+                string adapterType = m_adapter == null ? "Adapter" : m_adapter.GetType().Name;
+                BH.Engine.Base.Compute.RecordWarning($"{adapterType} does not have a set {nameof(m_adapter.AdapterIdFragmentType)}. Unable to filter load objects by set ID. All objects on the load will be treated as a dependency.");
+                return objects.Select(x => x?.Objects?.Elements).Where(x => x != null).SelectMany(x => x).Where(x => x != null).OfType<T>().ToList();
+            }
+            else
+            {
+                List<T> noIdLoadObjects = new List<T>();
+                foreach (GravityLoad load in objects)
+                {
+                    if (load?.Objects?.Elements != null)
+                        noIdLoadObjects.AddRange(load.Objects.Elements.OfType<T>().Where(x => x != null && !x.Fragments.Contains(m_adapter.AdapterIdFragmentType)));
+                }
+                return noIdLoadObjects;
+            }
+        }
         /***************************************************/
         /**** Constructors                              ****/
         /***************************************************/
 
         public GetGravityLoadElementsWithoutID(IBHoMAdapter adapter)
         {
-            m_adapterIdType = adapter.AdapterIdFragmentType;
+            m_adapter = adapter;
         }
 
         /***************************************************/
 
-        private Type m_adapterIdType;
+        private IBHoMAdapter m_adapter;
 
         /***************************************************/
     }
