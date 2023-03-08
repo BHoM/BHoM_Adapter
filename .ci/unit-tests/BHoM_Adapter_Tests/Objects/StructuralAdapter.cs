@@ -104,8 +104,9 @@ namespace BH.Tests.Adapter
                 {typeof(BarRelease), new NameOrDescriptionComparer() }
             };
 
-            AdapterIdFragmentType = typeof(StructuralAdapterId);
+
             BH.Adapter.Modules.Structure.ModuleLoader.LoadModules(this);
+            AdapterIdFragmentType = typeof(StructuralAdapterId);
         }
 
         protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
