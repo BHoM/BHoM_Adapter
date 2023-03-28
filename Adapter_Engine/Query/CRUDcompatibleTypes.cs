@@ -127,7 +127,3 @@ namespace BH.Engine.Adapter
 
     }
 }
-
-
-
-
