@@ -37,25 +37,27 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Returns a list of MethodInfo with all methods contained in classes whose name ends with `Adapter`.")]
-        public static List<MethodInfo> AdapterMethods()
+        [Description("Returns a collection with all CRUD-named methods found in all the Adapters loaded at runtime, grouped per CRUD type." +
+          "CRUD-named means whose name contains any of the CRUD keywords: `Create`, `Read`, `Update`, `Delete`.")]
+        [Output("Dictionary with string key, one of: `Create`, `Read`, `Update`, `Delete`; value is the List of CRUD methods.")]
+        public static Dictionary<string, List<MethodInfo>> AdaptersCRUDNamedMethods()
         {
-            // If the list exists already, return it
-            if (m_AdapterMethodsList != null && m_AdapterMethodsList.Count > 0)
-                return m_AdapterMethodsList;
-            else
-            {
-                List<MethodInfo> allMethods = BH.Engine.Base.Query.AllMethodList().OfType<MethodInfo>().ToList();
-                m_AdapterMethodsList = allMethods.Where(x => x.DeclaringType.Name.EndsWith("Adapter")).ToList();
-                // (if we moved the IBHoMAdapter interface from the BHoM_Adapter down in the base BH.oM, we could test for inheritance instead of "EndsWith")
-            }
-            return m_AdapterMethodsList;
+            List<MethodInfo> adapterMethods = AdapterMethods();
+
+            // Select methods whose name includes any of keywords and group them based on that
+            List<string> CreateKeywords = new List<string>() { "Create", "CreateCollection", "CreateObject" };
+            List<string> ReadKeywords = new List<string>() { "Read" };
+            List<string> UpdateKeywords = new List<string>() { "Update" };
+            List<string> DeleteKeywords = new List<string>() { "Delete" };
+
+            Dictionary<string, List<MethodInfo>> GroupedCRUDmethods = new Dictionary<string, List<MethodInfo>>();
+
+            GroupedCRUDmethods.Add("Create", adapterMethods.Where(x => CreateKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Read", adapterMethods.Where(x => ReadKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Update", adapterMethods.Where(x => UpdateKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Delete", adapterMethods.Where(x => DeleteKeywords.Any(s => x.Name.Contains(s))).ToList());
+
+            return GroupedCRUDmethods;
         }
-
-        /***************************************************/
-        /**** Private Fields                            ****/
-        /***************************************************/
-
-        private static List<MethodInfo> m_AdapterMethodsList = new List<MethodInfo>();
     }
 }
