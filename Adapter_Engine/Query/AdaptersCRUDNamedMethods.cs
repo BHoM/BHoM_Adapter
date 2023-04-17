@@ -45,17 +45,17 @@ namespace BH.Engine.Adapter
             List<MethodInfo> adapterMethods = AdapterMethods();
 
             // Select methods whose name includes any of keywords and group them based on that
-            List<string> CreateKeywords = new List<string>() { "Create", "CreateCollection", "CreateObject" };
-            List<string> ReadKeywords = new List<string>() { "Read" };
-            List<string> UpdateKeywords = new List<string>() { "Update" };
-            List<string> DeleteKeywords = new List<string>() { "Delete" };
+            List<string> createKeywords = new List<string>() { "Create", "CreateCollection", "CreateObject" };
+            List<string> readKeywords = new List<string>() { "Read" };
+            List<string> updateKeywords = new List<string>() { "Update" };
+            List<string> deleteKeywords = new List<string>() { "Delete" };
 
             Dictionary<string, List<MethodInfo>> GroupedCRUDmethods = new Dictionary<string, List<MethodInfo>>();
 
-            GroupedCRUDmethods.Add("Create", adapterMethods.Where(x => CreateKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Read", adapterMethods.Where(x => ReadKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Update", adapterMethods.Where(x => UpdateKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Delete", adapterMethods.Where(x => DeleteKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Create", adapterMethods.Where(x => createKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Read", adapterMethods.Where(x => readKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Update", adapterMethods.Where(x => updateKeywords.Any(s => x.Name.Contains(s))).ToList());
+            GroupedCRUDmethods.Add("Delete", adapterMethods.Where(x => deleteKeywords.Any(s => x.Name.Contains(s))).ToList());
 
             return GroupedCRUDmethods;
         }
