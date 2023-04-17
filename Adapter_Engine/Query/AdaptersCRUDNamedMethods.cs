@@ -50,14 +50,14 @@ namespace BH.Engine.Adapter
             List<string> updateKeywords = new List<string>() { "Update" };
             List<string> deleteKeywords = new List<string>() { "Delete" };
 
-            Dictionary<string, List<MethodInfo>> GroupedCRUDmethods = new Dictionary<string, List<MethodInfo>>();
+            Dictionary<string, List<MethodInfo>> groupedCRUDmethods = new Dictionary<string, List<MethodInfo>>();
 
-            GroupedCRUDmethods.Add("Create", adapterMethods.Where(x => createKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Read", adapterMethods.Where(x => readKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Update", adapterMethods.Where(x => updateKeywords.Any(s => x.Name.Contains(s))).ToList());
-            GroupedCRUDmethods.Add("Delete", adapterMethods.Where(x => deleteKeywords.Any(s => x.Name.Contains(s))).ToList());
+            groupedCRUDmethods.Add("Create", adapterMethods.Where(x => createKeywords.Any(s => x.Name.Contains(s))).ToList());
+            groupedCRUDmethods.Add("Read", adapterMethods.Where(x => readKeywords.Any(s => x.Name.Contains(s))).ToList());
+            groupedCRUDmethods.Add("Update", adapterMethods.Where(x => updateKeywords.Any(s => x.Name.Contains(s))).ToList());
+            groupedCRUDmethods.Add("Delete", adapterMethods.Where(x => deleteKeywords.Any(s => x.Name.Contains(s))).ToList());
 
-            return GroupedCRUDmethods;
+            return groupedCRUDmethods;
         }
     }
 }
