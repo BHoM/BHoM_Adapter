@@ -35,7 +35,7 @@ namespace BH.oM.Adapter.Commands
         [Description("Name of the command to be executed by the external software.")]
         public virtual string Command { get; set; }
         [Description("Parameters needed by the external software to execute the command.")]
-        public Dictionary<string, object> Parameters;
+        public Dictionary<string, object> Parameters { get; set; }
     }
 }
 
