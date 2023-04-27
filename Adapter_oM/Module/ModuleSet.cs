@@ -26,10 +26,11 @@ using BH.Engine.Base.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BH.oM.Base;
 
 namespace BH.oM.Adapter
 {
-    public class ModuleSet : HashSet<IAdapterModule>
+    public class ModuleSet : HashSet<IAdapterModule>, IObject
     {
         public ModuleSet() :
             base(new TypeComparer())
@@ -39,7 +40,3 @@ namespace BH.oM.Adapter
         { }
     }
 }
-
-
-
-
