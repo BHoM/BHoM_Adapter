@@ -30,7 +30,7 @@ using BH.oM.Base;
 
 namespace BH.oM.Adapter
 {
-    public class ModuleSet : HashSet<IAdapterModule>, IObject
+    public class ModuleSet : HashSet<IAdapterModule>
     {
         public ModuleSet() :
             base(new TypeComparer())
