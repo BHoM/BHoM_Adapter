@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>BHoM.Adpater</id>
+    <id>BHoM.Adapter</id>
     <version></version>
     <authors>BHoM</authors>
     <projectUrl>https://github.com/BHoM/BHoM_Adapter</projectUrl>
