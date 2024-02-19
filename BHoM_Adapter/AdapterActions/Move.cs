@@ -59,7 +59,7 @@ namespace BH.Adapter
 
         /******************************************************/
 
-        [Description("Performs an action prior to any move actions. For example can be used to open up a file for repeated move actions.")]
+        [Description("Performs an action prior to any move actions. For example can be used to open up a file for repeated move actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool BeforeMove(IBHoMAdapter to, IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, PushType pushType = PushType.AdapterDefault,  ActionConfig actionConfig = null)
         {
             m_HasRunPreMoveAction = true;
@@ -68,7 +68,7 @@ namespace BH.Adapter
 
         /******************************************************/
 
-        [Description("Performs an action after any move actions. For example can be used to close a file for repeated move actions.")]
+        [Description("Performs an action after any move actions. For example can be used to close a file for repeated move actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool AfterMove(IBHoMAdapter to, IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig pullConfig = null, PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
             m_HasRunPreMoveAction = false; //Reset for next move action
