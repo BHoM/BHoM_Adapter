@@ -54,7 +54,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action prior to any execute actions. For example can be used to open up a file for repeated execute actions.")]
-        public virtual bool BeforeExecute()
+        public virtual bool BeforeExecute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
             m_HasRunPreExecuteAction = true;
             return true;
@@ -63,7 +63,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action after any execute actions. For example can be used to close a file for repeated execute actions.")]
-        public virtual bool AfterExecute()
+        public virtual bool AfterExecute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
             m_HasRunPreExecuteAction = false; //Reset for next execute action
             return true;
