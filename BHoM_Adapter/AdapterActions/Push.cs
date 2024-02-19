@@ -137,7 +137,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action prior to any push actions. For example can be used to open up a file for repeated push actions.")]
-        public virtual bool BeforePush()
+        public virtual bool BeforePush(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
             m_HasRunPrePushAction = true;
             return true;
@@ -146,7 +146,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action after any push actions. For example can be used to close a file for repeated push actions.")]
-        public virtual bool AfterPush()
+        public virtual bool AfterPush(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
             m_HasRunPrePushAction = false; //Reset for next push action
             return true;
