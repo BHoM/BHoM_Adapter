@@ -60,6 +60,8 @@ namespace BH.Adapter
             return true;
         }
 
+        /******************************************************/
+
         [Description("Performs a set up for the ActionConfig of the Pull Action.")]
         public virtual bool SetupPullConfig(ActionConfig actionConfig, out ActionConfig pullConfig)
         {
@@ -68,6 +70,26 @@ namespace BH.Adapter
 
             return true;
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any pull actions. For example can be used to open up a file for repeated pull actions.")]
+        public virtual bool BeforePull()
+        {
+            m_HasRunPrePullAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any pull actions. For example can be used to close a file that was opened for repeated pull actions.")]
+        public virtual bool AfterPull()
+        {
+            m_HasRunPrePullAction = false; //Reset to false for the next pull
+            return true;
+        }
+
+        /******************************************************/
 
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
@@ -87,7 +109,3 @@ namespace BH.Adapter
         }
     }
 }
-
-
-
-

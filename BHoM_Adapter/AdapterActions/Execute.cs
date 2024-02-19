@@ -51,6 +51,26 @@ namespace BH.Adapter
             return true;
         }
 
+        /******************************************************/
+
+        [Description("Performs an action prior to any ececute actions. For example can be used to open up a file for repeated execute actions.")]
+        public virtual bool BeforeExecute()
+        {
+            m_HasRunPreExecuteAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any ececute actions. For example can be used to close a file for repeated execute actions.")]
+        public virtual bool AfterExecute()
+        {
+            m_HasRunPreExecuteAction = false; //Reset for next execute action
+            return true;
+        }
+
+        /******************************************************/
+
         [Description("To be implemented to send specific commands to the external software, through its API or other means." +
             "To be implemented (overridden) in Toolkits.")]
         [Output("Output<object, bool>", "Output is a tuple-like class with: " +
