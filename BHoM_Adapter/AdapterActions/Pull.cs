@@ -74,7 +74,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action prior to any pull actions. For example can be used to open up a file for repeated pull actions.")]
-        public virtual bool BeforePull()
+        public virtual bool BeforePull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
             m_HasRunPrePullAction = true;
             return true;
@@ -83,7 +83,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action after any pull actions. For example can be used to close a file that was opened for repeated pull actions.")]
-        public virtual bool AfterPull()
+        public virtual bool AfterPull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
         {
             m_HasRunPrePullAction = false; //Reset to false for the next pull
             return true;
