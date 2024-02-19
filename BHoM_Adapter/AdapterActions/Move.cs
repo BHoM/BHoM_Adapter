@@ -56,6 +56,26 @@ namespace BH.Adapter
 
             return to.Push(objects.Cast<IObject>(), tag, pushType, pushConfig).Count() == count;
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any move actions. For example can be used to open up a file for repeated move actions.")]
+        public virtual bool BeforeMove()
+        {
+            m_HasRunPreMoveAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any move actions. For example can be used to close a file for repeated move actions.")]
+        public virtual bool AfterMove()
+        {
+            m_HasRunPreMoveAction = false; //Reset for next move action
+            return true;
+        }
+
+        /******************************************************/
     }
 }
 
