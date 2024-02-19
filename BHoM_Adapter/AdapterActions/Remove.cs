@@ -67,7 +67,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action prior to any remove actions. For example can be used to open up a file for repeated remove actions.")]
-        public virtual bool BeforeRemove()
+        public virtual bool BeforeRemove(IRequest request, ActionConfig actionConfig = null)
         {
             m_HasRunPreRemoveAction = true;
             return true;
@@ -76,7 +76,7 @@ namespace BH.Adapter
         /******************************************************/
 
         [Description("Performs an action after any remove actions. For example can be used to close a file for repeated remove actions.")]
-        public virtual bool AfterRemove()
+        public virtual bool AfterRemove(IRequest request, ActionConfig actionConfig = null)
         {
             m_HasRunPreRemoveAction = false; //Reset for next remove action
             return true;
