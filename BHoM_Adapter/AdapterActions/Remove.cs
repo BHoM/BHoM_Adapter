@@ -63,6 +63,26 @@ namespace BH.Adapter
             this.ClearCache();
             return Delete(request as dynamic, actionConfig);
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any remove actions. For example can be used to open up a file for repeated remove actions.")]
+        public virtual bool BeforeRemove()
+        {
+            m_HasRunPreRemoveAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any remove actions. For example can be used to close a file for repeated remove actions.")]
+        public virtual bool AfterRemove()
+        {
+            m_HasRunPreRemoveAction = false; //Reset for next remove action
+            return true;
+        }
+
+        /******************************************************/
     }
 }
 
