@@ -41,13 +41,13 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Performs a set up for the Request input of the Remove Action.")]
+        [Description("Performs a set up for the Request input of the Remove Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupRemoveRequest(object obj, out IRequest removeRequest)
         {
             return SetupPullRequest(obj, out removeRequest);
         }
 
-        [Description("Performs a set up for the ActionConfig of the Remove Action.")]
+        [Description("Performs a set up for the ActionConfig of the Remove Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupRemoveConfig(ActionConfig actionConfig, out ActionConfig removeConfig)
         {
             // If null, set the actionConfig to a new ActionConfig.
@@ -63,6 +63,26 @@ namespace BH.Adapter
             this.ClearCache();
             return Delete(request as dynamic, actionConfig);
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any remove actions. For example can be used to open up a file for repeated remove actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool BeforeRemove(IRequest request, ActionConfig actionConfig = null)
+        {
+            m_HasRunPreRemoveAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any remove actions. For example can be used to close a file for repeated remove actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool AfterRemove(IRequest request, ActionConfig actionConfig = null)
+        {
+            m_HasRunPreRemoveAction = false; //Reset for next remove action
+            return true;
+        }
+
+        /******************************************************/
     }
 }
 

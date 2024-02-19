@@ -69,6 +69,12 @@ namespace BH.Adapter
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
         protected AdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
 
+        protected bool m_HasRunPrePullAction { get; set; } = false; //Flag to determine whether the adapter has run pre-pull actions
+        protected bool m_HasRunPrePushAction { get; set; } = false; //Flag to determine whether the adapter has run pre-push actions
+        protected bool m_HasRunPreExecuteAction { get; set; } = false; //Flag to determine whether the adapter has run pre-execute actions
+        protected bool m_HasRunPreMoveAction { get; set; } = false; //Flag to determine whether the adapter has run pre-move actions
+        protected bool m_HasRunPreRemoveAction { get; set; } = false; //Flag to determine whether the adapter has run pre-remove actions
+
         /***************************************************/
         /**** Public Events                             ****/
         /***************************************************/

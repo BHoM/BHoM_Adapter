@@ -42,7 +42,7 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Performs a set up for the Request input of the Pull Action.")]
+        [Description("Performs a set up for the Request input of the Pull Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupPullRequest(object request, out IRequest actualRequest)
         {
             // Always assure there is a Request. Allow to input a Type to generate a FilterRequest.
@@ -60,7 +60,9 @@ namespace BH.Adapter
             return true;
         }
 
-        [Description("Performs a set up for the ActionConfig of the Pull Action.")]
+        /******************************************************/
+
+        [Description("Performs a set up for the ActionConfig of the Pull Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupPullConfig(ActionConfig actionConfig, out ActionConfig pullConfig)
         {
             // If null, set the actionConfig to a new ActionConfig.
@@ -68,6 +70,26 @@ namespace BH.Adapter
 
             return true;
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any pull actions. For example can be used to open up a file for repeated pull actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool BeforePull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
+        {
+            m_HasRunPrePullAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any pull actions. For example can be used to close a file that was opened for repeated pull actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool AfterPull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
+        {
+            m_HasRunPrePullAction = false; //Reset to false for the next pull
+            return true;
+        }
+
+        /******************************************************/
 
         [Description("Pulls objects from an external software using the basic CRUD/Read method as appropriate.")]
         public virtual IEnumerable<object> Pull(IRequest request, PullType pullType = PullType.AdapterDefault, ActionConfig actionConfig = null)
@@ -87,7 +109,3 @@ namespace BH.Adapter
         }
     }
 }
-
-
-
-

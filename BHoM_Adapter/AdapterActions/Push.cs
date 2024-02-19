@@ -43,7 +43,7 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Performs a set up for the ActionConfig of the Push Action.")]
+        [Description("Performs a set up for the ActionConfig of the Push Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupPushConfig(ActionConfig actionConfig, out ActionConfig pushConfig)
         {
             // If null, set the actionConfig to a new ActionConfig.
@@ -52,7 +52,7 @@ namespace BH.Adapter
             return true;
         }
 
-        [Description("Performs a set up for the ActionConfig of the Push Action.")]
+        [Description("Performs a set up for the ActionConfig of the Push Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupPushType(PushType inputPushType, out PushType pushType)
         {
             // If unset, set the pushType to AdapterSettings' value (base AdapterSettings default is FullPush).
@@ -133,6 +133,26 @@ namespace BH.Adapter
             this.ClearCache();
             return success ? objectsToPush.Cast<object>().ToList() : new List<object>();
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any push actions. For example can be used to open up a file for repeated push actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool BeforePush(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
+        {
+            m_HasRunPrePushAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any push actions. For example can be used to close a file for repeated push actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool AfterPush(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
+        {
+            m_HasRunPrePushAction = false; //Reset for next push action
+            return true;
+        }
+
+        /******************************************************/
     }
 }
 
