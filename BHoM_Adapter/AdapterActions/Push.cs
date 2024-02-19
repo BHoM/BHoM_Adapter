@@ -133,6 +133,26 @@ namespace BH.Adapter
             this.ClearCache();
             return success ? objectsToPush.Cast<object>().ToList() : new List<object>();
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any push actions. For example can be used to open up a file for repeated push actions.")]
+        public virtual bool BeforePush()
+        {
+            m_HasRunPrePushAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any push actions. For example can be used to close a file for repeated push actions.")]
+        public virtual bool AfterPush()
+        {
+            m_HasRunPrePushAction = false; //Reset for next push action
+            return true;
+        }
+
+        /******************************************************/
     }
 }
 
