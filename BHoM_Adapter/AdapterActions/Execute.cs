@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -42,7 +42,7 @@ namespace BH.Adapter
         /* These methods represent Actions that the Adapter can complete. 
            They are publicly available in the UI as individual components, e.g. in Grasshopper, under BHoM/Adapters tab. */
 
-        [Description("Performs a set up for the ActionConfig of the Execute Action.")]
+        [Description("Performs a set up for the ActionConfig of the Execute Action. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
         public virtual bool SetupExecuteConfig(ActionConfig actionConfig, out ActionConfig executeConfig)
         {
             // If null, set the actionConfig to a new ActionConfig.
@@ -50,6 +50,26 @@ namespace BH.Adapter
 
             return true;
         }
+
+        /******************************************************/
+
+        [Description("Performs an action prior to any execute actions. For example can be used to open up a file for repeated execute actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool BeforeExecute(IExecuteCommand command, ActionConfig actionConfig = null)
+        {
+            m_HasRunPreExecuteAction = true;
+            return true;
+        }
+
+        /******************************************************/
+
+        [Description("Performs an action after any execute actions. For example can be used to close a file for repeated execute actions. This method is intended to be called by the context in which this Adapter is run, which typically is a UI supported by BHoM.")]
+        public virtual bool AfterExecute(IExecuteCommand command, ActionConfig actionConfig = null)
+        {
+            m_HasRunPreExecuteAction = false; //Reset for next execute action
+            return true;
+        }
+
+        /******************************************************/
 
         [Description("To be implemented to send specific commands to the external software, through its API or other means." +
             "To be implemented (overridden) in Toolkits.")]

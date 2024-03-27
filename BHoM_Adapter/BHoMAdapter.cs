@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -69,6 +69,12 @@ namespace BH.Adapter
         // e.g. AdapterSettings.WrapNonBHoMObjects = true;
         protected AdapterSettings m_AdapterSettings { get; set; } = new AdapterSettings();
 
+        protected bool m_HasRunPrePullAction { get; set; } = false; //Flag to determine whether the adapter has run pre-pull actions
+        protected bool m_HasRunPrePushAction { get; set; } = false; //Flag to determine whether the adapter has run pre-push actions
+        protected bool m_HasRunPreExecuteAction { get; set; } = false; //Flag to determine whether the adapter has run pre-execute actions
+        protected bool m_HasRunPreMoveAction { get; set; } = false; //Flag to determine whether the adapter has run pre-move actions
+        protected bool m_HasRunPreRemoveAction { get; set; } = false; //Flag to determine whether the adapter has run pre-remove actions
+
         /***************************************************/
         /**** Public Events                             ****/
         /***************************************************/
@@ -84,6 +90,7 @@ namespace BH.Adapter
         }
     }
 }
+
 
 
 
