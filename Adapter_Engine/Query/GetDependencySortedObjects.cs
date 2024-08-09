@@ -31,6 +31,8 @@ using BH.oM.Adapter;
 using BH.oM.Base.Attributes;
 using BH.Engine.Reflection;
 using System.Reflection;
+using BH.oM.Spatial.SettingOut;
+
 
 namespace BH.Engine.Adapter
 {
@@ -57,7 +59,7 @@ namespace BH.Engine.Adapter
             Dictionary<Tuple<Type, PushType>, List<IBHoMObject>> allObjectsPerType = GetObjectsAndRecursiveDependencies(objects, pushType, bHoMAdapter);
 
             // Sort the groups by dependency order, so they can be pushed in the correct order.
-            List<Tuple<Type, PushType, IEnumerable<object>>> baseTypeGroupObjects = allObjectsPerType.Select(x => new Tuple<Type, PushType, IEnumerable<object>> (x.Key.Item1, x.Key.Item2, x.Value )).ToList();
+            List<Tuple<Type, PushType, IEnumerable<object>>> baseTypeGroupObjects = allObjectsPerType.Select(x => new Tuple<Type, PushType, IEnumerable<object>>(x.Key.Item1, x.Key.Item2, x.Value)).ToList();
 
             // Group per base type extracted from dependencies.
             // This is useful to reduce the number of CRUD calls.
@@ -121,8 +123,21 @@ namespace BH.Engine.Adapter
             //Method runs through all types, and recursively calls the dependecy types, and increments the depth of each type for every time it is found
             EvaluateDependencyDepths(bHoMAdapter, baseTypeGroupObjects.Select(x => x.Item1).Distinct(), dependecyDepth);
 
-            //Sorts the types by highest to lowest depth count
-            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = baseTypeGroupObjects.OrderByDescending(x => dependecyDepth[x.Item1]).ToList();
+            //Separate levels from all other objects
+            List<Tuple<Type, PushType, IEnumerable<object>>> levels = baseTypeGroupObjects.ToList().Where(x => x.Item1.Name == "Level").ToList();
+            List<Tuple<Type, PushType, IEnumerable<object>>> otherObjects = baseTypeGroupObjects.ToList().Where(x => x.Item1.Name != "Level").ToList();
+
+            //Sorts the types of all other objects by highest to lowest depth count
+            List<Tuple<Type, PushType, IEnumerable<object>>> orderedOtherObjects = otherObjects.OrderByDescending(x => dependecyDepth[x.Item1]).ToList();
+
+            //Merge levels with ordered other objects if levels are present
+            List<Tuple<Type, PushType, IEnumerable<object>>> orderedObjects = new List<Tuple<Type, PushType, IEnumerable<object>>>();
+            if (levels != null) {
+                levels.AddRange(orderedOtherObjects);
+                orderedObjects = levels;
+            } else { 
+                orderedObjects=orderedOtherObjects; }
+
 
             // If two types are subject to two different CRUD operations (e.g. UpdateOnly and FullCRUD),
             // make sure the order of CRUD operations is appropriate (e.g. UpdateOnly must happen before FullCRUD to avoid duplicates).
@@ -146,6 +161,7 @@ namespace BH.Engine.Adapter
 
             return orderedObjects;
         }
+
 
         /***************************************************/
 

@@ -79,6 +79,9 @@
 	  <Private>false</Private>
 	  <SpecificVersion>false</SpecificVersion>
     </Reference>
+    <Reference Include="Spatial_oM">
+      <HintPath>..\..\BHoM\Spatial_oM\obj\Debug\netstandard2.0\Spatial_oM.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
