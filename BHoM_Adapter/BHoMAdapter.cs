@@ -59,6 +59,12 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
+        public List<Type> PriorityTypes { get; protected set; } = new List<Type>()
+        {
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Level), typeof(Node), typeof(Bar), ...}
+        };
+
         public Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
         /***************************************************/
