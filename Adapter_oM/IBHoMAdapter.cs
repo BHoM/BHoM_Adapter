@@ -23,6 +23,7 @@
 using BH.oM.Base;
 using BH.oM.Data.Requests;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace BH.oM.Adapter
         ModuleSet AdapterModules { get; }
         Dictionary<Type, object> AdapterComparers { get; }
         Dictionary<Type, List<Type>> DependencyTypes { get; }
-        Queue<Type> PriorityTypes {get;}
+        Dictionary<Type,int> PriorityTypes {get;}
         Guid AdapterGuid { get; }
 
         List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null);

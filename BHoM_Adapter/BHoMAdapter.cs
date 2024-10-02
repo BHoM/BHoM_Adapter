@@ -59,7 +59,7 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
-        public Queue<Type> PriorityTypes { get; protected set; } = new Queue<Type>()
+        public Dictionary<Type, int> PriorityTypes { get; protected set; } = new Dictionary<Type,int>()
         {
             // In your adapter constructor, populate this with values like:
             // {typeof(Level), typeof(Node), typeof(Bar), ...}
