@@ -55,11 +55,32 @@ namespace BH.Engine.Adapter
         [Input("bHoMAdapter", "The PriorityTypes that define the order of the output will be gathered from this Adapter instance.")]
         public static List<Tuple<Type, PushType, IEnumerable<object>>> GetPrioritySortedObjects(this List<Tuple<Type, PushType, IEnumerable<object>>> objects, PushType pushType, IBHoMAdapter bHoMAdapter)
         {
+            List<Type> priorityTypes = bHoMAdapter?.PriorityTypes;
 
-            objects.Sort(new PriorityComparer(bHoMAdapter.PriorityTypes));
+            if(objects == null || objects.Count = 0 || priorityTypes == null || priorityTypes.Count == 0)
+                return objects;
 
-            return objects;
+            List<Tuple<Type, PushType, IEnumerable<object>>> prioritySortedObjects = objects.ToList();
 
+            //Loop through the priority types backwards to ensure the first one in the list is moved to the top
+            for (int i = priorityTypes.Count - 1; i >= 0; i--)
+            {
+                Type current = priorityTypes[i];
+                //Loop through the object list backwards to keep previous sorting intact
+                //Intentionally skipping index 0 (j >= 1) as object will be moved there anyway
+                for (int j = prioritySortedObjects.Count - 1; j >= 1; j--)
+                {
+                    if (prioritySortedObjects[j].Item1 == current)
+                    { 
+                        var temp = prioritySortedObjects[j];
+                        prioritySortedObjects.RemoveAt(j);
+                        prioritySortedObjects.Insert(0, temp);
+                        j++;                 //Increment index to test against the same index again (counteracting the j-- in the for loop) as list will have been shifted
+                    }
+                }
+            }
+
+            return prioritySortedObjects;
         }
 
         /***************************************************/
