@@ -96,15 +96,13 @@ namespace BH.Adapter
             if(m_AdapterSettings.HandleDependencies)
             {
                 orderedObjects = Engine.Adapter.Query.GetDependencySortedObjects(objectsToPush, pushType, this);
-                if (m_AdapterSettings.HandlePriorities)
-                    orderedObjects = Engine.Adapter.Query.GetPrioritySortedObjects(orderedObjects, pushType, this);
             }
             else
                 orderedObjects = objectsToPush.GroupBy(x => x.GetType()).Select(x => new Tuple<Type, PushType, IEnumerable<object>>(x.Key, pushType, x.Cast<object>())).ToList();
 
 
-
-
+            if (m_AdapterSettings.HandlePriorities)
+                orderedObjects = Engine.Adapter.Query.GetPrioritySortedObjects(orderedObjects, pushType, this);
             // We now have objects grouped per type, and the groups are sorted following the dependency order.
             foreach (var group in orderedObjects)
             {
