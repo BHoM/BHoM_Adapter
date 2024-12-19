@@ -59,6 +59,15 @@ namespace BH.Adapter
             // {typeof(Bar), new List<Type> { typeof(ISectionProperty), typeof(Node) } }
         };
 
+        public List<Type> PriorityTypes { get; protected set; } = new List<Type>()
+        {
+            // If you are using the dependency types, this only needs to cover cases that are not already handled by this system
+            // e.g., if Bars are set to have a dependency on Nodes, then there is no need to add them in order in the priority types
+            // In your adapter constructor, populate this with values like:
+            // {typeof(Level), typeof(Node), typeof(Bar), ...}
+
+        };
+
         public Guid AdapterGuid { get; set; } = Guid.NewGuid();
 
         /***************************************************/

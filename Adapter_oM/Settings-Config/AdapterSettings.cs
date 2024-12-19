@@ -58,6 +58,7 @@ namespace BH.oM.Adapter
 
         [Description("If your adapter does not define DependencyTypes, this can be set to false for performance.")]
         public virtual bool HandleDependencies { get; set; } = true;
+        public virtual bool HandlePriorities { get; set; } = false;
         public virtual bool UseAdapterId { get; set; } = true;
         public virtual bool UseHashComparerAsDefault { get; set; } = false;
         public virtual bool ProcessInMemory { get; set; } = false;
