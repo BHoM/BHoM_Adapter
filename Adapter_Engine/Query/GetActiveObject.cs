@@ -42,8 +42,8 @@ namespace BH.Engine.Adapter
         /**** Public Methods                            ****/
         /***************************************************/
         [System.Security.SecurityCritical]  // auto-generated_required
-        [Description("Method to allow the System.InteropServices.Marshal.GetActiveObject() to be run within environments \n" +
-            "that use .NET Core such as Rhino 8.")]
+        [Description("Returns the active objects of the program id specified. This allows the Marshal.GetActiveObject() \n" +
+            "to be run within environments that use .NET Core such as Rhino 8.")]
         [Input("progID", "The program id to retrieve the active object of.")]
         public static Object GetActiveObject(String progID)
         {
