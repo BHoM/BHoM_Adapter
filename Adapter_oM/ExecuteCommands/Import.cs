@@ -32,6 +32,6 @@ namespace BH.oM.Adapter.Commands
     [Description("Used to instruct the external software to import a file.")]
     public class Import : IExecuteCommand
     {
-        public virtual string FileName { get; set; }
+        public virtual string FilePath { get; set; }
     }
 }
