@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 namespace BH.oM.Adapter.Commands
 {
     [Description("Used to instruct the external software to import a file.")]
-    public class Import : IExecuteCommand
+    public class ImportFile : IExecuteCommand
     {
         public virtual string FilePath { get; set; }
     }
